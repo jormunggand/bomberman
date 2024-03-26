@@ -1,2 +1,5 @@
 # bomberman
-IN104 project: Bomberman
+
+## Projet IN104: Bomberman
+
+
