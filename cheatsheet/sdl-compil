@@ -1,0 +1,1 @@
+gcc FILE.C $(sdl2-config --cflags --libs)
