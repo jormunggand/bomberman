@@ -24,7 +24,7 @@ int main(int argc, char * argv[]) {
 	SDL_RenderClear(renderer);
 	SDL_Rect rect = {10, 10, 100, 100};
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-	SDL_RenderDrawRect(renderer, &rect);
+	SDL_RenderFillRect(renderer, &rect);
 
 	SDL_RenderPresent(renderer);
 
