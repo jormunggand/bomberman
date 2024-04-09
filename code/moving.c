@@ -26,8 +26,24 @@ int main(int argc, char* argv[]) {
 
     SDL_RenderCopy(render, player, NULL, &dst);
     SDL_RenderPresent(render);
+    
 
-    SDL_Delay(3000);
+    int velocity = 10;
+    SDL_Event event;
+    bool done = false;
+    while (!done) {
+        SDL_WaitEvent(&event);
+        if (event.type == SDL_QUIT)
+            done = true;
+        if (event.type == SDL_KEYDOWN) {
+            if (event.key.keysym.sym == SDLK_DOWN)
+                dst.y += velocity;
+            else if (event.key.keysym.sym == SDLK_UP)
+                dst.y -= velocity;
+            SDL_RenderCopy(render, player, NULL, &dst);
+            SDL_RenderPresent(render);
+        }
+    }
 
     SDL_DestroyTexture(player);
     SDL_DestroyRenderer(render);
