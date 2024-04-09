@@ -10,6 +10,6 @@
 #include <SDL_image.h>
 #endif
 
-SDL_Texture* load_image(char* name, SDL_Renderer** render);
-int setWindowColor(SDL_Renderer *renderer, SDL_Color color);
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);
+SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer);
+int setColor(SDL_Renderer *renderer, SDL_Color color);
