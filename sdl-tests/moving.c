@@ -3,6 +3,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "../code/utils.h"
+
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0) {
@@ -18,12 +20,12 @@ int main(int argc, char* argv[]) {
     }
     SDL_SetWindowTitle(window, "Moving Bomberman");
 
-    
-
+    SDL_Texture* player = loadImage("bomberman-sprite.png", render);
     
 
     SDL_RenderPresent(render);
 
+    SDL_DestroyTexture(player);
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
     exit_status = EXIT_SUCCESS;
