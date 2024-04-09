@@ -22,13 +22,20 @@ int main(int argc, char* argv[]) {
 
     //SDL_Surface* surf = SDL_CreateRGBSurface(0, 300, 200, 32, 0, 0, 0, 0);
 
-    SDL_Surface* player = IMG_Load("bomberman-sprite.png");
-    if (player == NULL) {
+    SDL_Surface* tmp = IMG_Load("bomberman-sprite.png");
+    if (tmp == NULL) {
         printf("%s", IMG_GetError());
     }
+    SDL_Texture* player = SDL_CreateTextureFromSurface(render, tmp);
+    SDL_FreeSurface(tmp);
 
+    SDL_Rect dst = {120, 60, 0, 0};
+    SDL_QueryTexture(player, 0, 0, &dst.w, &dst.h);
+
+    SDL_RenderCopy(render, player, NULL, &dst);
 
     SDL_RenderPresent(render);
+    SDL_Delay(3000);
 
     //SDL_FreeSurface(surf);
     //SDL_DestroyTexture(sprite);
