@@ -1,4 +1,4 @@
-#include "util.h"
+#include "utils.h"
 
 
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h){
