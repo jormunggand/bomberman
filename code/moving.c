@@ -5,6 +5,19 @@
 
 #include "utils.h"
 
+void edge_collision(SDL_Window* window, SDL_Rect* rect) {
+    int width, height;
+    SDL_GetWindowSize(window, &width, &height);
+    if (rect->x < 0)
+        rect->x = 0;
+    if (rect->y < 0)
+        rect->y = 0;
+    if (rect->x + rect->w > width)
+        rect->x = width-rect->w;
+    if (rect->y + rect->h > height)
+        rect->y = height-rect->h;
+}
+
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0) {
@@ -28,7 +41,7 @@ int main(int argc, char* argv[]) {
     SDL_RenderPresent(render);
     
 
-    int velocity = 10;
+    int velocity = 58;
     SDL_Event event;
     bool done = false;
     while (!done) {
@@ -40,6 +53,13 @@ int main(int argc, char* argv[]) {
                 dst.y += velocity;
             else if (event.key.keysym.sym == SDLK_UP)
                 dst.y -= velocity;
+            else if (event.key.keysym.sym == SDLK_RIGHT)
+                dst.x += velocity;
+            else if (event.key.keysym.sym == SDLK_LEFT)
+                dst.x -= velocity;
+
+            edge_collision(window, &dst);
+            SDL_RenderClear(render);
             SDL_RenderCopy(render, player, NULL, &dst);
             SDL_RenderPresent(render);
         }
