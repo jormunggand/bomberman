@@ -1,8 +1,7 @@
-#include <stdlib.h>
-#include <SDL2/SDL.h>
+#include <utils.h>
 
 
-int width = 100; // size of each case in pixels
+int width = 100; // size of each tile in pixels
 
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
