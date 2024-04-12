@@ -1,8 +1,19 @@
-CFLAGS= -Wall -Werror
+UNAME := $(shell uname)
 
+ifeq ($(UNAME), Darwin)
+CFLAGS = -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE -Wall
+LDFLAGS = -L/opt/homebrew/lib -lSDL2 -lSDL2_image
+endif
+
+ifeq ($(UNAME), Linux)
+CFLAGS= -Wall -Werror
+LDFLAGS = -lSDL2 -lSDL2_image
+endif
+
+CC = gcc
 
 %.o: %.c utils.c
-	gcc $(CFLAGS) -o $@ $^ -lSDL2 -lSDL2_image
+	$(CC) $(CFLAGS)	$^ -o $@ $(LDFLAGS)	
 
 clean: 
 	rm *.o
