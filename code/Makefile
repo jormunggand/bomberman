@@ -12,7 +12,13 @@ endif
 
 CC = gcc
 
-%.o: %.c utils.c
+all: moving.exe
+	./moving.exe
+
+moving.exe: moving.o utils.o
+	$(CC) $^ -o $@ 
+
+%.o: %.c
 	$(CC) $(CFLAGS)	$^ -o $@ $(LDFLAGS)	
 
 clean: 
