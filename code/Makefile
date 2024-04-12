@@ -16,10 +16,9 @@ all: moving.exe
 	./moving.exe
 
 moving.exe: moving.o utils.o
-	$(CC) $^ -o $@ 
-
-%.o: %.c
 	$(CC) $(CFLAGS)	$^ -o $@ $(LDFLAGS)	
 
+*.o: *.c
+	$(CC) $(CFLAGS) -c $^
 clean: 
 	rm *.o
