@@ -20,5 +20,6 @@ moving.exe: moving.o utils.o
 
 *.o: *.c
 	$(CC) $(CFLAGS) -c $^
+	
 clean: 
 	rm *.o
