@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
 #include "utils.h"
 
 void edge_collision(SDL_Window* window, SDL_Rect* rect) {
@@ -13,9 +8,9 @@ void edge_collision(SDL_Window* window, SDL_Rect* rect) {
     if (rect->y < 0)
         rect->y = 0;
     if (rect->x + rect->w > width)
-        rect->x = width-rect->w;
+        rect->x = width - rect->w;
     if (rect->y + rect->h > height)
-        rect->y = height-rect->h;
+        rect->y = height - rect->h;
 }
 
 int main(int argc, char* argv[]) {
@@ -27,14 +22,14 @@ int main(int argc, char* argv[]) {
 
     SDL_Window* window = NULL;
     SDL_Renderer* render = NULL;
-    if (SDL_CreateWindowAndRenderer(1000, 1000, SDL_WINDOW_SHOWN, &window, &render) != 0) {
+    if (SDL_CreateWindowAndRenderer(1000, 700, SDL_WINDOW_SHOWN, &window, &render) != 0) {
         printf("%s", SDL_GetError());
         goto Quit;
     }
     SDL_SetWindowTitle(window, "Moving Bomberman");
 
     SDL_Texture* player = loadImage("../assets/bomberman-sprite.png", render);
-    SDL_Rect dst = {320,320,0,0};
+    SDL_Rect dst = {.x = 0, .y = 0, .w = 32, .h = 32};
     SDL_QueryTexture(player, 0, 0, &dst.w, &dst.h);
 
     SDL_RenderCopy(render, player, NULL, &dst);
