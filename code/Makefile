@@ -18,8 +18,11 @@ all: map
 map: map.o utils.o
 	$(CC) $(CFLAGS)	$^ -o $@ $(LDFLAGS)	
 
+map_test: map_test.o map.o utils.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+
 *.o: *.c
 	$(CC) $(CFLAGS) -c $^
 
 clean:
-	rm *.o *.exe
+	rm *.o
