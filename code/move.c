@@ -2,8 +2,8 @@
 
 #include "utils.h"
 
-#define TILE_SIZE (32)
-#define MAP_SIZE (16)
+#define TILE_SIZE (16)
+#define MAP_SIZE (32)
 
 typedef enum{
     HARD_WALL,
