@@ -20,3 +20,6 @@ map: map.o utils.o
 
 *.o: *.c
 	$(CC) $(CFLAGS) -c $^
+
+clean:
+	rm *.o *.exe
