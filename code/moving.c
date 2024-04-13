@@ -8,9 +8,9 @@ void edge_collision(SDL_Window* window, SDL_Rect* rect) {
     if (rect->y < 0)
         rect->y = 0;
     if (rect->x + rect->w > width)
-        rect->x = width-rect->w;
+        rect->x = width - rect->w;
     if (rect->y + rect->h > height)
-        rect->y = height-rect->h;
+        rect->y = height - rect->h;
 }
 
 int main(int argc, char* argv[]) {
