@@ -5,14 +5,17 @@
 #define TILE_SIZE (32)
 
 int main(int argc, char* argv[]) {
+    int exit_status = EXIT_FAILURE;
+
     int** map = malloc(MAP_SIZE * sizeof(int*));
     for (int i = 0; i < MAP_SIZE; i++) {
         map[i] = malloc(MAP_SIZE * sizeof(int));
     }
-    int exit_status = EXIT_FAILURE;
-    char* wall_tile = "wall_tile.png";
-    char* empty_tile = "normal_tile.png";
-    char* soft_wall_tile = "soft_wall_tile.png";
+    
+    char* wall_tile = "../assets/Blocks/SolidBlock.png";
+    char* empty_tile = "../assets/Blocks/BackgroundTile.png";
+    char* soft_wall_tile = "../assets/Blocks/ExplodableBlock.png";
+
     SDL_Window* window = NULL;
     SDL_Renderer* renderer = NULL;
     SDL_Texture* empty_texture = NULL; 
@@ -35,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     SDL_Texture* textures[] = {wall_texture, empty_texture, soft_wall_texture};
     read_map_from_file(map, "map_example.txt");
-    printf("%d\n", map[2][2]);
+    //printf("%d\n", map[2][2]);
     update_renderer(renderer, map, textures, 3);
 
     SDL_RenderPresent(renderer);
@@ -49,11 +52,15 @@ int main(int argc, char* argv[]) {
         }
         SDL_Delay(16);
     }
+
+    exit_status = EXIT_SUCCESS;
     Quit:
     if (NULL != wall_texture)
         SDL_DestroyTexture(wall_texture);
     if (NULL != empty_texture)
         SDL_DestroyTexture(empty_texture);
+    if (NULL != soft_wall_texture)
+        SDL_DestroyTexture(soft_wall_texture);
     if(NULL != renderer)
         SDL_DestroyRenderer(renderer);
     if(NULL != window)
