@@ -20,15 +20,17 @@ map: map.o utils.o
 
 map_test: map_test.o map.o utils.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) && ./map_test
-	rm $^ 
+	rm -f *.o
 
-move_test: move_test.o utils.o
+move_test: move_test.o utils.o map.o 
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
-	rm $^ 
+	rm -f *.o
 
 *.o: *.c
 	$(CC) $(CFLAGS) -c $^
 
 clean:
 	rm -f *.o
+
+realclean: clean
 	rm -f map map_test move_test
