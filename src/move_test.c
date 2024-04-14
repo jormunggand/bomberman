@@ -1,5 +1,6 @@
 #include "utils.h"
 
+// gère la collision du rectangle avec les bords de la fenêtre
 void edge_collision(SDL_Window* window, SDL_Rect* rect) {
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
@@ -15,20 +16,15 @@ void edge_collision(SDL_Window* window, SDL_Rect* rect) {
 
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
-    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) != 0) {
-        printf("Erreur dans l'init %s", SDL_GetError());
-        goto Quit;
-    }
 
     SDL_Window* window = NULL;
     SDL_Renderer* render = NULL;
-    if (SDL_CreateWindowAndRenderer(1000, 700, SDL_WINDOW_SHOWN, &window, &render) != 0) {
+    if (0 != init(&window, &render, 1000, 1000)) {
         printf("%s", SDL_GetError());
         goto Quit;
     }
-    SDL_SetWindowTitle(window, "Moving Bomberman");
 
-    SDL_Texture* player = loadImage("../assets/bomberman-sprite.png", render);
+    SDL_Texture* player = loadImage("../assets/Bomberman/Front/Bman_F_f00.png", render);
     SDL_Rect dst = {.x = 0, .y = 0, .w = 32, .h = 32};
     SDL_QueryTexture(player, 0, 0, &dst.w, &dst.h);
 
@@ -60,12 +56,13 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    SDL_DestroyTexture(player);
-    SDL_DestroyRenderer(render);
-    SDL_DestroyWindow(window);
+
     exit_status = EXIT_SUCCESS;
 
 Quit:
+    SDL_DestroyTexture(player);
+    SDL_DestroyRenderer(render);
+    SDL_DestroyWindow(window);
     SDL_Quit();
     return exit_status;
 }
