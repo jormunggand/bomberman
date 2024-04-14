@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
 
 
     exit_status = EXIT_SUCCESS;
-//SDL_RenderClear(render);
+
 Quit:
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
