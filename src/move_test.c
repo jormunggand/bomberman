@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     SDL_RenderPresent(render);
     
 
-    int velocity = 15;
+    int velocity = 16;
     SDL_Event event;
     bool done = false;
     while (!done) {
