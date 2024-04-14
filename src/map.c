@@ -15,7 +15,11 @@ SDL_Texture* textures[N_TEXTURES];
 void loadTextures(SDL_Renderer* render) {
     empty_texture = loadImage("../assets/Blocks/BackgroundTile.png", render);
     wall_texture = loadImage("../assets/Blocks/SolidBlock.png", render);
-    soft_wall_texture = loadImage("../assets/Blocks/", render);
+    soft_wall_texture = loadImage("../assets/Blocks/ExplodableBlock.png", render);
+    if (empty_texture == NULL || wall_texture == NULL || soft_wall_texture == NULL) {
+        printf("%s", SDL_GetError());
+        return;
+    }
 
     textures[0] = wall_texture;
     textures[1] = empty_texture;

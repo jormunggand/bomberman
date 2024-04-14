@@ -4,7 +4,7 @@
 #define N_TEXTURES (5)
 // the size of the board is currently fixed by defines but this will maybe be changed in the future to have variable sizes
 #define MAP_SIZE (16)
-#define TILE_SIZE (32)
+#define TILE_SIZE (64)
 
 typedef enum { // Tile types, will add the other types later
     HARD_WALL,
