@@ -22,7 +22,7 @@ map_test: map_test.o map.o utils.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) && ./map_test
 	rm -f *.o
 
-move_test: move_test.o utils.o map.o 
+move_test: move_test.o utils.o map.o move.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 	rm -f *.o
 
