@@ -1,3 +1,6 @@
+# VSCODE config files
+/src/.vscode
+
 # Compiled source #
 ###################
 *.com
