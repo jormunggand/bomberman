@@ -23,9 +23,9 @@ void edge_collision(SDL_Window* window, SDL_Rect* rect, int** map, int velx, int
 bool check_collision(SDL_Rect* r, int** map){
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
-            int x = (r->x + i * r->w) / TILE_SIZE;
-            int y = (r->y + j * r->h) / TILE_SIZE;
-            if (map[x][y] == HARD_WALL || map[x][y] == SOFT_WALL){
+            int x = (r->x + i * r->h) / TILE_SIZE;
+            int y = (r->y + j * r->w) / TILE_SIZE;
+            if (map[y][x] == HARD_WALL || map[y][x] == SOFT_WALL){
                 return true;
             }
         }

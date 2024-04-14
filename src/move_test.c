@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     // load and display player sprite
     player = loadImage("../assets/Bomberman/Front/Bman_F_f00.png", render);
     SDL_Rect playerRect = {.x = windowWidth/2, .y = windowHeight/2, .w = TILE_SIZE, .h = TILE_SIZE};
-    SDL_QueryTexture(player, 0, 0, &playerRect.w, &playerRect.h);
+    // SDL_QueryTexture(player, 0, 0, &playerRect.w, &playerRect.h);
     SDL_RenderCopy(render, player, NULL, &playerRect);
     
     SDL_RenderPresent(render);
