@@ -25,6 +25,7 @@ typedef struct  {
 
 Player* create_player(int x, int y);
 void change_direction(Player* player, SpriteDirection newDir);
+void update_sprite(Player* player);
 void display_player(SDL_Renderer* render, Player* player);
 void destroy_player(Player* player);
 

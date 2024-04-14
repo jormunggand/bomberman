@@ -30,7 +30,13 @@ void display_player(SDL_Renderer* render, Player* player) {
         loadedAnim = true;
         load_animations(render);
     }
-    SDL_RenderCopy(render, player->animations[player->iframe], NULL, player->rect);
+
+    if (player->curDir == LEFT) {
+        SDL_RenderCopyEx(render, player->animations[player->iframe], NULL, player->rect, 
+            0, NULL, SDL_FLIP_HORIZONTAL);
+    } else {
+        SDL_RenderCopy(render, player->animations[player->iframe], NULL, player->rect);
+    }
 }
 
 void change_direction(Player* player, SpriteDirection newDir) {
@@ -42,17 +48,14 @@ void change_direction(Player* player, SpriteDirection newDir) {
     } else {
         player->animations = side_walking;
     }
-    player->iframe = 0;
 }
 
 
-void update_sprite(SDL_Renderer* render, Player* player) {
-    player->iframe  = (player->iframe + 1) % ANIMATION_FRAMES;
-    if (player->curDir == LEFT) {
+void update_sprite(Player* player) {
+    player->iframe += 1;
+    if (player->iframe >= ANIMATION_FRAMES)
+        player->iframe = 0;
 
-    } else {
-         
-    }
 }
 
 void destroy_player(Player* player) {
