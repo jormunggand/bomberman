@@ -2,7 +2,7 @@
 #include "utils.h"
 
 // keep track of whether or not the textures have been loaded
-bool loaded = false;
+bool loadedTiles = false;
 
 // Texture files
 SDL_Texture* empty_texture = NULL; 
@@ -52,9 +52,9 @@ int** read_map_from_file(char* file_name, int map_width, int map_height) {
 
 // a function to update the renderer given the current state of the map
 void display_map(SDL_Renderer* renderer, int** map, int map_width, int map_height) {
-    if (!loaded) {
+    if (!loadedTiles) {
         loadTextures(renderer);
-        loaded = true;
+        loadedTiles = true;
     }
 
     SDL_Rect rect = {0, 0, TILE_SIZE, TILE_SIZE};
