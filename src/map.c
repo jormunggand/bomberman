@@ -65,6 +65,7 @@ void display_map(SDL_Renderer* renderer, int** map, int map_width, int map_heigh
             SDL_RenderCopy(renderer, textures[map[y][x]], NULL, &rect);
         }
     }
+    SDL_RenderPresent(renderer);
 }
 
 
