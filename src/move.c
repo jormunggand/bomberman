@@ -2,6 +2,89 @@
 #include "move.h"
 #include "utils.h"
 
+bool loadedAnim = false;
+
+SDL_Texture* front_walking[ANIMATION_FRAMES];
+SDL_Texture* back_walking[ANIMATION_FRAMES];
+SDL_Texture* side_walking[ANIMATION_FRAMES];
+
+
+Player* create_player(int x, int y) {
+    Player* player = malloc(sizeof(player));
+    player->curDir = FRONT;
+    player->iframe = 0;
+
+    player->rect = malloc(sizeof(SDL_Rect));
+    player->rect->x = x;
+    player->rect->y = y;
+    player->rect->w = 64;
+    player->rect->h = 128;
+
+    player->animations = front_walking;
+
+    return player;
+}
+
+void display_player(SDL_Renderer* render, Player* player) {
+    if (!loadedAnim) {
+        loadedAnim = true;
+        load_animations(render);
+    }
+    SDL_RenderCopy(render, player->animations[player->iframe], NULL, player->rect);
+}
+
+void change_direction(Player* player, SpriteDirection newDir) {
+    player->curDir = newDir;
+    if (player->curDir == FRONT) {
+        player->animations = front_walking;
+    } else if (player->curDir == BACK) {
+        player->animations = back_walking;
+    } else {
+        player->animations = side_walking;
+    }
+    player->iframe = 0;
+}
+
+
+void update_sprite(SDL_Renderer* render, Player* player) {
+    player->iframe  = (player->iframe + 1) % ANIMATION_FRAMES;
+    if (player->curDir == LEFT) {
+
+    } else {
+         
+    }
+}
+
+void destroy_player(Player* player) {
+    free(player->rect);
+    free(player);
+}
+
+
+int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures) {
+    for (int i = 0; i < 8; i++) {
+        char filename[50];
+        sprintf(filename, base, i);
+        SDL_Texture* curText = loadImage(filename, render);
+        if (curText == NULL) {
+            printf("%s\n", SDL_GetError());
+            return -1;
+        }
+        textures[i] = curText;
+        }
+    return 0;
+}
+
+int load_animations(SDL_Renderer* render) {
+    int r1, r2, r3;
+    r1 = load_animations_aux(render, "../assets/Bomberman/Front/Bman_F_f0%d.png", front_walking);
+    r2 = load_animations_aux(render, "../assets/Bomberman/Back/Bman_B_f0%d.png", back_walking);
+    r3 = load_animations_aux(render, "../assets/Bomberman/Side/Bman_F_f0%d.png", side_walking);
+    if (r1 + r2 + r3 != 0) {
+        return -1;
+    }
+    return 0;
+}
 
 void edge_collision(SDL_Window* window, SDL_Rect* rect, int** map) {
     int width, height;
