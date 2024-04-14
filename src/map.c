@@ -1,29 +1,72 @@
 #include "map.h"
 
+
+// keep track of whether or not the textures have been loaded
+bool loaded = false;
+
+// Texture files
+SDL_Texture* empty_texture = NULL; 
+SDL_Texture* wall_texture = NULL;
+SDL_Texture* soft_wall_texture = NULL;
+
+SDL_Texture* textures[N_TEXTURES];
+
+
+void loadTextures(SDL_Renderer* render) {
+    empty_texture = loadImage("../assets/Blocks/BackgroundTile.png", render);
+    wall_texture = loadImage("../assets/Blocks/SolidBlock.png", render);
+    soft_wall_texture = loadImage("../assets/Blocks/", render);
+
+    textures[0] = wall_texture;
+    textures[1] = empty_texture;
+    textures[2] = soft_wall_texture;
+}
+
+
 // function to load the map from a text file
-void read_map_from_file(int** map, char* file_name) {
+int** read_map_from_file(char* file_name, int map_width, int map_height) {
     FILE* file = fopen(file_name, "r");
     if (file == NULL) {
-        printf("Error opening file\n");
-        return;
+        printf("Error opening %s\n", file_name);
+        return NULL;
     }
-    for (int i = 0; i < MAP_SIZE; i++) {
-        for (int j = 0; j < MAP_SIZE; j++) {
-            map[i][j] = fgetc(file) - '0';
+
+    int** map = malloc(map_height*sizeof(int*));
+    for (int y = 0; y < map_height; y++)
+        map[y] = malloc(map_width*sizeof(int));
+    
+    for (int y = 0; y < map_height; y++) {
+        for (int x = 0; x < map_width; x++) {
+            map[y][x] = fgetc(file) - '0';
         }
         fgetc(file); // to skip the newline character
     }
     fclose(file);
+    return map;
 }
 
+
 // a function to update the renderer given the current state of the map
-void update_renderer(SDL_Renderer* renderer, int** map, SDL_Texture* textures[], int nb_textures) {
+void display_map(SDL_Renderer* renderer, int** map, int map_width, int map_height) {
+    if (!loaded) {
+        loadTextures(renderer);
+        loaded = true;
+    }
+
     SDL_Rect rect = {0, 0, TILE_SIZE, TILE_SIZE};
-    for (int i = 0; i < MAP_SIZE; i++) {
-        for (int j = 0; j < MAP_SIZE; j++) {
-            rect.x = i * TILE_SIZE;
-            rect.y = j * TILE_SIZE;
-            SDL_RenderCopy(renderer, textures[map[i][j]], NULL, &rect);
+    for (int y = 0; y < map_height; y++) {
+        for (int x = 0; x < map_width; x++) {
+            rect.x = x * TILE_SIZE;
+            rect.y = y * TILE_SIZE;
+            SDL_RenderCopy(renderer, textures[map[y][x]], NULL, &rect);
         }
     }
+}
+
+
+// destroy memory allocated for the map
+void destroy_map(int** map, int map_width, int map_height) {
+    for (int y = 0; y < map_height; y++)
+        free(map[y]);
+    free(map);
 }
