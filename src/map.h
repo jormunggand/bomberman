@@ -1,16 +1,10 @@
-#include "utils.h"
-
-// might be changed in the future
-#define N_TEXTURES (5)
-// the size of the board is currently fixed by defines but this will maybe be changed in the future to have variable sizes
-#define MAP_SIZE (16)
-#define TILE_SIZE (64)
-
-typedef enum { // Tile types, will add the other types later
-    HARD_WALL,
-    EMPTY,
-    SOFT_WALL
-} TileType;
+#ifdef __linux__
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#elif __APPLE__
+#include <SDL.h>
+#include <SDL_image.h>
+#endif
 
 void loadTextures(SDL_Renderer* render);
 int** read_map_from_file(char* file_name, int map_width, int map_height);

@@ -1,5 +1,5 @@
 #include "map.h"
-
+#include "utils.h"
 
 // keep track of whether or not the textures have been loaded
 bool loaded = false;
