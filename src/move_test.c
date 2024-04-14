@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
     SDL_Renderer* render = NULL;
     SDL_Texture* player = NULL;
     int windowWidth = MAP_SIZE * TILE_SIZE, windowHeight = MAP_SIZE * TILE_SIZE;
-    int** map = read_map_from_file("map_example.txt", MAP_SIZE, MAP_SIZE);
+    int** map = read_map_from_file("map_collision.txt", MAP_SIZE, MAP_SIZE);
     if (0 != init(&window, &render, windowWidth, windowHeight)) {
         printf("%s", SDL_GetError());
         goto Quit;

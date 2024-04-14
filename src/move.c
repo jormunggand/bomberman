@@ -8,13 +8,13 @@ void edge_collision(SDL_Window* window, SDL_Rect* rect, int** map, int velx, int
     SDL_GetWindowSize(window, &width, &height);
     if (velx != 0){
         rect->x += velx;
-        if (rect->x < 0 || rect->x + rect->h > height || check_collision_map(rect, map)){
+        if (rect->x < 0 || rect->x + rect->h > height || check_collision(rect, map)){
             rect->x -= velx;
         }
     }
     if (vely != 0){
         rect->y += vely;
-        if (rect->y < 0 || rect->y + rect->w > width || check_collision_map(rect, map)){
+        if (rect->y < 0 || rect->y + rect->w > width || check_collision(rect, map)){
             rect->y -= vely;
         }
     }
