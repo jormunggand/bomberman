@@ -12,18 +12,20 @@ SDL_Texture* soft_wall_texture = NULL;
 SDL_Texture* textures[N_TEXTURES];
 
 
-void loadTextures(SDL_Renderer* render) {
+int loadTextures(SDL_Renderer* render) {
     empty_texture = loadImage("../assets/Blocks/BackgroundTile.png", render);
     wall_texture = loadImage("../assets/Blocks/SolidBlock.png", render);
     soft_wall_texture = loadImage("../assets/Blocks/ExplodableBlock.png", render);
     if (empty_texture == NULL || wall_texture == NULL || soft_wall_texture == NULL) {
         printf("%s", SDL_GetError());
-        return;
+        return -1;
     }
 
     textures[0] = wall_texture;
     textures[1] = empty_texture;
     textures[2] = soft_wall_texture;
+
+    return 0;
 }
 
 
@@ -51,9 +53,9 @@ int** read_map_from_file(char* file_name, int map_width, int map_height) {
 
 
 // a function to update the renderer given the current state of the map
-void display_map(SDL_Renderer* renderer, int** map, int map_width, int map_height) {
+int display_map(SDL_Renderer* renderer, int** map, int map_width, int map_height) {
     if (!loaded) {
-        loadTextures(renderer);
+        if (loadTextures(renderer) != 0) return -1;;
         loaded = true;
     }
 
@@ -62,9 +64,13 @@ void display_map(SDL_Renderer* renderer, int** map, int map_width, int map_heigh
         for (int x = 0; x < map_width; x++) {
             rect.x = x * TILE_SIZE;
             rect.y = y * TILE_SIZE;
-            SDL_RenderCopy(renderer, textures[map[y][x]], NULL, &rect);
+            if (SDL_RenderCopy(renderer, textures[map[y][x]], NULL, &rect) != 0){
+                printf("%s", SDL_GetError());
+                return -1;
+            }
         }
     }
+    return 0;
 }
 
 

@@ -7,44 +7,46 @@ int main(int argc, char* argv[]) {
 
     SDL_Window* window = NULL;
     SDL_Renderer* render = NULL;
-    int windowWidth = MAP_SIZE*TILE_SIZE, windowHeight = MAP_SIZE*TILE_SIZE;
+    SDL_Texture* player = NULL;
+    int windowWidth = MAP_SIZE * TILE_SIZE, windowHeight = MAP_SIZE * TILE_SIZE;
+    int** map = read_map_from_file("map_example.txt", MAP_SIZE, MAP_SIZE);
     if (0 != init(&window, &render, windowWidth, windowHeight)) {
         printf("%s", SDL_GetError());
         goto Quit;
     }
 
     // load and display map
-    int** map = read_map_from_file("map_example.txt", MAP_SIZE, MAP_SIZE);
     display_map(render, map, MAP_SIZE, MAP_SIZE);
 
     // load and display player sprite
-    SDL_Texture* player = loadImage("../assets/Bomberman/Front/Bman_F_f00.png", render);
-    SDL_Rect playerRect = {.x = windowWidth/2, .y = windowHeight/2, .w = 32, .h = 32};
+    player = loadImage("../assets/Bomberman/Front/Bman_F_f00.png", render);
+    SDL_Rect playerRect = {.x = windowWidth/2, .y = windowHeight/2, .w = TILE_SIZE, .h = TILE_SIZE};
     SDL_QueryTexture(player, 0, 0, &playerRect.w, &playerRect.h);
     SDL_RenderCopy(render, player, NULL, &playerRect);
     
     SDL_RenderPresent(render);
     
 
-    int velocity = 40;
+    int velocity = 15;
     SDL_Event event;
     bool done = false;
+    int vx = 0, vy = 0;
     while (!done) {
         SDL_WaitEvent(&event);
         if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q))
             done = true;
         if (event.type == SDL_KEYDOWN) {
             if (event.key.keysym.sym == SDLK_DOWN)
-                playerRect.y += velocity;
+                vy += velocity;
             else if (event.key.keysym.sym == SDLK_UP)
-                playerRect.y -= velocity;
+                vy -= velocity;
             else if (event.key.keysym.sym == SDLK_RIGHT)
-                playerRect.x += velocity;
+                vx += velocity;
             else if (event.key.keysym.sym == SDLK_LEFT)
-                playerRect.x -= velocity;
+                vx -= velocity;
 
-            edge_collision(window, &playerRect, map);
-
+            edge_collision(window, &playerRect, map, vx, vy);
+            vx = 0; vy = 0;
             SDL_RenderClear(render);
             display_map(render, map, MAP_SIZE, MAP_SIZE);
             SDL_RenderCopy(render, player, NULL, &playerRect);

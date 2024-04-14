@@ -7,19 +7,19 @@ endif
 
 ifeq ($(UNAME), Linux)
 CFLAGS= -Wall -Werror
-LDFLAGS = -lSDL2 -lSDL2_image
+LDFLAGS= -lSDL2 -lSDL2_image
 endif
 
 CC = gcc
 
-all: map
-	./map
+all: move_test
+	./move_test
 
 map: map.o utils.o
 	$(CC) $(CFLAGS)	$^ -o $@ $(LDFLAGS)	
 
 map_test: map_test.o map.o utils.o
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) && ./map_test
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 	rm -f *.o
 
 move_test: move_test.o utils.o map.o move.o
