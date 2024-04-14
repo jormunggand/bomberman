@@ -1,15 +1,6 @@
 // file meant to contain all functions related to moving the player
-
+#include "move.h"
 #include "utils.h"
-
-#define TILE_SIZE (16)
-#define MAP_SIZE (32)
-
-typedef enum{
-    HARD_WALL,
-    EMPTY,
-    SOFT_WALL,
-} TileType;
 
 
 void edge_collision(SDL_Window* window, SDL_Rect* rect, int** map) {

@@ -1,8 +1,9 @@
 #include "utils.h"
 #include "map.h"
+#include "move.h"
 
 // gère la collision du rectangle avec les bords de la fenêtre
-void edge_collision(SDL_Window* window, SDL_Rect* rect) {
+/*void edge_collision(SDL_Window* window, SDL_Rect* rect) {
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
     if (rect->x < 0)
@@ -13,7 +14,7 @@ void edge_collision(SDL_Window* window, SDL_Rect* rect) {
         rect->x = width - rect->w;
     if (rect->y + rect->h > height)
         rect->y = height - rect->h;
-}
+}*/
 
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
@@ -26,7 +27,7 @@ int main(int argc, char* argv[]) {
     }
 
     // load and display map
-    int** map = read_map_from_file("map_example.txt", MAP_SIZE, MAP_SIZE);
+    int** map = read_map_from_file("map_collision.txt", MAP_SIZE, MAP_SIZE);
     display_map(render, map, MAP_SIZE, MAP_SIZE);
 
     // load and display player sprite
@@ -55,7 +56,7 @@ int main(int argc, char* argv[]) {
             else if (event.key.keysym.sym == SDLK_LEFT)
                 dst.x -= velocity;
 
-            edge_collision(window, &dst);
+            edge_collision(window, &dst, map);
             SDL_RenderClear(render);
             display_map(render, map, MAP_SIZE, MAP_SIZE);
             SDL_RenderCopy(render, player, NULL, &dst);
