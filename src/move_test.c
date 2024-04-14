@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "map.h"
 
 // gère la collision du rectangle avec les bords de la fenêtre
 void edge_collision(SDL_Window* window, SDL_Rect* rect) {
@@ -19,16 +20,21 @@ int main(int argc, char* argv[]) {
 
     SDL_Window* window = NULL;
     SDL_Renderer* render = NULL;
-    if (0 != init(&window, &render, 1000, 1000)) {
+    if (0 != init(&window, &render, MAP_SIZE*TILE_SIZE, MAP_SIZE*TILE_SIZE)) {
         printf("%s", SDL_GetError());
         goto Quit;
     }
 
-    SDL_Texture* player = loadImage("../assets/Bomberman/Front/Bman_F_f00.png", render);
-    SDL_Rect dst = {.x = 0, .y = 0, .w = 32, .h = 32};
-    SDL_QueryTexture(player, 0, 0, &dst.w, &dst.h);
+    // load and display map
+    int** map = read_map_from_file("map_example.txt", MAP_SIZE, MAP_SIZE);
+    display_map(render, map, MAP_SIZE, MAP_SIZE);
 
+    // load and display player sprite
+    SDL_Texture* player = loadImage("../assets/Bomberman/Front/Bman_F_f00.png", render);
+    SDL_Rect dst = {.x = MAP_SIZE/2, .y = MAP_SIZE/2, .w = 32, .h = 32};
+    SDL_QueryTexture(player, 0, 0, &dst.w, &dst.h);
     SDL_RenderCopy(render, player, NULL, &dst);
+    
     SDL_RenderPresent(render);
     
 
@@ -51,6 +57,7 @@ int main(int argc, char* argv[]) {
 
             edge_collision(window, &dst);
             SDL_RenderClear(render);
+            display_map(render, map, MAP_SIZE, MAP_SIZE);
             SDL_RenderCopy(render, player, NULL, &dst);
             SDL_RenderPresent(render);
         }
@@ -58,11 +65,12 @@ int main(int argc, char* argv[]) {
 
 
     exit_status = EXIT_SUCCESS;
-
+//SDL_RenderClear(render);
 Quit:
     SDL_DestroyTexture(player);
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
     SDL_Quit();
+    destroy_map(map, MAP_SIZE, MAP_SIZE);
     return exit_status;
 }
