@@ -89,37 +89,38 @@ int load_animations(SDL_Renderer* render) {
     return 0;
 }
 
-void edge_collision(SDL_Window* window, SDL_Rect* rect, int** map) {
+float eps = TILE_SIZE / 4;
+
+void edge_collision(SDL_Window* window, SDL_Rect* player_rect, SDL_Rect* collision_rect, int** map, int velx, int vely) {
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
-    int i = rect->x / TILE_SIZE;
-    int j = rect->y / TILE_SIZE;
-    int x_up = TILE_SIZE * i;
-    int x_down = TILE_SIZE * (i + 1);
-    int y_left = TILE_SIZE * j;
-    int y_right = TILE_SIZE * (j + 1);
-    if (i >= 1 && (map[i - 1][j] == HARD_WALL || map[i - 1][j] == SOFT_WALL) && rect->x < x_up){
-        rect->x = x_up;
+    if (velx != 0){
+        player_rect->x += velx;
+        collision_rect->x += velx;
+        if (collision_rect->x < 0 || collision_rect->x + collision_rect->w > width || check_collision(collision_rect, map)){
+            player_rect->x -= velx;
+            collision_rect->x -= velx;
+        }
     }
-    else if (i == 0 && rect->x < 0){
-        rect->x = 0;
+    if (vely != 0){
+        collision_rect->y += vely;
+        player_rect->y += vely;
+        if (collision_rect->y < 0 || collision_rect->y + collision_rect->h > height || check_collision(collision_rect, map)){
+            collision_rect->y -= vely;
+            player_rect->y -= vely;
+        }
     }
-    if (j >= 1 && (map[i][j - 1] == HARD_WALL || map[i][j - 1] == SOFT_WALL) && rect->y < y_left){
-        rect->y = y_left;
+}
+
+bool check_collision(SDL_Rect* r, int** map){
+    for (int i = 0; i < 2; i++){
+        for (int j = 0; j < 2; j++){
+            int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;
+            int y = (r->y + j * (r->h - eps)  + (1 - j) * eps) / TILE_SIZE;
+            if (map[y][x] == HARD_WALL || map[y][x] == SOFT_WALL){
+                return true;
+            }
+        }
     }
-    else if (j == 0 && rect->y < 0){
-        rect->y = 0;
-    }
-    if (i < MAP_SIZE - 1 && (map[i + 1][j] == HARD_WALL || map[i + 1][j] == SOFT_WALL) && rect->x + rect->w > x_down){
-        rect->x = x_down - rect->w;
-    }
-    else if (i == MAP_SIZE - 1 && rect->x + rect->w > width){
-        rect->x = width - rect->w;
-    }
-    if (j < MAP_SIZE - 1 && (map[i][j + 1] == HARD_WALL || map[i][j + 1] == SOFT_WALL) && rect->y + rect->h > y_right){
-        rect->y = y_right - rect->h;
-    }
-    else if (j == MAP_SIZE - 1 && rect->y + rect->h > height){
-        rect->y = height - rect->h;
-    }
+    return false;
 }
