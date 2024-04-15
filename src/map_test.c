@@ -1,8 +1,6 @@
 #include "utils.h"
 #include "map.h"
 
-#define MAP_SIZE (16)
-#define TILE_SIZE (32)
 
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
@@ -12,15 +10,8 @@ int main(int argc, char* argv[]) {
         map[i] = malloc(MAP_SIZE * sizeof(int));
     }
     
-    char* wall_tile = "../assets/Blocks/SolidBlock.png";
-    char* empty_tile = "../assets/Blocks/BackgroundTile.png";
-    char* soft_wall_tile = "../assets/Blocks/ExplodableBlock.png";
-
     SDL_Window* window = NULL;
     SDL_Renderer* renderer = NULL;
-    SDL_Texture* empty_texture = NULL; 
-    SDL_Texture* wall_texture = NULL;
-    SDL_Texture* soft_wall_texture = NULL;
 
     if (init(&window, &renderer, MAP_SIZE * TILE_SIZE, MAP_SIZE * TILE_SIZE) != 0) {
         printf("%s\n", SDL_GetError());
@@ -28,18 +19,16 @@ int main(int argc, char* argv[]) {
     }
     SDL_SetWindowTitle(window, "Map");
 
-    empty_texture = loadImage(empty_tile, renderer);
-    wall_texture = loadImage(wall_tile, renderer);
-    soft_wall_texture = loadImage(soft_wall_tile, renderer);
-    if (empty_texture == NULL || wall_texture == NULL || soft_wall_texture == NULL) {
-        printf("%s", SDL_GetError());
+    map = read_map_from_file("map_example.txt", MAP_SIZE, MAP_SIZE);
+    if (map == NULL) {
+        printf("Error reading map from file\n");
         goto Quit;
     }
-
-    SDL_Texture* textures[] = {wall_texture, empty_texture, soft_wall_texture};
-    read_map_from_file(map, "map_example.txt");
     //printf("%d\n", map[2][2]);
-    update_renderer(renderer, map, textures, 3);
+    if (display_map(renderer, map, MAP_SIZE, MAP_SIZE) != 0) {
+        printf("Error displaying map\n");
+        goto Quit;
+    }
 
     SDL_RenderPresent(renderer);
     bool is_running = true;
@@ -55,20 +44,17 @@ int main(int argc, char* argv[]) {
 
     exit_status = EXIT_SUCCESS;
     Quit:
-    if (NULL != wall_texture)
-        SDL_DestroyTexture(wall_texture);
-    if (NULL != empty_texture)
-        SDL_DestroyTexture(empty_texture);
-    if (NULL != soft_wall_texture)
-        SDL_DestroyTexture(soft_wall_texture);
+    // if (NULL != wall_texture)
+    //     SDL_DestroyTexture(wall_texture);
+    // if (NULL != empty_texture)
+    //     SDL_DestroyTexture(empty_texture);
+    // if (NULL != soft_wall_texture)
+    //     SDL_DestroyTexture(soft_wall_texture);
     if(NULL != renderer)
         SDL_DestroyRenderer(renderer);
     if(NULL != window)
         SDL_DestroyWindow(window);
     SDL_Quit();
-    for (int i = 0; i < MAP_SIZE; i++) {
-        free(map[i]);
-    }
-    free(map);
+    destroy_map(map, MAP_SIZE, MAP_SIZE);
     return exit_status;
 }
