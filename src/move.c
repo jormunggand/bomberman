@@ -2,6 +2,7 @@
 #include "move.h"
 #include "utils.h"
 
+float eps = TILE_SIZE / 4;
 
 void edge_collision(SDL_Window* window, SDL_Rect* player_rect, SDL_Rect* collision_rect, int** map, int velx, int vely) {
     int width, height;
@@ -27,8 +28,8 @@ void edge_collision(SDL_Window* window, SDL_Rect* player_rect, SDL_Rect* collisi
 bool check_collision(SDL_Rect* r, int** map){
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
-            int x = (r->x + i * r->w) / TILE_SIZE;
-            int y = (r->y + j * r->h) / TILE_SIZE;
+            int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;
+            int y = (r->y + j * (r->h - eps)  + (1 - j) * eps) / TILE_SIZE;
             if (map[y][x] == HARD_WALL || map[y][x] == SOFT_WALL){
                 return true;
             }
