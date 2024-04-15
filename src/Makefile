@@ -1,7 +1,7 @@
 UNAME := $(shell uname)
 
 ifeq ($(UNAME), Darwin)
-CFLAGS = -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE -Wall
+CFLAGS = -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE -Wall -g
 LDFLAGS = -L/opt/homebrew/lib -lSDL2 -lSDL2_image
 endif
 
@@ -12,15 +12,15 @@ endif
 
 CC = gcc
 
-all: map
-	./map
+all: move_test
+	./move_test
 
 map: map.o utils.o
 	$(CC) $(CFLAGS)	$^ -o $@ $(LDFLAGS)	
 
-map_test: map_test.o map.o utils.o
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) && ./map_test
-	rm -f *.o
+# map_test: map_test.o map.o utils.o
+# 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) && ./map_test
+# 	rm -f *.o
 
 move_test: move_test.o utils.o map.o move.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)

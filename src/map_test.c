@@ -1,9 +1,6 @@
 #include "utils.h"
 #include "map.h"
 
-#define MAP_SIZE (16)
-#define TILE_SIZE (32)
-
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
 

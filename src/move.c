@@ -9,33 +9,34 @@ SDL_Texture* back_walking[ANIMATION_FRAMES];
 SDL_Texture* side_walking[ANIMATION_FRAMES];
 
 
-Player* create_player(int x, int y) {
-    Player* player = malloc(sizeof(player));
+void init_player(Player* player, int x, int y) {
+    // player = malloc(sizeof(player));
+    // if (player == NULL) {
+    //     printf("Error allocating memory for player\n");
+    //     return;
+    // }
     player->curDir = FRONT;
     player->iframe = 0;
 
-    player->rect = malloc(sizeof(SDL_Rect));
-    player->rect->x = x;
-    player->rect->y = y;
-    player->rect->w = 64;
-    player->rect->h = 128;
+    player->rect.x = x;
+    player->rect.y = y;
+    player->rect.w = TILE_SIZE;
+    player->rect.h = 2 * TILE_SIZE;
 
     player->animations = front_walking;
-
-    return player;
 }
 
-void display_player(SDL_Renderer* render, Player* player) {
+void display_player(SDL_Renderer* render, Player player) {
     if (!loadedAnim) {
         loadedAnim = true;
         load_animations(render);
     }
 
-    if (player->curDir == LEFT) {
-        SDL_RenderCopyEx(render, player->animations[player->iframe], NULL, player->rect, 
+    if (player.curDir == LEFT) {
+        SDL_RenderCopyEx(render, player.animations[player.iframe], NULL, &(player.rect), 
             0, NULL, SDL_FLIP_HORIZONTAL);
     } else {
-        SDL_RenderCopy(render, player->animations[player->iframe], NULL, player->rect);
+        SDL_RenderCopy(render, player.animations[player.iframe], NULL, &(player.rect));
     }
 }
 
@@ -58,10 +59,10 @@ void update_sprite(Player* player) {
 
 }
 
-void destroy_player(Player* player) {
-    free(player->rect);
-    free(player);
-}
+// void destroy_player(Player* player) {
+//     free(player->rect);
+//     free(player);
+// }
 
 
 int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures) {
@@ -112,7 +113,7 @@ void edge_collision(SDL_Window* window, SDL_Rect* player_rect, SDL_Rect* collisi
     }
 }
 
-bool check_collision(SDL_Rect* r, int** map){
+bool check_collision(SDL_Rect* r, int** map) {
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
             int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;
