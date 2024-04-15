@@ -7,6 +7,6 @@
 #include <SDL_image.h>
 #endif
 
-void edge_collision(SDL_Window* window, SDL_Rect* rect, int** map, int vx, int vy);
+void edge_collision(SDL_Window* window, SDL_Rect* player_rect, SDL_Rect* collision_rect, int** map, int velx, int vely);
 
 bool check_collision(SDL_Rect* r, int** map);
