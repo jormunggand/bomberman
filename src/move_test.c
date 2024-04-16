@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     display_map(render, map, MAP_SIZE, MAP_SIZE);
 
     // load and display player sprite
-    display_player(render, player);
+    display_player(render, &player);
 
     SDL_RenderPresent(render);
     
@@ -29,9 +29,11 @@ int main(int argc, char* argv[]) {
     int velocity = 16;
     SDL_Event event;
     bool done = false;
+    int cpt = 0;
     while (!done) {
         int eventPresent = SDL_PollEvent(&event);
         if (eventPresent) {
+            player.isWalking = true;
             if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q))
                 done = true;
             else if (event.type == SDL_KEYDOWN) {
@@ -53,9 +55,16 @@ int main(int argc, char* argv[]) {
                 //edge_collision(window, &playerRect, map);
             }
         }
+        else{
+            cpt++;
+            if (cpt == 300){
+                cpt = 0;
+                player.isWalking = false;
+            }
+        }
         SDL_RenderClear(render);
         display_map(render, map, MAP_SIZE, MAP_SIZE);
-        display_player(render, player);
+        display_player(render, &player);
         SDL_RenderPresent(render);
     }
 

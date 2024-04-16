@@ -10,13 +10,9 @@ SDL_Texture* side_walking[ANIMATION_FRAMES];
 
 
 void init_player(Player* player, int x, int y) {
-    // player = malloc(sizeof(player));
-    // if (player == NULL) {
-    //     printf("Error allocating memory for player\n");
-    //     return;
-    // }
     player->curDir = FRONT;
     player->iframe = 0;
+    player->isWalking = false;
 
     player->rect.x = x;
     player->rect.y = y;
@@ -26,17 +22,17 @@ void init_player(Player* player, int x, int y) {
     player->animations = front_walking;
 }
 
-void display_player(SDL_Renderer* render, Player player) {
+void display_player(SDL_Renderer* render, Player* player) {
     if (!loadedAnim) {
         loadedAnim = true;
         load_animations(render);
     }
-
-    if (player.curDir == LEFT) {
-        SDL_RenderCopyEx(render, player.animations[player.iframe], NULL, &(player.rect), 
+    if (!player->isWalking) player->iframe = 0;
+    if (player->curDir == LEFT) {
+        SDL_RenderCopyEx(render, player->animations[player->iframe], NULL, &(player->rect), 
             0, NULL, SDL_FLIP_HORIZONTAL);
     } else {
-        SDL_RenderCopy(render, player.animations[player.iframe], NULL, &(player.rect));
+        SDL_RenderCopy(render, player->animations[player->iframe], NULL, &(player->rect));
     }
 }
 
@@ -53,10 +49,7 @@ void change_direction(Player* player, SpriteDirection newDir) {
 
 
 void update_sprite(Player* player) {
-    player->iframe += 1;
-    if (player->iframe >= ANIMATION_FRAMES)
-        player->iframe = 0;
-
+    player->iframe = (player->iframe + 1) % ANIMATION_FRAMES;
 }
 
 // void destroy_player(Player* player) {
