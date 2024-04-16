@@ -49,7 +49,8 @@ void change_direction(Player* player, SpriteDirection newDir) {
 
 
 void update_sprite(Player* player) {
-    player->iframe = (player->iframe + 1) % ANIMATION_FRAMES;
+    player->iframe++;
+    player->iframe %= ANIMATION_FRAMES;
 }
 
 // void destroy_player(Player* player) {
