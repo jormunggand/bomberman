@@ -10,6 +10,8 @@
 #include <stdbool.h>
 
 #define ANIMATION_FRAMES (8)
+#define BASE_SPEED (16) // in pixels
+#define SPEED_BOOST (10) // in pixels
 
 struct Map;
 
@@ -28,6 +30,10 @@ typedef struct Player {
     SDL_Texture** animations;
     SDL_Rect rect;
     SDL_Rect collisionRect;
+
+    int nBombs;
+    int speed;
+    int flamePower;
 } Player;
 
 void init_player(Player* player, int x, int y);

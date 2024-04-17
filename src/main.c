@@ -36,7 +36,6 @@ int main(int argc, char* argv[]) {
     SDL_RenderPresent(render);
     
 
-    int velocity = 16;
     SDL_Event event;
     bool done = false;
     int cpt = 0, vx = 0, vy = 0;
@@ -48,16 +47,16 @@ int main(int argc, char* argv[]) {
                 done = true;
             else if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s) {
-                    vy += velocity;
+                    vy += player.speed;
                     change_direction(&player, FRONT);
                 } else if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_z) {
-                    vy -= velocity;
+                    vy -= player.speed;
                     change_direction(&player, BACK);
                 } else if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d) {
-                    vx += velocity;
+                    vx += player.speed;
                     change_direction(&player, RIGHT);
                 } else if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_q) {
-                    vx -= velocity;
+                    vx -= player.speed;
                     change_direction(&player, LEFT);
                 }
 
