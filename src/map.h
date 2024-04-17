@@ -6,7 +6,7 @@
 #include <SDL_image.h>
 #endif
 
-typedef struct {
+typedef struct Map {
     int** grid;
     int size;
 } Map;

@@ -11,6 +11,8 @@
 
 #define ANIMATION_FRAMES (8)
 
+struct Map;
+
 typedef enum {
     FRONT,
     BACK,
@@ -37,5 +39,5 @@ void display_player(SDL_Renderer* render, Player* player);
 int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures);
 int load_animations(SDL_Renderer* render);
 
-void edge_collision(SDL_Window* window, Player* player, int** map, int velx, int vely);
-bool check_collision(SDL_Rect* r, int** map);
+void edge_collision(SDL_Window* window, Player* player, struct Map *map, int velx, int vely);
+bool check_collision(SDL_Rect* r, struct Map *map);
