@@ -6,7 +6,8 @@ bool loadedAnim = false;
 
 SDL_Texture* front_walking[ANIMATION_FRAMES];
 SDL_Texture* back_walking[ANIMATION_FRAMES];
-SDL_Texture* side_walking[ANIMATION_FRAMES];
+SDL_Texture* left_walking[ANIMATION_FRAMES];
+SDL_Texture* right_walking[ANIMATION_FRAMES];
 
 
 void init_player(Player* player, int x, int y) {
@@ -33,12 +34,7 @@ void display_player(SDL_Renderer* render, Player* player) {
         load_animations(render);
     }
     if (!player->isWalking) player->iframe = 0;
-    if (player->curDir == LEFT) {
-        SDL_RenderCopyEx(render, player->animations[player->iframe], NULL, &(player->rect), 
-            0, NULL, SDL_FLIP_HORIZONTAL);
-    } else {
-        SDL_RenderCopy(render, player->animations[player->iframe], NULL, &(player->rect));
-    }
+    SDL_RenderCopy(render, player->animations[player->iframe], NULL, &(player->rect));
 }
 
 void change_direction(Player* player, SpriteDirection newDir) {
@@ -47,8 +43,11 @@ void change_direction(Player* player, SpriteDirection newDir) {
         player->animations = front_walking;
     } else if (player->curDir == BACK) {
         player->animations = back_walking;
-    } else {
-        player->animations = side_walking;
+    } else if (player->curDir == LEFT) {
+        player->animations = left_walking;
+    }
+    else {
+        player->animations = right_walking;
     }
 }
 
@@ -79,11 +78,12 @@ int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures
 }
 
 int load_animations(SDL_Renderer* render) {
-    int r1, r2, r3;
+    int r1, r2, r3, r4;
     r1 = load_animations_aux(render, "../assets/Bomberman/Front/Bman_F_f0%d.png", front_walking);
     r2 = load_animations_aux(render, "../assets/Bomberman/Back/Bman_B_f0%d.png", back_walking);
-    r3 = load_animations_aux(render, "../assets/Bomberman/Side/Bman_F_f0%d.png", side_walking);
-    if (r1 + r2 + r3 != 0) {
+    r3 = load_animations_aux(render, "../assets/Bomberman/Left/Bman_L_f0%d.png", left_walking);
+    r4 = load_animations_aux(render, "../assets/Bomberman/Right/Bman_R_f0%d.png", right_walking);
+    if (r1 + r2 + r3 + r4 != 0) {
         return -1;
     }
     return 0;
