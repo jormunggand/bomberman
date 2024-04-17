@@ -11,18 +11,20 @@ SDL_Texture* left_walking[ANIMATION_FRAMES];
 SDL_Texture* right_walking[ANIMATION_FRAMES];
 
 
-void init_player(Player* player, int x, int y) {
+// create a player structure positioned at map.grid[y][x]
+void init_player(Player* player, int y, int x) {
     player->curDir = FRONT;
     player->iframe = 0;
     player->isWalking = false;
 
-    player->rect.x = x;
-    player->rect.y = y;
     player->rect.w = TILE_SIZE;
     player->rect.h = 2 * TILE_SIZE;
+    player->rect.x = x*TILE_SIZE;
+    player->rect.y = (y-1)*TILE_SIZE;
+    
 
-    player->collisionRect.x = x;
-    player->collisionRect.y = y + 5 * player->rect.h/8;
+    player->collisionRect.x = x*TILE_SIZE;
+    player->collisionRect.y = (y-1)*TILE_SIZE + 5*player->rect.h/8;
     player->collisionRect.w = TILE_SIZE;
     player->collisionRect.h = TILE_SIZE;
 

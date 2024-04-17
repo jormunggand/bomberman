@@ -26,7 +26,8 @@ int main(int argc, char* argv[]) {
     // SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
     Player player;
-    init_player(&player, map.size * TILE_SIZE/2, map.size * TILE_SIZE/2);
+    //printf("%d %d\n", map.starty, map.startx);
+    init_player(&player, map.starty, map.startx);
 
     // load and display map and player
     display_map(render, &map);
@@ -75,6 +76,8 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(render);
         display_map(render, &map);
         display_player(render, &player);
+        SDL_RenderDrawRect(render, &player.rect);
+        SDL_RenderDrawRect(render, &player.collisionRect);
         SDL_RenderPresent(render);
     }
 
