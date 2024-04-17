@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     player = loadImage("../assets/Bomberman/Front/Bman_F_f00.png", render);
     SDL_Rect playerRect = {.x = TILE_SIZE * MAP_SIZE/2, .y = TILE_SIZE * MAP_SIZE/2, .w = TILE_SIZE, .h = 2 * TILE_SIZE};
     SDL_QueryTexture(player, 0, 0, &playerRect.w, &playerRect.h);
-    SDL_Rect collision_rect = {.x = TILE_SIZE * MAP_SIZE/2, .y = TILE_SIZE * MAP_SIZE/2 + playerRect.h/2, .w = playerRect.w, .h = playerRect.h/2};
+    SDL_Rect collision_rect = {.x = TILE_SIZE * MAP_SIZE/2, .y = TILE_SIZE * MAP_SIZE/2 + 5 * playerRect.h/ 8, .w = playerRect.w, .h = playerRect.h/2};
     SDL_RenderCopy(render, player, NULL, &playerRect);
     
     SDL_RenderPresent(render);
@@ -50,6 +50,7 @@ int main(int argc, char* argv[]) {
             vx = 0; vy = 0;
             SDL_RenderClear(render);
             display_map(render, map, MAP_SIZE, MAP_SIZE);
+            SDL_RenderDrawRect(render, &collision_rect);   
             SDL_RenderCopy(render, player, NULL, &playerRect);
             SDL_RenderPresent(render);
         }
