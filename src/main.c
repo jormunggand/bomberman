@@ -26,7 +26,6 @@ int main(int argc, char* argv[]) {
     // SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
     Player player;
-    //printf("%d %d\n", map.starty, map.startx);
     init_player(&player, map.starty, map.startx);
 
     // load and display map and player
