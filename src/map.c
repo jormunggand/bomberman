@@ -18,6 +18,18 @@ SDL_Texture* speed_bonus = NULL;
 SDL_Texture* textures[N_TEXTURES];
 
 
+// draw the bonus icon on top of the background tile
+SDL_Texture* createBonusTexture(SDL_Renderer* render, SDL_Texture* icon) {
+    SDL_Texture* text = SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, 
+        SDL_TEXTUREACCESS_TARGET, TILE_SIZE, TILE_SIZE);
+    SDL_SetRenderTarget(render, text);
+    SDL_RenderCopy(render, empty_texture, NULL, NULL);
+    SDL_Rect middle = {.x=TILE_SIZE/4, .y=TILE_SIZE/4, .w=TILE_SIZE/2, .h=TILE_SIZE/2};
+    SDL_RenderCopy(render, icon, NULL, &middle);
+    SDL_SetRenderTarget(render, NULL);
+    return text;
+}
+
 int loadTextures(SDL_Renderer* render) {
     empty_texture = loadImage("../assets/Blocks/BackgroundTile.png", render);
     wall_texture = loadImage("../assets/Blocks/SolidBlock.png", render);
@@ -27,15 +39,9 @@ int loadTextures(SDL_Renderer* render) {
     flame_bonus_icon = loadImage("../assets/Powerups/FlamePowerup.png", render);
     speed_bonus_icon = loadImage("../assets/Powerups/SpeedPowerup.png", render);
 
-    //SDL_Rect middle = {.x=TILE_SIZE/2, .y=TILE_SIZE/2, .w=TILE_SIZE/2, .h=TILE_SIZE/2};
-    SDL_Rect test = {.x=0, .y=0, .w = 64, .h = 64};
-    bomb_bonus = loadImage("../assets/Blocks/BackgroundTile.png", render);
-    SDL_SetRenderTarget(render, bomb_bonus);
-    SDL_RenderFillRect(render, &test);
-    //SDL_RenderCopy(render, bomb_bonus_icon, NULL, &middle);
-    SDL_SetRenderTarget(render, NULL);
-    flame_bonus = loadImage("../assets/Blocks/BackgroundTile.png", render);
-    speed_bonus = loadImage("../assets/Blocks/BackgroundTile.png", render);
+    bomb_bonus = createBonusTexture(render, bomb_bonus_icon);
+    flame_bonus = createBonusTexture(render, flame_bonus_icon);
+    speed_bonus = createBonusTexture(render, speed_bonus_icon);
     
 
     if (empty_texture == NULL || wall_texture == NULL || soft_wall_texture == NULL
@@ -44,6 +50,11 @@ int loadTextures(SDL_Renderer* render) {
         printf("%s\n", SDL_GetError());
         return -1;
     }
+
+    // now useless
+    SDL_DestroyTexture(bomb_bonus_icon);
+    SDL_DestroyTexture(flame_bonus_icon);
+    SDL_DestroyTexture(speed_bonus_icon);
 
     textures[HARD_WALL] = wall_texture;
     textures[EMPTY] = empty_texture;
