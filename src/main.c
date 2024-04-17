@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
     int windowWidth = MAP_SIZE * TILE_SIZE, windowHeight = MAP_SIZE * TILE_SIZE;
     Player player;
     init_player(&player, MAP_SIZE * TILE_SIZE/2, MAP_SIZE * TILE_SIZE/2);
-    int** map = read_map_from_file("map_collision.txt", MAP_SIZE, MAP_SIZE);
+    int** map = read_map_from_file("../maps/map_collision.txt", MAP_SIZE, MAP_SIZE);
     if (0 != init(&window, &render, windowWidth, windowHeight)) {
         printf("%s", SDL_GetError());
         goto Quit;

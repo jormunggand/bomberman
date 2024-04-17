@@ -15,16 +15,12 @@ CC = gcc
 all: main.exe
 	./main.exe
 
-map.exe: map.o utils.o
-	$(CC) $(CFLAGS)	$^ -o $@ $(LDFLAGS)	
-
-#map_test.exe: map_test.o map.o utils.o
-#	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
-#	rm -f *.o
-
 main.exe: main.o utils.o map.o move.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 	rm -f *.o
+
+map.exe: map.o utils.o
+	$(CC) $(CFLAGS)	$^ -o $@ $(LDFLAGS)	
 
 *.o: *.c
 	$(CC) $(CFLAGS) -c $^
