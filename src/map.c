@@ -40,6 +40,9 @@ int** read_map_from_file(char* file_name, int map_width, int map_height) {
     int** map = malloc(map_height*sizeof(int*));
     for (int y = 0; y < map_height; y++)
         map[y] = malloc(map_width*sizeof(int));
+
+    int size;
+    fscanf(file, "%d", &size);
     
     for (int y = 0; y < map_height; y++) {
         for (int x = 0; x < map_width; x++) {
