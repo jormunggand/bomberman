@@ -8,7 +8,7 @@
 
 typedef struct Map {
     int** grid;
-    int size;
+    int size, starty, startx;
 } Map;
 
 int loadTextures(SDL_Renderer* render);
