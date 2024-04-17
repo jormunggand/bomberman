@@ -93,9 +93,11 @@ float eps = 0.5 + TILE_SIZE / 4; // tolerance for collision detection
 
 // moves the player with the veolicitites velx and vely if there is no collision that forbids it
 // the collisions are calculated with collision_rect
-void edge_collision(SDL_Window* window, SDL_Rect* player_rect, SDL_Rect* collision_rect, int** map, int velx, int vely) {
+void edge_collision(SDL_Window* window, Player* player, int** map, int velx, int vely) {
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
+    SDL_Rect* player_rect = &player->rect;
+    SDL_Rect* collision_rect = &player->collisionRect;
     if (velx != 0){
         player_rect->x += velx;
         collision_rect->x += velx;

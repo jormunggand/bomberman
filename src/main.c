@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
                 }
 
                 update_sprite(&player);
-                edge_collision(window, &player.rect, &player.collisionRect, map, vx, vy);
+                edge_collision(window, &player, map, vx, vy);
                 vx = 0; vy = 0;
             }
         }

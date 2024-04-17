@@ -37,5 +37,5 @@ void display_player(SDL_Renderer* render, Player* player);
 int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures);
 int load_animations(SDL_Renderer* render);
 
-void edge_collision(SDL_Window* window, SDL_Rect* player_rect, SDL_Rect* collision_rect, int** map, int velx, int vely);
+void edge_collision(SDL_Window* window, Player* player, int** map, int velx, int vely);
 bool check_collision(SDL_Rect* r, int** map);
