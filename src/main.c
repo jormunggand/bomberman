@@ -5,9 +5,12 @@
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
 
+    Map map;
+    read_map_from_file(&map, "../maps/map_collision.txt");
+
     SDL_Window* window = NULL;
     SDL_Renderer* render = NULL;
-    int windowWidth = MAP_SIZE * TILE_SIZE, windowHeight = MAP_SIZE * TILE_SIZE;
+    int windowWidth = map.size * TILE_SIZE, windowHeight = map.size * TILE_SIZE;
     if (0 != init(&window, &render, windowWidth, windowHeight)) {
         printf("%s", SDL_GetError());
         goto Quit;
@@ -15,9 +18,7 @@ int main(int argc, char* argv[]) {
     // SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
     Player player;
-    init_player(&player, MAP_SIZE * TILE_SIZE/2, MAP_SIZE * TILE_SIZE/2);
-    Map map;
-    read_map_from_file(&map, "../maps/map_collision.txt");
+    init_player(&player, map.size * TILE_SIZE/2, map.size * TILE_SIZE/2);
 
     // load and display map and player
     display_map(render, &map);
@@ -34,19 +35,19 @@ int main(int argc, char* argv[]) {
         int eventPresent = SDL_PollEvent(&event);
         if (eventPresent) {
             player.isWalking = true;
-            if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q))
+            if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
                 done = true;
             else if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_DOWN) {
+                if (event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s) {
                     vy += velocity;
                     change_direction(&player, FRONT);
-                } else if (event.key.keysym.sym == SDLK_UP) {
+                } else if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_z) {
                     vy -= velocity;
                     change_direction(&player, BACK);
-                } else if (event.key.keysym.sym == SDLK_RIGHT) {
+                } else if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d) {
                     vx += velocity;
                     change_direction(&player, RIGHT);
-                } else if (event.key.keysym.sym == SDLK_LEFT) {
+                } else if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_q) {
                     vx -= velocity;
                     change_direction(&player, LEFT);
                 }
@@ -58,7 +59,7 @@ int main(int argc, char* argv[]) {
         }
         else{
             cpt++;
-            if (cpt == 300){
+            if (cpt == 200){
                 cpt = 0;
                 player.isWalking = false;
             }
@@ -66,7 +67,6 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(render);
         display_map(render, &map);
         display_player(render, &player);
-        SDL_RenderDrawRect(render, &player.collisionRect);
         SDL_RenderPresent(render);
     }
 
