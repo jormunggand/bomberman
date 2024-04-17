@@ -62,6 +62,8 @@ int main(int argc, char* argv[]) {
 
                 update_sprite(&player);
                 edge_collision(window, &player, &map, vx, vy);
+                get_bonus(&player, &map);
+                //printf("%d %d %d\n", player.nBombs, player.flamePower, player.speed);
                 vx = 0; vy = 0;
             }
         }

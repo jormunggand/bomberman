@@ -10,8 +10,14 @@
 #include <stdbool.h>
 
 #define ANIMATION_FRAMES (8)
+
+// Powerups constnts
 #define BASE_SPEED (16) // in pixels
-#define SPEED_BOOST (10) // in pixels
+#define SPEED_BOOST (4) // in pixels
+#define MAX_SPEED (28)
+
+#define MAX_BOMBS (5)
+#define MAX_POWER (5) // in number of tiles
 
 struct Map;
 
@@ -47,3 +53,4 @@ int load_animations(SDL_Renderer* render);
 
 void edge_collision(SDL_Window* window, Player* player, struct Map *map, int velx, int vely);
 bool check_collision(SDL_Rect* r, struct Map *map);
+void get_bonus(Player* player, struct Map* map);
