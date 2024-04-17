@@ -8,19 +8,19 @@ int main(int argc, char* argv[]) {
     SDL_Window* window = NULL;
     SDL_Renderer* render = NULL;
     int windowWidth = MAP_SIZE * TILE_SIZE, windowHeight = MAP_SIZE * TILE_SIZE;
-    Player player;
-    init_player(&player, MAP_SIZE * TILE_SIZE/2, MAP_SIZE * TILE_SIZE/2);
-    int** map = read_map_from_file("../maps/map_collision.txt", MAP_SIZE, MAP_SIZE);
     if (0 != init(&window, &render, windowWidth, windowHeight)) {
         printf("%s", SDL_GetError());
         goto Quit;
     }
     // SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
-    // load and display map
-    display_map(render, map, MAP_SIZE, MAP_SIZE);
+    Player player;
+    init_player(&player, MAP_SIZE * TILE_SIZE/2, MAP_SIZE * TILE_SIZE/2);
+    Map map;
+    read_map_from_file(&map, "../maps/map_collision.txt");
 
-    // load and display player sprite
+    // load and display map and player
+    display_map(render, &map);
     display_player(render, &player);
 
     SDL_RenderPresent(render);
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
                 }
 
                 update_sprite(&player);
-                edge_collision(window, &player, map, vx, vy);
+                edge_collision(window, &player, map.grid, vx, vy);
                 vx = 0; vy = 0;
             }
         }
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
             }
         }
         SDL_RenderClear(render);
-        display_map(render, map, MAP_SIZE, MAP_SIZE);
+        display_map(render, &map);
         display_player(render, &player);
         SDL_RenderDrawRect(render, &player.collisionRect);
         SDL_RenderPresent(render);
@@ -76,7 +76,7 @@ Quit:
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
     SDL_Quit();
-    destroy_map(map, MAP_SIZE, MAP_SIZE);
+    destroy_map(&map);
     // destroy_player(&player);
     return exit_status;
 }
