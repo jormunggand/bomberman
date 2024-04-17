@@ -32,7 +32,7 @@ void init_player(Player* player, int x, int y);
 void change_direction(Player* player, SpriteDirection newDir);
 void update_sprite(Player* player);
 void display_player(SDL_Renderer* render, Player* player);
-void destroy_player(Player* player);
+//void destroy_player(Player* player);
 
 int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures);
 int load_animations(SDL_Renderer* render);
