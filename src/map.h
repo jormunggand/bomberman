@@ -6,8 +6,19 @@
 #include <SDL_image.h>
 #endif
 
-typedef struct {
-    int** grid;
+typedef struct Bomb {
+    SDL_Rect rect;
+    int nb_ticks;
+    int radius;
+} Bomb;
+
+typedef struct Tile {
+    int type;
+    Bomb* bomb;
+} Tile;
+
+typedef struct Map {
+    Tile** grid;
     int size;
 } Map;
 

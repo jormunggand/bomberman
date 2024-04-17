@@ -27,6 +27,11 @@ typedef struct Player {
     SDL_Rect collisionRect;
 } Player;
 
+#ifndef MAP_H
+#define MAP_H
+#include "map.h"
+#endif
+
 void init_player(Player* player, int x, int y);
 void change_direction(Player* player, SpriteDirection newDir);
 void update_sprite(Player* player);
@@ -36,5 +41,5 @@ void display_player(SDL_Renderer* render, Player* player);
 int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures);
 int load_animations(SDL_Renderer* render);
 
-void edge_collision(SDL_Window* window, Player* player, int** map, int velx, int vely);
-bool check_collision(SDL_Rect* r, int** map);
+void edge_collision(SDL_Window* window, Player* player, Tile** map, int velx, int vely);
+bool check_collision(SDL_Rect* r, Tile** map);

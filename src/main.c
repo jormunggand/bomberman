@@ -1,7 +1,19 @@
 #include "utils.h"
+
+#ifndef MAP_H
+#define MAP_H
 #include "map.h"
-#include "move.h"
+#endif
+
+#ifndef BOMB_H
+#define BOMB_H
 #include "bomb.h"
+#endif
+
+#ifndef MOVE_H
+#define MOVE_H
+#include "move.h"
+#endif
 
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
@@ -33,9 +45,6 @@ int main(int argc, char* argv[]) {
     bool done = false;
     int cpt_reset = 0, vx = 0, vy = 0;
 
-    Bomb bomb;
-    init_bomb(&bomb, 2 * TILE_SIZE, 2 * TILE_SIZE);
-
     while (!done) {
         int eventPresent = SDL_PollEvent(&event);
         if (eventPresent) {
@@ -61,6 +70,12 @@ int main(int argc, char* argv[]) {
                 edge_collision(window, &player, map.grid, vx, vy);
                 vx = 0; vy = 0;
             }
+            else if (event.type == SDL_MOUSEBUTTONDOWN) {
+                int x, y;
+                Bomb bomb;
+                SDL_GetMouseState(&x, &y);
+                add_bomb(&map, &bomb, x / TILE_SIZE, y / TILE_SIZE);
+            }
         }
         else{
             cpt_reset++;
@@ -71,7 +86,7 @@ int main(int argc, char* argv[]) {
         }
         SDL_RenderClear(render);
         display_map(render, &map);
-        display_bomb(render, &bomb);
+        display_bombs(render, &map);
         display_player(render, &player);
         SDL_RenderPresent(render);
     }

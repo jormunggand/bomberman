@@ -9,13 +9,14 @@
 #define NB_BOMB_TEXTURES (2)
 #define NB_FLAME_TEXTURES (5)
 
-typedef struct Bomb {
-    SDL_Rect rect;
-    int nb_ticks;
-    int radius;
-} Bomb;
+#ifndef MAP_H
+#define MAP_H
+#include "map.h"
+#endif
 
 void init_bomb(Bomb* bomb, int x, int y);
+void add_bomb(Map* map, Bomb* bomb, int x, int y);
 void display_bomb(SDL_Renderer* render, Bomb* bomb);
+void display_bombs(SDL_Renderer* render, Map* map);
 int load_textures_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int nb_textures);
 int load_textures(SDL_Renderer* render);

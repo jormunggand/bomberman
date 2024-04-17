@@ -41,11 +41,12 @@ int read_map_from_file(Map* map, char* file_name) {
     fscanf(file, "%d\n", &size);
     map->size = size;
 
-    map->grid = malloc(size*sizeof(int*));
+    map->grid = malloc(size * sizeof(Tile*));
     for (int y = 0; y < size; y++) {
-        map->grid[y] = malloc(size*sizeof(int));
+        map->grid[y] = malloc(size * sizeof(Tile));
         for (int x = 0; x < size; x++) {
-            map->grid[y][x] = fgetc(file) - '0';
+            map->grid[y][x].type = fgetc(file) - '0';
+            map->grid[y][x].bomb = NULL;
         }
         fgetc(file); // to skip the newline character
     }
@@ -67,7 +68,7 @@ int display_map(SDL_Renderer* renderer, Map* map) {
         for (int x = 0; x < map->size; x++) {
             rect.x = x * TILE_SIZE;
             rect.y = y * TILE_SIZE;
-            if (SDL_RenderCopy(renderer, textures[map->grid[y][x]], NULL, &rect) != 0){
+            if (SDL_RenderCopy(renderer, textures[map->grid[y][x].type], NULL, &rect) != 0){
                 printf("%s", SDL_GetError());
                 return -1;
             }
