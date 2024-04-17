@@ -28,6 +28,8 @@ typedef enum { // Tile types, will add the other types later
     SPEED_BONUS = 9
 } TileType;
 
+int min(int a, int b);
+int max(int a, int b);
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);
 SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer);
 int setColor(SDL_Renderer *renderer, SDL_Color color);
