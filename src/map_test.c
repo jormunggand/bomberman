@@ -1,7 +1,6 @@
 #include "utils.h"
 #include "map.h"
 
-
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
 
@@ -44,12 +43,6 @@ int main(int argc, char* argv[]) {
 
     exit_status = EXIT_SUCCESS;
     Quit:
-    // if (NULL != wall_texture)
-    //     SDL_DestroyTexture(wall_texture);
-    // if (NULL != empty_texture)
-    //     SDL_DestroyTexture(empty_texture);
-    // if (NULL != soft_wall_texture)
-    //     SDL_DestroyTexture(soft_wall_texture);
     if(NULL != renderer)
         SDL_DestroyRenderer(renderer);
     if(NULL != window)

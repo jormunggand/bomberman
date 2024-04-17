@@ -7,63 +7,74 @@ int main(int argc, char* argv[]) {
 
     SDL_Window* window = NULL;
     SDL_Renderer* render = NULL;
-    SDL_Texture* player = NULL;
     int windowWidth = MAP_SIZE * TILE_SIZE, windowHeight = MAP_SIZE * TILE_SIZE;
-    int** map = read_map_from_file("map_collision.txt", MAP_SIZE, MAP_SIZE);
+    Player player;
+    init_player(&player, MAP_SIZE * TILE_SIZE/2, MAP_SIZE * TILE_SIZE/2);
+    int** map = read_map_from_file("map_example.txt", MAP_SIZE, MAP_SIZE);
     if (0 != init(&window, &render, windowWidth, windowHeight)) {
         printf("%s", SDL_GetError());
         goto Quit;
     }
+    // SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
     // load and display map
     display_map(render, map, MAP_SIZE, MAP_SIZE);
 
     // load and display player sprite
-    player = loadImage("../assets/Bomberman/Front/Bman_F_f00.png", render);
-    SDL_Rect playerRect = {.x = TILE_SIZE * MAP_SIZE/2, .y = TILE_SIZE * MAP_SIZE/2, .w = TILE_SIZE, .h = 2 * TILE_SIZE};
-    SDL_QueryTexture(player, 0, 0, &playerRect.w, &playerRect.h);
-    SDL_Rect collision_rect = {.x = TILE_SIZE * MAP_SIZE/2, .y = TILE_SIZE * MAP_SIZE/2 + 5 * playerRect.h/ 8, .w = playerRect.w, .h = playerRect.h/2};
-    SDL_RenderCopy(render, player, NULL, &playerRect);
-    
+    display_player(render, &player);
+
     SDL_RenderPresent(render);
     
 
     int velocity = 16;
     SDL_Event event;
     bool done = false;
-    int vx = 0, vy = 0;
+    int cpt = 0;
     while (!done) {
-        SDL_WaitEvent(&event);
-        if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
-            done = true;
-        if (event.type == SDL_KEYDOWN) {
-            if (event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s)
-                vy += velocity;
-            else if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_z)
-                vy -= velocity;
-            else if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d)
-                vx += velocity;
-            else if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_q)
-                vx -= velocity;
+        int eventPresent = SDL_PollEvent(&event);
+        if (eventPresent) {
+            player.isWalking = true;
+            if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q))
+                done = true;
+            else if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_DOWN) {
+                    player.rect.y += velocity;
+                    change_direction(&player, FRONT);
+                } else if (event.key.keysym.sym == SDLK_UP) {
+                    player.rect.y -= velocity;
+                    change_direction(&player, BACK);
+                } else if (event.key.keysym.sym == SDLK_RIGHT) {
+                    player.rect.x += velocity;
+                    change_direction(&player, RIGHT);
+                } else if (event.key.keysym.sym == SDLK_LEFT) {
+                    player.rect.x -= velocity;
+                    change_direction(&player, LEFT);
+                }
 
-            edge_collision(window, &playerRect, &collision_rect, map, vx, vy);
-            vx = 0; vy = 0;
-            SDL_RenderClear(render);
-            display_map(render, map, MAP_SIZE, MAP_SIZE);
-            SDL_RenderDrawRect(render, &collision_rect);   
-            SDL_RenderCopy(render, player, NULL, &playerRect);
-            SDL_RenderPresent(render);
+                update_sprite(&player);
+                edge_collision(window, &player.rect, map);
+            }
         }
+        else{
+            cpt++;
+            if (cpt == 300){
+                cpt = 0;
+                player.isWalking = false;
+            }
+        }
+        SDL_RenderClear(render);
+        display_map(render, map, MAP_SIZE, MAP_SIZE);
+        display_player(render, &player);
+        SDL_RenderPresent(render);
     }
 
 
     exit_status = EXIT_SUCCESS;
-//SDL_RenderClear(render);
 Quit:
-    SDL_DestroyTexture(player);
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
     SDL_Quit();
     destroy_map(map, MAP_SIZE, MAP_SIZE);
+    // destroy_player(&player);
     return exit_status;
 }

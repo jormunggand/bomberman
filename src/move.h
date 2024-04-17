@@ -7,6 +7,8 @@
 #include <SDL_image.h>
 #endif
 
+#include <stdbool.h>
+
 #define ANIMATION_FRAMES (8)
 
 typedef enum {
@@ -17,14 +19,15 @@ typedef enum {
 } SpriteDirection;
 
 
-typedef struct  {
+typedef struct Player {
     SpriteDirection curDir;
+    bool isWalking;
     int iframe;
     SDL_Texture** animations;
-    SDL_Rect* rect;
+    SDL_Rect rect;
 } Player;
 
-Player* create_player(int x, int y);
+void init_player(Player* player, int x, int y);
 void change_direction(Player* player, SpriteDirection newDir);
 void update_sprite(Player* player);
 void display_player(SDL_Renderer* render, Player* player);

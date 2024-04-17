@@ -9,20 +9,17 @@ SDL_Texture* back_walking[ANIMATION_FRAMES];
 SDL_Texture* side_walking[ANIMATION_FRAMES];
 
 
-Player* create_player(int x, int y) {
-    Player* player = malloc(sizeof(player));
+void init_player(Player* player, int x, int y) {
     player->curDir = FRONT;
     player->iframe = 0;
+    player->isWalking = false;
 
-    player->rect = malloc(sizeof(SDL_Rect));
-    player->rect->x = x;
-    player->rect->y = y;
-    player->rect->w = 64;
-    player->rect->h = 128;
+    player->rect.x = x;
+    player->rect.y = y;
+    player->rect.w = TILE_SIZE;
+    player->rect.h = 2 * TILE_SIZE;
 
     player->animations = front_walking;
-
-    return player;
 }
 
 void display_player(SDL_Renderer* render, Player* player) {
@@ -30,12 +27,12 @@ void display_player(SDL_Renderer* render, Player* player) {
         loadedAnim = true;
         load_animations(render);
     }
-
+    if (!player->isWalking) player->iframe = 0;
     if (player->curDir == LEFT) {
-        SDL_RenderCopyEx(render, player->animations[player->iframe], NULL, player->rect, 
+        SDL_RenderCopyEx(render, player->animations[player->iframe], NULL, &(player->rect), 
             0, NULL, SDL_FLIP_HORIZONTAL);
     } else {
-        SDL_RenderCopy(render, player->animations[player->iframe], NULL, player->rect);
+        SDL_RenderCopy(render, player->animations[player->iframe], NULL, &(player->rect));
     }
 }
 
@@ -52,16 +49,14 @@ void change_direction(Player* player, SpriteDirection newDir) {
 
 
 void update_sprite(Player* player) {
-    player->iframe += 1;
-    if (player->iframe >= ANIMATION_FRAMES)
-        player->iframe = 0;
-
+    player->iframe++;
+    player->iframe %= ANIMATION_FRAMES;
 }
 
-void destroy_player(Player* player) {
-    free(player->rect);
-    free(player);
-}
+// void destroy_player(Player* player) {
+//     free(player->rect);
+//     free(player);
+// }
 
 
 int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures) {
@@ -105,8 +100,8 @@ void edge_collision(SDL_Window* window, SDL_Rect* player_rect, SDL_Rect* collisi
         }
     }
     if (vely != 0){
-        player_rect->y += vely;
         collision_rect->y += vely;
+        player_rect->y += vely;
         if (collision_rect->y < 0 || collision_rect->y + collision_rect->h > height || check_collision(collision_rect, map)){
             collision_rect->y -= vely;
             player_rect->y -= vely;
@@ -114,8 +109,7 @@ void edge_collision(SDL_Window* window, SDL_Rect* player_rect, SDL_Rect* collisi
     }
 }
 
-// returns true if there is a collision between the rect and a wall
-bool check_collision(SDL_Rect* r, int** map){
+bool check_collision(SDL_Rect* r, int** map) {
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
             int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;

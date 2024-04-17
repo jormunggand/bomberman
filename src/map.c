@@ -53,7 +53,7 @@ int** read_map_from_file(char* file_name, int map_width, int map_height) {
 
 
 // a function to update the renderer given the current state of the map
-void display_map(SDL_Renderer* renderer, int** map, int map_width, int map_height) {
+int display_map(SDL_Renderer* renderer, int** map, int map_width, int map_height) {
     if (!loadedTiles) {
         loadTextures(renderer);
         loadedTiles = true;
