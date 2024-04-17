@@ -18,7 +18,13 @@
 typedef enum { // Tile types, will add the other types later
     HARD_WALL,
     EMPTY,
-    SOFT_WALL
+    SOFT_WALL,
+    BOMB_BONUS_HIDDEN,
+    BOMB_BONUS,
+    FLAME_BONUS_HIDDEN,
+    FLAME_BONUS,
+    SPEED_BONUS_HIDDEN,
+    SPEED_BONUS
 } TileType;
 
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);
