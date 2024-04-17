@@ -19,6 +19,11 @@ void init_player(Player* player, int x, int y) {
     player->rect.w = TILE_SIZE;
     player->rect.h = 2 * TILE_SIZE;
 
+    player->collisionRect.x = x;
+    player->collisionRect.y = y + 5 * player->rect.h/8;
+    player->collisionRect.w = TILE_SIZE;
+    player->collisionRect.h = TILE_SIZE;
+
     player->animations = front_walking;
 }
 

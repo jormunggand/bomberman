@@ -25,6 +25,7 @@ typedef struct Player {
     int iframe;
     SDL_Texture** animations;
     SDL_Rect rect;
+    SDL_Rect collisionRect;
 } Player;
 
 void init_player(Player* player, int x, int y);
