@@ -1,6 +1,7 @@
 #include "utils.h"
 #include "map.h"
 #include "move.h"
+#include "bomb.h"
 
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
@@ -30,7 +31,11 @@ int main(int argc, char* argv[]) {
     int velocity = 16;
     SDL_Event event;
     bool done = false;
-    int cpt = 0, vx = 0, vy = 0;
+    int cpt_reset = 0, vx = 0, vy = 0;
+
+    Bomb bomb;
+    init_bomb(&bomb, 2 * TILE_SIZE, 2 * TILE_SIZE);
+
     while (!done) {
         int eventPresent = SDL_PollEvent(&event);
         if (eventPresent) {
@@ -58,14 +63,15 @@ int main(int argc, char* argv[]) {
             }
         }
         else{
-            cpt++;
-            if (cpt == 200){
-                cpt = 0;
+            cpt_reset++;
+            if (cpt_reset == 200){
+                cpt_reset = 0;
                 player.isWalking = false;
             }
         }
         SDL_RenderClear(render);
         display_map(render, &map);
+        display_bomb(render, &bomb);
         display_player(render, &player);
         SDL_RenderPresent(render);
     }

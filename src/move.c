@@ -64,7 +64,7 @@ void update_sprite(Player* player) {
 
 
 int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures) {
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < ANIMATION_FRAMES; i++) {
         char filename[50];
         sprintf(filename, base, i);
         SDL_Texture* curText = loadImage(filename, render);
@@ -91,8 +91,8 @@ int load_animations(SDL_Renderer* render) {
 
 float eps = 0.5 + TILE_SIZE / 4; // tolerance for collision detection
 
-// moves the player with the veolicitites velx and vely if there is no collision that forbids it
-// the collisions are calculated with collision_rect
+// moves the player with the velocities velx and vely if there is no collision that forbids it
+// the collisions are calculated with regards to collision_rect
 void edge_collision(SDL_Window* window, Player* player, int** map, int velx, int vely) {
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
