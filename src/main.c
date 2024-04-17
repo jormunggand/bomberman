@@ -6,7 +6,15 @@ int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
 
     Map map;
-    read_map_from_file(&map, "../maps/map_collision.txt");
+    if (argc == 2) {
+        if (read_map_from_file(&map, argv[1]) == -1) {
+            printf("Error while opening the map file - Usage: %s FILE\n", argv[0]);
+            return exit_status;
+        } 
+    } else {
+        read_map_from_file(&map, "../maps/map_example.txt");
+    }
+
 
     SDL_Window* window = NULL;
     SDL_Renderer* render = NULL;
