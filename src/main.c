@@ -65,23 +65,25 @@ int main(int argc, char* argv[]) {
                     vx -= velocity;
                     change_direction(&player, LEFT);
                 }
-
+                else{
+                    cpt_reset++;
+                    if (cpt_reset == 200){
+                        cpt_reset = 0;
+                        player.isWalking = false;
+                    }
+                }
+                if (event.key.keysym.sym == SDLK_SPACE) {
+                    player_place_bomb(&player, &map);
+                }
                 update_sprite(&player);
                 edge_collision(window, &player, map.grid, vx, vy);
                 vx = 0; vy = 0;
             }
-            else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
                 int i = x / TILE_SIZE, j = y / TILE_SIZE;
                 add_bomb(&map, i, j);
-            }
-        }
-        else{
-            cpt_reset++;
-            if (cpt_reset == 200){
-                cpt_reset = 0;
-                player.isWalking = false;
             }
         }
         SDL_RenderClear(render);

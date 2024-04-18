@@ -2,7 +2,8 @@
 #include "bomb.h"
 
 bool loadedTextures = false;
-int tick_cycle = 1000;
+int bomb_cycle = 1300;
+int flame_cycle = 500;
 
 SDL_Texture* bombTextures[NB_BOMB_TEXTURES];
 SDL_Texture* flameTextures[NB_FLAME_TEXTURES];
@@ -15,6 +16,14 @@ void init_bomb(Bomb* bomb, int x, int y) {
     bomb->rect.h = TILE_SIZE;
     bomb->nb_ticks = 0;
     bomb->radius = 3;
+}
+
+void player_place_bomb(Player* player, Map* map) {
+    int x = (player->collisionRect.x + player->collisionRect.w / 2) / TILE_SIZE;
+    int y = (player->collisionRect.y + + player->collisionRect.h / 2) / TILE_SIZE;
+    if (map->grid[y][x].bomb == NULL) {
+        add_bomb(map, x, y);
+    }
 }
 
 // add a bomb to the map at the given map coordinates
@@ -52,13 +61,13 @@ int display_bomb(SDL_Renderer* render, Bomb* bomb, Map* map) {
         load_textures(render);
         loadedTextures = true;
     }
-    if (bomb->nb_ticks < NB_BOMB_TEXTURES * tick_cycle){
-        SDL_RenderCopy(render, bombTextures[bomb->nb_ticks / tick_cycle], NULL, &bomb->rect);
+    if (bomb->nb_ticks < NB_BOMB_TEXTURES * bomb_cycle){
+        SDL_RenderCopy(render, bombTextures[bomb->nb_ticks / bomb_cycle], NULL, &bomb->rect);
         bomb->nb_ticks++;
         return 0;
     }
-    else if (bomb->nb_ticks < (NB_BOMB_TEXTURES + NB_FLAME_TEXTURES) * tick_cycle){
-        display_explosion(render, flameTextures[(bomb->nb_ticks - NB_BOMB_TEXTURES * tick_cycle) / tick_cycle], bomb, map);
+    else if (bomb->nb_ticks < NB_BOMB_TEXTURES * bomb_cycle + NB_FLAME_TEXTURES * flame_cycle){
+        display_explosion(render, flameTextures[(bomb->nb_ticks - NB_BOMB_TEXTURES * bomb_cycle) / flame_cycle], bomb, map);
         bomb->nb_ticks++;   
         return 0;
     }

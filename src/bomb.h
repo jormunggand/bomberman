@@ -14,8 +14,14 @@
 #include "map.h"
 #endif
 
+#ifndef MOVE_H
+#define MOVE_H
+#include "move.h"
+#endif
+
 void init_bomb(Bomb* bomb, int x, int y);
 void add_bomb(Map* map, int x, int y);
+void player_place_bomb(Player* player, Map* map);
 void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, Map* map);
 int display_bomb(SDL_Renderer* render, Bomb* bomb, Map* map);
 void display_bombs(SDL_Renderer* render, Map* map);
