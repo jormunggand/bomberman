@@ -9,6 +9,8 @@
 - gérer le multijoueur local
 - gérer le multijoueur en réseau
 
+- écrire un keyboard handler : https://stackoverflow.com/questions/1252976/how-to-handle-multiple-keypresses-at-once-with-sdl
+
 ## Moins important
 - changer le nb de frames dans un cycle pour une animation plus fluide
 - ajouter un splashscreen au début avec un menu
