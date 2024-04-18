@@ -65,7 +65,7 @@ void update_sprite(Player* player) {
 
 
 int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures) {
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < ANIMATION_FRAMES; i++) {
         char filename[50];
         sprintf(filename, base, i);
         SDL_Texture* curText = loadImage(filename, render);

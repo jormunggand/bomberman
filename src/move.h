@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #ifdef __linux__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -29,6 +28,11 @@ typedef struct Player {
     SDL_Rect rect;
     SDL_Rect collisionRect;
 } Player;
+
+#ifndef MAP_H
+#define MAP_H
+#include "map.h"
+#endif
 
 void init_player(Player* player, int x, int y);
 void change_direction(Player* player, SpriteDirection newDir);

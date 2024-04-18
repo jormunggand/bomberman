@@ -6,8 +6,23 @@
 #include <SDL_image.h>
 #endif
 
+#include <stdbool.h>
+
+typedef struct Bomb {
+    SDL_Rect rect;
+    int nb_ticks;
+    int radius; // does not count the center tile
+    bool detonated;
+    bool* explosion_tiles; // array of size (2 * radius + 1)^2 to represent on which tiles the explosion must be displayed 
+} Bomb;
+
+typedef struct Tile {
+    int type;
+    Bomb* bomb;
+} Tile;
+
 typedef struct Map {
-    int** grid;
+    Tile** grid;
     int size;
 } Map;
 

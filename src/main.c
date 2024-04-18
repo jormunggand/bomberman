@@ -1,6 +1,19 @@
 #include "utils.h"
+
+#ifndef MAP_H
+#define MAP_H
 #include "map.h"
+#endif
+
+#ifndef BOMB_H
+#define BOMB_H
+#include "bomb.h"
+#endif
+
+#ifndef MOVE_H
+#define MOVE_H
 #include "move.h"
+#endif
 
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
@@ -38,7 +51,8 @@ int main(int argc, char* argv[]) {
     int velocity = 16;
     SDL_Event event;
     bool done = false;
-    int cpt = 0, vx = 0, vy = 0;
+    int cpt_reset = 0, vx = 0, vy = 0;
+
     while (!done) {
         int eventPresent = SDL_PollEvent(&event);
         if (eventPresent) {
@@ -59,21 +73,30 @@ int main(int argc, char* argv[]) {
                     vx -= velocity;
                     change_direction(&player, LEFT);
                 }
-
+                else{
+                    cpt_reset++;
+                    if (cpt_reset == 200){
+                        cpt_reset = 0;
+                        player.isWalking = false;
+                    }
+                }
+                if (event.key.keysym.sym == SDLK_SPACE) {
+                    player_place_bomb(&player, &map);
+                }
                 update_sprite(&player);
                 edge_collision(window, &player, &map, vx, vy);
                 vx = 0; vy = 0;
             }
-        }
-        else{
-            cpt++;
-            if (cpt == 200){
-                cpt = 0;
-                player.isWalking = false;
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                int i = x / TILE_SIZE, j = y / TILE_SIZE;
+                add_bomb(&map, i, j);
             }
         }
         SDL_RenderClear(render);
         display_map(render, &map);
+        display_bombs(render, &map);
         display_player(render, &player);
         SDL_RenderPresent(render);
     }
