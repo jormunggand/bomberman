@@ -22,7 +22,7 @@ void init_bomb(Bomb* bomb, int x, int y) {
 
 void player_place_bomb(Player* player, Map* map) {
     int x = (player->collisionRect.x + player->collisionRect.w / 2) / TILE_SIZE;
-    int y = (player->collisionRect.y + + player->collisionRect.h / 2) / TILE_SIZE;
+    int y = (player->collisionRect.y + player->collisionRect.h / 2) / TILE_SIZE;
     if (map->grid[y][x].bomb == NULL) {
         add_bomb(map, x, y);
     }
