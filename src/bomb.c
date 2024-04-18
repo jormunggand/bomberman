@@ -36,23 +36,22 @@ void add_bomb(Map* map, int x, int y) {
 
 int ij_to_expl_index(int i, int j, int radius) {
     if (j == 0) return i + radius;
-    else if (j < 0) return 2 * radius + 1 - j;
-    else return 3 * radius + 1 + j;
+    else if (j < 0) return 2 * radius - j;
+    else return 3 * radius + j;
 }
 
 void exlp_index_to_ij(int expl_index, int radius, int* i, int* j) {
     if (expl_index < 2 * radius + 1) {
         *i = expl_index - radius;
         *j = 0;
-
     }
     else if (expl_index < 3 * radius + 1) {
         *i = 0;
-        *j = 2 * radius + 1 - expl_index;
+        *j = 2 * radius - expl_index;
     }
     else {
         *i = 0;
-        *j = expl_index - 3 * radius - 1 ;
+        *j = expl_index - 3 * radius;
     }
 }
 
