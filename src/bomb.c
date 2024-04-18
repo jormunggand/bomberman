@@ -16,6 +16,8 @@ void init_bomb(Bomb* bomb, int x, int y) {
     bomb->rect.h = TILE_SIZE;
     bomb->nb_ticks = 0;
     bomb->radius = 3;
+    bomb->detonated = false;
+    bomb->explosion_tiles = calloc((4 * bomb->radius + 1), sizeof(bool));
 }
 
 void player_place_bomb(Player* player, Map* map) {
@@ -32,23 +34,87 @@ void add_bomb(Map* map, int x, int y) {
     init_bomb(map->grid[y][x].bomb, x, y);
 }
 
+int ij_to_expl_index(int i, int j, int radius) {
+    if (j == 0) return i + radius;
+    else if (j < 0) return 2 * radius + 1 - j;
+    else return 3 * radius + 1 + j;
+}
+
+void exlp_index_to_ij(int expl_index, int radius, int* i, int* j) {
+    if (expl_index < 2 * radius + 1) {
+        *i = expl_index - radius;
+        *j = 0;
+
+    }
+    else if (expl_index < 3 * radius + 1) {
+        *i = 0;
+        *j = 2 * radius + 1 - expl_index;
+    }
+    else {
+        *i = 0;
+        *j = expl_index - 3 * radius - 1 ;
+    }
+}
+
 void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, Map* map){
     int r = bomb->radius;
     int ib = bomb->rect.y / TILE_SIZE; 
     int jb = bomb->rect.x / TILE_SIZE;
-    for (int i = -r + 1; i < r; i++) {
-        if (i + ib >= 0 && i + ib < map->size){
-            if (map->grid[i + ib][jb].type != HARD_WALL){
-                SDL_Rect rect = {jb * TILE_SIZE, (i + ib) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-                SDL_RenderCopy(render, texture, NULL, &rect);
+    if (!bomb->detonated) {
+        for (int sgn = -1; sgn <= 1; sgn += 2) {
+            for (int k = 0; k <= r; k++) {
+                int i = sgn * k;
+                if (i == 0 && sgn == 1) continue; // avoid drawing the center twice
+                if (i + ib >= 0 && i + ib < map->size){
+                    SDL_Rect rect = {jb * TILE_SIZE, (i + ib) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+                    switch (map->grid[i + ib][jb].type){
+                        case HARD_WALL:
+                            k = r; // to stop the loop
+                            break;
+                        case SOFT_WALL:
+                            map->grid[i + ib][jb].type = EMPTY;
+                            k = r; // to stop the loop
+                        case EMPTY:
+                            bomb->explosion_tiles[ij_to_expl_index(i, 0, bomb->radius)] = true;
+                            SDL_RenderCopy(render, texture, NULL, &rect);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            for (int k = 1; k <= r; k++) {
+                int j = sgn * k;
+                if (j + jb >= 0 && j + jb < map->size) {
+                    SDL_Rect rect = {(j + jb) * TILE_SIZE, ib * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+                    switch (map->grid[ib][j + jb].type){
+                        case HARD_WALL:
+                            k = r; // to stop the loop
+                            break;
+                        case SOFT_WALL:
+                            map->grid[ib][j + jb].type = EMPTY;
+                            k = r; // to stop the loop
+                        case EMPTY:
+                            bomb->explosion_tiles[ij_to_expl_index(0, j, bomb->radius)] = true;
+                            SDL_RenderCopy(render, texture, NULL, &rect);
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
+        bomb->detonated = true;
     }
-    for (int j = -r + 1; j < r; j++) {
-        if (j + jb >= 0 && j + jb < map->size){
-            if (map->grid[ib][j + jb].type != HARD_WALL){
-                SDL_Rect rect = {(j + jb) * TILE_SIZE, ib * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-                SDL_RenderCopy(render, texture, NULL, &rect);
+    else {
+        int i, j;
+        for (int k = 0; k < 4 * bomb->radius + 1; k++) {
+            exlp_index_to_ij(k, bomb->radius, &i, &j);
+            if (i + ib >= 0 && i + ib < map->size && j + jb >= 0 && j + jb < map->size){
+                if (bomb->explosion_tiles[k]) {
+                    SDL_Rect rect = {(j + jb) * TILE_SIZE, (i + ib) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+                    SDL_RenderCopy(render, texture, NULL, &rect);
+                }
             }
         }
     }
@@ -83,6 +149,7 @@ void display_bombs(SDL_Renderer* render, Map* map) {
             if (map->grid[i][j].bomb != NULL) {
                 int r = display_bomb(render, map->grid[i][j].bomb, map);
                 if (r == 1) {
+                    free(map->grid[i][j].bomb->explosion_tiles);
                     free(map->grid[i][j].bomb);
                     map->grid[i][j].bomb = NULL;
                 }

@@ -19,6 +19,9 @@
 #include "move.h"
 #endif
 
+int ij_to_expl_index(int i, int j, int radius);
+void exlp_index_to_ij(int expl_index, int radius, int* i, int* j);
+
 void init_bomb(Bomb* bomb, int x, int y);
 void add_bomb(Map* map, int x, int y);
 void player_place_bomb(Player* player, Map* map);
