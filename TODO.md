@@ -2,7 +2,6 @@
 
 ## Important
 
-- feature de gestion des bombes
 - apparition de bonus sur la map
 - gestion des bonus pour le joueur
 
