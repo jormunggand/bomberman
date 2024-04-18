@@ -72,9 +72,9 @@ int main(int argc, char* argv[]) {
             }
             else if (event.type == SDL_MOUSEBUTTONDOWN) {
                 int x, y;
-                Bomb bomb;
                 SDL_GetMouseState(&x, &y);
-                add_bomb(&map, &bomb, x / TILE_SIZE, y / TILE_SIZE);
+                int i = x / TILE_SIZE, j = y / TILE_SIZE;
+                add_bomb(&map, i, j);
             }
         }
         else{

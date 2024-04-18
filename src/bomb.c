@@ -7,7 +7,7 @@ int tick_cycle = 1000;
 SDL_Texture* bombTextures[NB_BOMB_TEXTURES];
 SDL_Texture* flameTextures[NB_FLAME_TEXTURES];
 
-// initialize a bomb at the given map coordinates 
+// initialize a bomb at the given map coordinates and return it
 void init_bomb(Bomb* bomb, int x, int y) {
     bomb->rect.x = x * TILE_SIZE;
     bomb->rect.y = y * TILE_SIZE;
@@ -18,13 +18,14 @@ void init_bomb(Bomb* bomb, int x, int y) {
 }
 
 // add a bomb to the map at the given map coordinates
-void add_bomb(Map* map, Bomb* bomb, int x, int y) {
-    init_bomb(bomb, x, y);
-    map->grid[y][x].bomb = bomb;
+void add_bomb(Map* map, int x, int y) {
+    map->grid[y][x].bomb = malloc(sizeof(Bomb));
+    init_bomb(map->grid[y][x].bomb, x, y);
 }
 
 // display a single bomb on the screen
-void display_bomb(SDL_Renderer* render, Bomb* bomb) {
+// return 1 if the bomb animation is done and the bomb should be removed
+int display_bomb(SDL_Renderer* render, Bomb* bomb) {
     if (!loadedTextures) {
         load_textures(render);
         loadedTextures = true;
@@ -32,13 +33,15 @@ void display_bomb(SDL_Renderer* render, Bomb* bomb) {
     if (bomb->nb_ticks < NB_BOMB_TEXTURES * tick_cycle){
         SDL_RenderCopy(render, bombTextures[bomb->nb_ticks / tick_cycle], NULL, &bomb->rect);
         bomb->nb_ticks++;
+        return 0;
     }
     else if (bomb->nb_ticks < (NB_BOMB_TEXTURES + NB_FLAME_TEXTURES) * tick_cycle){
         SDL_RenderCopy(render, flameTextures[(bomb->nb_ticks - NB_BOMB_TEXTURES * tick_cycle) / tick_cycle], NULL, &bomb->rect);
         bomb->nb_ticks++;   
+        return 0;
     }
     else {
-        bomb = NULL;
+        return 1;
     }
 }
 
@@ -47,7 +50,11 @@ void display_bombs(SDL_Renderer* render, Map* map) {
     for (int i = 0; i < map->size; i++) {
         for (int j = 0; j < map->size; j++) {
             if (map->grid[i][j].bomb != NULL) {
-                display_bomb(render, map->grid[i][j].bomb);
+                int r = display_bomb(render, map->grid[i][j].bomb);
+                if (r == 1) {
+                    free(map->grid[i][j].bomb);
+                    map->grid[i][j].bomb = NULL;
+                }
             }
         }
     }
