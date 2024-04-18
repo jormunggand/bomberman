@@ -16,7 +16,8 @@
 
 void init_bomb(Bomb* bomb, int x, int y);
 void add_bomb(Map* map, int x, int y);
-int display_bomb(SDL_Renderer* render, Bomb* bomb);
+void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, Map* map);
+int display_bomb(SDL_Renderer* render, Bomb* bomb, Map* map);
 void display_bombs(SDL_Renderer* render, Map* map);
 int load_textures_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int nb_textures);
 int load_textures(SDL_Renderer* render);
