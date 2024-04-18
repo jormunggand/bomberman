@@ -1,6 +1,5 @@
 // file meant to contain all functions related to moving the player
 #include "move.h"
-#include "map.h"
 #include "utils.h"
 
 bool loadedAnim = false;
@@ -94,7 +93,7 @@ float eps = 0.5 + TILE_SIZE / 4; // tolerance for collision detection
 
 // moves the player with the veolicitites velx and vely if there is no collision that forbids it
 // the collisions are calculated with collision_rect
-void edge_collision(SDL_Window* window, Player* player, struct Map *map, int velx, int vely) {
+void edge_collision(SDL_Window* window, Player* player, Map *map, int velx, int vely) {
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
     SDL_Rect* player_rect = &player->rect;
@@ -117,7 +116,7 @@ void edge_collision(SDL_Window* window, Player* player, struct Map *map, int vel
     }
 }
 
-bool check_collision(SDL_Rect* r, struct Map *map) {
+bool check_collision(SDL_Rect* r, Map *map) {
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
             int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;

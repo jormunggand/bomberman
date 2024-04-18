@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
             return exit_status;
         } 
     } else {
-        read_map_from_file(&map, "../maps/map_example.txt");
+        read_map_from_file(&map, "../maps/map_collision.txt");
     }
 
 
