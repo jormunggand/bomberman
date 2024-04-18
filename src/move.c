@@ -122,7 +122,7 @@ bool check_collision(SDL_Rect* r, struct Map *map) {
         for (int j = 0; j < 2; j++){
             int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;
             int y = (r->y + j * (r->h - eps)  + (1 - j) * eps) / TILE_SIZE;
-            if (map->grid[y][x] == HARD_WALL || map->grid[y][x] == SOFT_WALL){
+            if (map->grid[y][x].type == HARD_WALL || map->grid[y][x].type == SOFT_WALL){
                 return true;
             }
         }
