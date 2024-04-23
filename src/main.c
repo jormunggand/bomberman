@@ -79,42 +79,43 @@ int main(int argc, char* argv[]) {
             }
 
 
-        if (handler.keyState[K_DOWN] == SDL_PRESSED) {
-            player.isWalking = true;
-            vy += player.speed;
-            change_direction(&player, FRONT);
-        } else if (handler.keyState[K_UP] == SDL_PRESSED) {
-            player.isWalking = true;
-            vy -= player.speed;
-            change_direction(&player, BACK);
-        } else if (handler.keyState[K_RIGHT] == SDL_PRESSED) {
-            player.isWalking = true;
-            vx += player.speed;
-            change_direction(&player, RIGHT);
-            
-        } else if (handler.keyState[K_LEFT] == SDL_PRESSED) {
-            player.isWalking = true;
-            vx -= player.speed;
-            change_direction(&player, LEFT);
-        }
-        else{
-            cpt_reset++;
-            if (cpt_reset == 200){
-                cpt_reset = 0;
-                player.isWalking = false;
+            if (anyDirectionPressed(&handler)) {
+                player.isWalking = true;
+                cpt_reset++;
+                update_sprite(&player);
+                if (cpt_reset == 200){
+                    cpt_reset = 0;
+                    player.isWalking = false;
+                }
+                if (handler.keyState[K_DOWN] == SDL_PRESSED) {
+                    vy += player.speed;
+                    change_direction(&player, FRONT);
+                }
+                if (handler.keyState[K_UP] == SDL_PRESSED) {
+                    vy -= player.speed;
+                    change_direction(&player, BACK);
+                }
+                if (handler.keyState[K_RIGHT] == SDL_PRESSED) {
+                    vx += player.speed;
+                    change_direction(&player, RIGHT);
+                } 
+                if (handler.keyState[K_LEFT] == SDL_PRESSED) {
+                    vx -= player.speed;
+                    change_direction(&player, LEFT);
+                }
             }
+
+            if (handler.keyState[K_SPACE] == SDL_PRESSED) {
+                player_place_bomb(&player, &map);
+            }
+
+
         }
 
-        if (handler.keyState[K_SPACE] == SDL_PRESSED) {
-            player_place_bomb(&player, &map);
-        }
-
-        update_sprite(&player);
+        
         edge_collision(window, &player, &map, vx, vy);
         vx = 0; vy = 0;
         get_bonus(&player, &map);
-    }
-
         
         SDL_RenderClear(render);
         display_map(render, &map);
