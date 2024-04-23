@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
         }
         while (accumulator > targetfps)
         {
-            cpt++;
+            // cpt++;
             if (anyDirectionPressed(&handler)) {
                 player.isWalking = true;
                 cpt_reset++;
