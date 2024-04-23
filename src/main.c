@@ -1,3 +1,6 @@
+#include <time.h>
+#include <unistd.h>
+
 #include "utils.h"
 #include "keyboard.h"
 
@@ -61,9 +64,22 @@ int main(int argc, char* argv[]) {
 
     bool done = false;
     int cpt_reset = 0;
-    float vx = 0, vy = 0;
+    int deltaX = 0, deltaY = 0;
+
+    double now = (double) clock(); 
+    double last = 0.0;
+    double deltaTime;
+    double targetfps = 1.0 / 60.0;
+    double accumulator = 0.0;
+
+    // int cpt = 0;
 
     while (!done) {
+        last = now;
+        now = (double) clock();
+        deltaTime = (now - last) / (double) CLOCKS_PER_SEC; // delta time in seconds
+        accumulator += deltaTime;
+
         int eventPresent = SDL_PollEvent(&event);
         if (eventPresent) {
             if (event.type == SDL_QUIT || handler.keyState[K_ESC] == SDL_PRESSED)
@@ -77,8 +93,10 @@ int main(int argc, char* argv[]) {
                 int i = x / TILE_SIZE, j = y / TILE_SIZE;
                 add_bomb(&map, i, j);
             }
-
-
+        }
+        while (accumulator > targetfps)
+        {
+            cpt++;
             if (anyDirectionPressed(&handler)) {
                 player.isWalking = true;
                 cpt_reset++;
@@ -88,19 +106,19 @@ int main(int argc, char* argv[]) {
                     player.isWalking = false;
                 }
                 if (handler.keyState[K_DOWN] == SDL_PRESSED) {
-                    vy += player.speed;
+                    deltaY += 1;
                     change_direction(&player, FRONT);
                 }
                 if (handler.keyState[K_UP] == SDL_PRESSED) {
-                    vy -= player.speed;
+                    deltaY -= 1;
                     change_direction(&player, BACK);
                 }
                 if (handler.keyState[K_RIGHT] == SDL_PRESSED) {
-                    vx += player.speed;
+                    deltaX += 1;
                     change_direction(&player, RIGHT);
                 } 
                 if (handler.keyState[K_LEFT] == SDL_PRESSED) {
-                    vx -= player.speed;
+                    deltaX -= 1;
                     change_direction(&player, LEFT);
                 }
             }
@@ -108,14 +126,16 @@ int main(int argc, char* argv[]) {
             if (handler.keyState[K_SPACE] == SDL_PRESSED) {
                 player_place_bomb(&player, &map);
             }
-
-
-        }
-
+            // printf("%lf\n", elapsedTime);
+            edge_collision(window, &player, &map, deltaX, deltaY, targetfps);
         
-        edge_collision(window, &player, &map, vx, vy);
-        vx = 0; vy = 0;
-        get_bonus(&player, &map);
+            deltaX = 0; deltaY = 0;
+            get_bonus(&player, &map);
+
+            accumulator -= targetfps;
+        }
+        // printf("nb while  = %d\n", cpt); 
+        // cpt = 0; 
         
         SDL_RenderClear(render);
         display_map(render, &map);

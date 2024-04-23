@@ -20,12 +20,12 @@ void init_player(Player* player, int y, int x) {
 
     player->rect.w = TILE_SIZE;
     player->rect.h = 2 * TILE_SIZE;
-    player->rect.x = x*TILE_SIZE;
-    player->rect.y = (y-1)*TILE_SIZE;
+    player->rect.x = x * TILE_SIZE;
+    player->rect.y = (y - 1) * TILE_SIZE;
     
 
-    player->collisionRect.x = x*TILE_SIZE;
-    player->collisionRect.y = (y-1)*TILE_SIZE + 5*player->rect.h/8;
+    player->collisionRect.x = x * TILE_SIZE;
+    player->collisionRect.y = (y - 1) * TILE_SIZE + 5*player->rect.h/8;
     player->collisionRect.w = TILE_SIZE;
     player->collisionRect.h = TILE_SIZE;
 
@@ -101,25 +101,27 @@ float eps = 0.5 + TILE_SIZE / 4; // tolerance for collision detection
 
 // moves the player with the veolicitites velx and vely if there is no collision that forbids it
 // the collisions are calculated with collision_rect
-void edge_collision(SDL_Window* window, Player* player, Map *map, float velx, float vely) {
+void edge_collision(SDL_Window* window, Player* player, Map *map, int deltaX, int deltaY, double deltaTime) {
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
     SDL_Rect* player_rect = &player->rect;
     SDL_Rect* collision_rect = &player->collisionRect;
-    if (velx != 0){
-        player_rect->x += velx;
-        collision_rect->x += velx;
+    if (deltaX != 0){
+        int dx = (int) (deltaX * deltaTime * player->speed);
+        player_rect->x += dx;
+        collision_rect->x += dx;
         if (collision_rect->x < 0 || collision_rect->x + collision_rect->w > width || check_collision(collision_rect, map)){
-            player_rect->x -= velx;
-            collision_rect->x -= velx;
+            player_rect->x -= dx;
+            collision_rect->x -= dx;
         }
     }
-    if (vely != 0){
-        collision_rect->y += vely;
-        player_rect->y += vely;
+    if (deltaY != 0){
+        int dy = (int) (deltaY * deltaTime * player->speed);
+        collision_rect->y += dy;
+        player_rect->y += dy;
         if (collision_rect->y < 0 || collision_rect->y + collision_rect->h > height || check_collision(collision_rect, map)){
-            collision_rect->y -= vely;
-            player_rect->y -= vely;
+            collision_rect->y -= dy;
+            player_rect->y -= dy;
         }
     }
 }
