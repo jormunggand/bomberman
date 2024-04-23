@@ -60,7 +60,8 @@ int main(int argc, char* argv[]) {
     initHandler(&handler);
 
     bool done = false;
-    int cpt_reset = 0, vx = 0, vy = 0;
+    int cpt_reset = 0;
+    float vx = 0, vy = 0;
 
     while (!done) {
         int eventPresent = SDL_PollEvent(&event);
@@ -109,10 +110,9 @@ int main(int argc, char* argv[]) {
 
         update_sprite(&player);
         edge_collision(window, &player, &map, vx, vy);
-        get_bonus(&player, &map);
-        //printf("%d %d %d\n", player.nBombs, player.flamePower, player.speed);
         vx = 0; vy = 0;
-
+        get_bonus(&player, &map);
+        
         SDL_RenderClear(render);
         display_map(render, &map);
         display_bombs(render, &map);
@@ -120,8 +120,6 @@ int main(int argc, char* argv[]) {
         //SDL_RenderDrawRect(render, &player.rect);
         //SDL_RenderDrawRect(render, &player.collisionRect);
         SDL_RenderPresent(render);
-
-        SDL_Delay(32);
     }
 
 
