@@ -12,15 +12,19 @@ void handleEvent(KeyboardHandler* self, SDL_KeyboardEvent event) {
             key = K_ESC;
             break;
         case (SDLK_UP):
+        case (SDLK_z):
             key = K_UP;
             break;
         case (SDLK_RIGHT):
+        case (SDLK_d):
             key = K_RIGHT;
             break;
         case(SDLK_DOWN):
+        case (SDLK_s):
             key = K_DOWN;
             break;
         case (SDLK_LEFT):
+        case (SDLK_q):
             key = K_LEFT;
             break;
         case (SDLK_SPACE):
