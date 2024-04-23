@@ -16,7 +16,7 @@
 #define TILE_SIZE (64)
 
 // Powerups constants
-#define BASE_SPEED (16) // in pixels
+#define BASE_SPEED (20) // in pixels
 #define SPEED_BOOST (4) // in pixels
 #define MAX_SPEED (28)
 

@@ -25,8 +25,8 @@ typedef struct Bomb {
 int ij_to_expl_index(int i, int j, int radius);
 void exlp_index_to_ij(int expl_index, int radius, int* i, int* j);
 
-void init_bomb(Bomb* bomb, int x, int y);
-void add_bomb(struct Map* map, int x, int y);
+void init_bomb(Bomb* bomb, int x, int y, int radius);
+void add_bomb(struct Map* map, int x, int y, int radius);
 void player_place_bomb(struct Player* player, struct Map* map);
 void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, struct Map* map);
 int display_bomb(SDL_Renderer* render, Bomb* bomb, struct Map* map);

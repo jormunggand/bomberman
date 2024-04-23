@@ -13,13 +13,13 @@ SDL_Texture* bombTextures[NB_BOMB_TEXTURES];
 SDL_Texture* flameTextures[NB_FLAME_TEXTURES];
 
 // initialize a bomb at the given map coordinates and return it
-void init_bomb(Bomb* bomb, int x, int y) {
+void init_bomb(Bomb* bomb, int x, int y, int radius) {
     bomb->rect.x = x * TILE_SIZE;
     bomb->rect.y = y * TILE_SIZE;
     bomb->rect.w = TILE_SIZE;
     bomb->rect.h = TILE_SIZE;
     bomb->nb_ticks = 0;
-    bomb->radius = 3;
+    bomb->radius = radius;
     bomb->detonated = false;
     bomb->explosion_tiles = calloc((4 * bomb->radius + 1), sizeof(bool));
 }
@@ -28,14 +28,14 @@ void player_place_bomb(Player* player, Map* map) {
     int x = (player->collisionRect.x + player->collisionRect.w / 2) / TILE_SIZE;
     int y = (player->collisionRect.y + player->collisionRect.h / 2) / TILE_SIZE;
     if (map->grid[y][x].bomb == NULL) {
-        add_bomb(map, x, y);
+        add_bomb(map, x, y, player->flamePower);
     }
 }
 
 // add a bomb to the map at the given map coordinates
-void add_bomb(Map* map, int x, int y) {
+void add_bomb(Map* map, int x, int y, int radius) {
     map->grid[y][x].bomb = malloc(sizeof(Bomb));
-    init_bomb(map->grid[y][x].bomb, x, y);
+    init_bomb(map->grid[y][x].bomb, x, y, radius);
 }
 
 int ij_to_expl_index(int i, int j, int radius) {

@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
                 int i = x / TILE_SIZE, j = y / TILE_SIZE;
-                add_bomb(&map, i, j);
+                add_bomb(&map, i, j, 1);
             }
         }
         SDL_RenderClear(render);
