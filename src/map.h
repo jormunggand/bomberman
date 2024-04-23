@@ -23,7 +23,7 @@ typedef struct Tile {
 
 typedef struct Map {
     Tile** grid;
-    int size;
+    int size, starty, startx;
 } Map;
 
 int loadTextures(SDL_Renderer* render);

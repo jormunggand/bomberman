@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     // SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
     Player player;
-    init_player(&player, map.size * TILE_SIZE/2, map.size * TILE_SIZE/2);
+    init_player(&player, map.starty, map.startx);
 
     // load and display map and player
     display_map(render, &map);
@@ -48,7 +48,6 @@ int main(int argc, char* argv[]) {
     SDL_RenderPresent(render);
     
 
-    int velocity = 16;
     SDL_Event event;
     bool done = false;
     int cpt_reset = 0, vx = 0, vy = 0;
@@ -61,16 +60,16 @@ int main(int argc, char* argv[]) {
                 done = true;
             else if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s) {
-                    vy += velocity;
+                    vy += player.speed;
                     change_direction(&player, FRONT);
                 } else if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_z) {
-                    vy -= velocity;
+                    vy -= player.speed;
                     change_direction(&player, BACK);
                 } else if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d) {
-                    vx += velocity;
+                    vx += player.speed;
                     change_direction(&player, RIGHT);
                 } else if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_q) {
-                    vx -= velocity;
+                    vx -= player.speed;
                     change_direction(&player, LEFT);
                 }
                 else{
@@ -85,6 +84,8 @@ int main(int argc, char* argv[]) {
                 }
                 update_sprite(&player);
                 edge_collision(window, &player, &map, vx, vy);
+                get_bonus(&player, &map);
+                //printf("%d %d %d\n", player.nBombs, player.flamePower, player.speed);
                 vx = 0; vy = 0;
             }
             if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -98,6 +99,8 @@ int main(int argc, char* argv[]) {
         display_map(render, &map);
         display_bombs(render, &map);
         display_player(render, &player);
+        SDL_RenderDrawRect(render, &player.rect);
+        SDL_RenderDrawRect(render, &player.collisionRect);
         SDL_RenderPresent(render);
     }
 

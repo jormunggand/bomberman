@@ -10,6 +10,14 @@
 
 #define ANIMATION_FRAMES (8)
 
+// Powerups constants
+#define BASE_SPEED (16) // in pixels
+#define SPEED_BOOST (4) // in pixels
+#define MAX_SPEED (28)
+
+#define MAX_BOMBS (5)
+#define MAX_POWER (5) // in number of tiles
+
 typedef enum {
     FRONT,
     BACK,
@@ -25,6 +33,10 @@ typedef struct Player {
     SDL_Texture** animations;
     SDL_Rect rect;
     SDL_Rect collisionRect;
+
+    int nBombs;
+    int speed;
+    int flamePower;
 } Player;
 
 #ifndef MAP_H
@@ -43,3 +55,4 @@ int load_animations(SDL_Renderer* render);
 
 void edge_collision(SDL_Window* window, Player* player, Map *map, int velx, int vely);
 bool check_collision(SDL_Rect* r, Map *map);
+void get_bonus(Player* player, struct Map* map);

@@ -10,22 +10,28 @@ SDL_Texture* left_walking[ANIMATION_FRAMES];
 SDL_Texture* right_walking[ANIMATION_FRAMES];
 
 
-void init_player(Player* player, int x, int y) {
+// create a player structure positioned at map.grid[y][x]
+void init_player(Player* player, int y, int x) {
     player->curDir = FRONT;
     player->iframe = 0;
     player->isWalking = false;
 
-    player->rect.x = x;
-    player->rect.y = y;
     player->rect.w = TILE_SIZE;
     player->rect.h = 2 * TILE_SIZE;
+    player->rect.x = x*TILE_SIZE;
+    player->rect.y = (y-1)*TILE_SIZE;
+    
 
-    player->collisionRect.x = x;
-    player->collisionRect.y = y + 5 * player->rect.h/8;
+    player->collisionRect.x = x*TILE_SIZE;
+    player->collisionRect.y = (y-1)*TILE_SIZE + 5*player->rect.h/8;
     player->collisionRect.w = TILE_SIZE;
     player->collisionRect.h = TILE_SIZE;
 
     player->animations = front_walking;
+
+    player->nBombs = 1;
+    player->speed = BASE_SPEED;
+    player->flamePower = 1;
 }
 
 void display_player(SDL_Renderer* render, Player* player) {
@@ -127,4 +133,30 @@ bool check_collision(SDL_Rect* r, Map *map) {
         }
     }
     return false;
+}
+
+// check if the player is touching a bonus
+// not at all inspired by check_collision's code
+void get_bonus(Player* player, struct Map* map) {
+    SDL_Rect* r = &player->collisionRect;
+    for (int i = 0; i < 2; i++){
+        for (int j = 0; j < 2; j++){
+            int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;
+            int y = (r->y + j * (r->h - eps)  + (1 - j) * eps) / TILE_SIZE;
+            switch (map->grid[y][x]) {
+                case BOMB_BONUS:
+                    player->nBombs = min(MAX_BOMBS, player->nBombs+1);
+                    map->grid[y][x] = EMPTY;
+                    break;
+                case FLAME_BONUS:
+                    player->flamePower = min(MAX_POWER, player->flamePower+1);
+                    map->grid[y][x] = EMPTY;
+                    break;
+                case SPEED_BONUS:
+                    player->speed = min(MAX_SPEED, player->speed + SPEED_BOOST);
+                    map->grid[y][x] = EMPTY;
+                    break;
+            }
+        }
+    }
 }
