@@ -5,7 +5,6 @@
 #include "map.h"
 
 
-bool loadedTextures = false;
 int bomb_cycle = 1300;
 int flame_cycle = 500;
 
@@ -126,10 +125,6 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
 // display a single bomb on the screen
 // return 1 if the bomb animation is done and the bomb should be removed
 int display_bomb(SDL_Renderer* render, Bomb* bomb, Map* map) {
-    if (!loadedTextures) {
-        load_textures(render);
-        loadedTextures = true;
-    }
     if (bomb->nb_ticks < NB_BOMB_TEXTURES * bomb_cycle){
         SDL_RenderCopy(render, bombTextures[bomb->nb_ticks / bomb_cycle], NULL, &bomb->rect);
         bomb->nb_ticks++;
@@ -161,7 +156,7 @@ void display_bombs(SDL_Renderer* render, Map* map) {
     }
 }
 
-int load_textures_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int nb_textures) {
+int load_bomb_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int nb_textures) {
     for (int i = 0; i < nb_textures; i++) {
         char filename[50];
         sprintf(filename, base, i);
@@ -175,10 +170,10 @@ int load_textures_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, 
     return 0;
 }
 
-int load_textures(SDL_Renderer* render) {
+int load_bomb_textures(SDL_Renderer* render) {
     int r1, r2;
-    r1 = load_textures_aux(render, "../assets/Bomb/Bomb_f0%d.png", bombTextures, NB_BOMB_TEXTURES);
-    r2 = load_textures_aux(render, "../assets/Flame/Flame_f0%d.png", flameTextures, NB_FLAME_TEXTURES);
+    r1 = load_bomb_aux(render, "../assets/Bomb/Bomb_f0%d.png", bombTextures, NB_BOMB_TEXTURES);
+    r2 = load_bomb_aux(render, "../assets/Flame/Flame_f0%d.png", flameTextures, NB_FLAME_TEXTURES);
     if (r1 + r2 != 0) {
         return -1;
     }

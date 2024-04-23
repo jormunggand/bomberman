@@ -14,12 +14,9 @@ typedef enum {
     EMPTY = 1,
     SOFT_WALL = 2,
     PLAYER_POS = 3,
-    BOMB_BONUS_HIDDEN = 4,
-    BOMB_BONUS = 5,
-    FLAME_BONUS_HIDDEN = 6,
-    FLAME_BONUS = 7,
-    SPEED_BONUS_HIDDEN = 8,
-    SPEED_BONUS = 9
+    BOMB_BONUS = 4,
+    SPEED_BONUS = 5,
+    FLAME_BONUS = 6
 } TileType;
 
 typedef struct Tile {
@@ -32,8 +29,8 @@ typedef struct Map {
     int size, starty, startx;
 } Map;
 
-
-int loadTextures(SDL_Renderer* render);
+SDL_Texture* create_bonus_texture(SDL_Renderer* render, SDL_Texture* icon);
+int load_map_textures(SDL_Renderer* render);
 int read_map_from_file(Map* map, char* file_name);
 int display_map(SDL_Renderer* renderer, Map* map);
 void destroy_map(Map* map);

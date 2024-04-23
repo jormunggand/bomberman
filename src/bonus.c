@@ -4,6 +4,12 @@
 #include "player.h"
 #include "map.h"
 
+
+void init_bonus(Map* map) {
+
+}
+
+
 // check if the player is touching a bonus
 // not at all inspired by check_collision's code
 void get_bonus(Player* player, Map* map) {

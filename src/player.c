@@ -4,7 +4,6 @@
 #include "utils.h"
 #include "map.h"
 
-bool loadedAnim = false;
 
 SDL_Texture* front_walking[ANIMATION_FRAMES];
 SDL_Texture* back_walking[ANIMATION_FRAMES];
@@ -37,10 +36,6 @@ void init_player(Player* player, int y, int x) {
 }
 
 void display_player(SDL_Renderer* render, Player* player) {
-    if (!loadedAnim) {
-        loadedAnim = true;
-        load_animations(render);
-    }
     if (!player->isWalking) player->iframe = 0;
     SDL_RenderCopy(render, player->animations[player->iframe], NULL, &(player->rect));
 }
@@ -65,13 +60,7 @@ void update_sprite(Player* player) {
     player->iframe %= ANIMATION_FRAMES;
 }
 
-// void destroy_player(Player* player) {
-//     free(player->rect);
-//     free(player);
-// }
-
-
-int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures) {
+int load_player_aux(SDL_Renderer* render, char* base, SDL_Texture** textures) {
     for (int i = 0; i < ANIMATION_FRAMES; i++) {
         char filename[50];
         sprintf(filename, base, i);
@@ -85,12 +74,12 @@ int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures
     return 0;
 }
 
-int load_animations(SDL_Renderer* render) {
+int load_player_textures(SDL_Renderer* render) {
     int r1, r2, r3, r4;
-    r1 = load_animations_aux(render, "../assets/Bomberman/Front/Bman_F_f0%d.png", front_walking);
-    r2 = load_animations_aux(render, "../assets/Bomberman/Back/Bman_B_f0%d.png", back_walking);
-    r3 = load_animations_aux(render, "../assets/Bomberman/Left/Bman_L_f0%d.png", left_walking);
-    r4 = load_animations_aux(render, "../assets/Bomberman/Right/Bman_R_f0%d.png", right_walking);
+    r1 = load_player_aux(render, "../assets/Bomberman/Front/Bman_F_f0%d.png", front_walking);
+    r2 = load_player_aux(render, "../assets/Bomberman/Back/Bman_B_f0%d.png", back_walking);
+    r3 = load_player_aux(render, "../assets/Bomberman/Left/Bman_L_f0%d.png", left_walking);
+    r4 = load_player_aux(render, "../assets/Bomberman/Right/Bman_R_f0%d.png", right_walking);
     if (r1 + r2 + r3 + r4 != 0) {
         return -1;
     }
