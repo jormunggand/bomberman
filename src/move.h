@@ -55,4 +55,4 @@ int load_animations(SDL_Renderer* render);
 
 void edge_collision(SDL_Window* window, Player* player, Map *map, int velx, int vely);
 bool check_collision(SDL_Rect* r, Map *map);
-void get_bonus(Player* player, struct Map* map);
+
