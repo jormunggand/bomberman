@@ -32,3 +32,8 @@ void handleEvent(KeyboardHandler* self, SDL_KeyboardEvent event) {
     if (key != NONE)
         self->keyState[key] = event.state;
 }
+
+bool anyDirectionPressed(KeyboardHandler* self) {
+    return (self->keyState[K_UP] == SDL_PRESSED || self->keyState[K_RIGHT] == SDL_PRESSED 
+        || self->keyState[K_DOWN] == SDL_PRESSED || self->keyState[K_LEFT] == SDL_PRESSED);
+}

@@ -6,6 +6,8 @@
 #include <SDL_image.h>
 #endif
 
+#include <stdbool.h>
+
 #define N_KEYS (6)
 
 typedef enum Key{
@@ -26,3 +28,4 @@ typedef struct KeyboardHandler {
 
 void initHandler(KeyboardHandler* self);
 void handleEvent(KeyboardHandler* self, SDL_KeyboardEvent event);
+bool anyDirectionPressed(KeyboardHandler* self);
