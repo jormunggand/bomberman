@@ -19,7 +19,7 @@ void init_bomb(Bomb* bomb, int x, int y) {
     bomb->rect.w = TILE_SIZE;
     bomb->rect.h = TILE_SIZE;
     bomb->nb_ticks = 0;
-    bomb->radius = 2;
+    bomb->radius = 1;
     bomb->detonated = false;
     bomb->explosion_tiles = calloc((4 * bomb->radius + 1), sizeof(bool));
 }

@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
                 int i = x / TILE_SIZE, j = y / TILE_SIZE;
                 add_bomb(&map, i, j);
             }
-        }
+
 
         if (handler.keyState[K_DOWN] == SDL_PRESSED) {
             player.isWalking = true;
@@ -91,6 +91,7 @@ int main(int argc, char* argv[]) {
             player.isWalking = true;
             vx += player.speed;
             change_direction(&player, RIGHT);
+            
         } else if (handler.keyState[K_LEFT] == SDL_PRESSED) {
             player.isWalking = true;
             vx -= player.speed;
@@ -112,6 +113,8 @@ int main(int argc, char* argv[]) {
         edge_collision(window, &player, &map, vx, vy);
         vx = 0; vy = 0;
         get_bonus(&player, &map);
+    }
+
         
         SDL_RenderClear(render);
         display_map(render, &map);
