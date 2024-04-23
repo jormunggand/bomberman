@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
     KeyboardHandler handler;
     initHandler(&handler);
 
-    bool done = false;
+    bool done = false, draw_hitboxes = false;
     int cpt_reset = 0;
     int deltaX = 0, deltaY = 0;
 
@@ -141,8 +141,10 @@ int main(int argc, char* argv[]) {
         display_map(render, &map);
         display_bombs(render, &map);
         display_player(render, &player);
-        //SDL_RenderDrawRect(render, &player.rect);
-        //SDL_RenderDrawRect(render, &player.collisionRect);
+        if (draw_hitboxes) {
+            SDL_RenderDrawRect(render, &player.rect);
+            SDL_RenderDrawRect(render, &player.collisionRect);
+        }
         SDL_RenderPresent(render);
     }
 
