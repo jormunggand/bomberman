@@ -1,6 +1,8 @@
 // file meant to contain all functions related to moving the player
-#include "move.h"
+#include "player.h"
+
 #include "utils.h"
+#include "map.h"
 
 bool loadedAnim = false;
 

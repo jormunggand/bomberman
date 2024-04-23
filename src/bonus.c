@@ -1,9 +1,14 @@
 #include "bonus.h"
 
+#include "utils.h"
 #include "player.h"
 #include "map.h"
 
+// check if the player is touching a bonus
+// not at all inspired by check_collision's code
 void get_bonus(Player* player, Map* map) {
+    float eps = 0.5 + TILE_SIZE / 4; // tolerance for collision detection
+
     SDL_Rect* r = &player->collisionRect;
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){

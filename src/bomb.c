@@ -1,5 +1,9 @@
-#include "utils.h"
 #include "bomb.h"
+
+#include "utils.h"
+#include "player.h"
+#include "map.h"
+
 
 bool loadedTextures = false;
 int bomb_cycle = 1300;
