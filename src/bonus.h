@@ -6,6 +6,8 @@
 #include <SDL_image.h>
 #endif
 
+
+
 struct Player;
 struct Map;
 

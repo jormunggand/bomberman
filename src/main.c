@@ -105,8 +105,8 @@ int main(int argc, char* argv[]) {
         display_map(render, &map);
         display_bombs(render, &map);
         display_player(render, &player);
-        SDL_RenderDrawRect(render, &player.rect);
-        SDL_RenderDrawRect(render, &player.collisionRect);
+        //SDL_RenderDrawRect(render, &player.rect);
+        //SDL_RenderDrawRect(render, &player.collisionRect);
         SDL_RenderPresent(render);
     }
 

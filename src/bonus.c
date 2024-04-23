@@ -27,6 +27,8 @@ void get_bonus(Player* player, Map* map) {
                     player->speed = min(MAX_SPEED, player->speed + SPEED_BOOST);
                     map->grid[y][x].type = EMPTY;
                     break;
+                default:
+                    break;
             }
         }
     }

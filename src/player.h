@@ -10,14 +10,6 @@
 
 #define ANIMATION_FRAMES (8)
 
-// Powerups constants
-#define BASE_SPEED (16) // in pixels
-#define SPEED_BOOST (4) // in pixels
-#define MAX_SPEED (28)
-
-#define MAX_BOMBS (5)
-#define MAX_POWER (5) // in number of tiles
-
 typedef enum {
     FRONT,
     BACK,
