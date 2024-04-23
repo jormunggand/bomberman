@@ -44,6 +44,7 @@ int main(int argc, char* argv[]) {
     } else {
         read_map_from_file(&map, "../maps/map_collision.txt");
     }
+    init_bonus(&map);
 
 
     SDL_Window* window = NULL;

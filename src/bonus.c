@@ -4,9 +4,34 @@
 #include "player.h"
 #include "map.h"
 
+#include <time.h>
+#include <stdlib.h>
+
+#define SPAWN_RATE (2)
+
 
 void init_bonus(Map* map) {
+    srandom(time(NULL));
 
+    for (int y = 0; y < map->size; y++) {
+        for (int x = 0; x < map->size; x++) {
+            if (map->grid[y][x].type == SOFT_WALL) {
+                if (random() % 10 > SPAWN_RATE) {
+                    switch (random() % 3) {
+                        case (0):
+                            map->grid[y][x].hiddenBonus = BOMB_BONUS;
+                            break;
+                        case (1):
+                            map->grid[y][x].hiddenBonus = SPEED_BONUS;
+                            break;
+                        case (2):
+                            map->grid[y][x].hiddenBonus = FLAME_BONUS;
+                            break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 

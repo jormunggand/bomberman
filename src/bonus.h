@@ -11,4 +11,5 @@
 struct Player;
 struct Map;
 
+void init_bonus(struct Map* map);
 void get_bonus(struct Player* player, struct Map* map);

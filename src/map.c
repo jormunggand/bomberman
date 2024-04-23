@@ -89,6 +89,7 @@ int read_map_from_file(Map* map, char* file_name) {
         map->grid[y] = malloc(size * sizeof(Tile));
         for (int x = 0; x < size; x++) {
             map->grid[y][x].type = fgetc(file) - '0';
+            map->grid[y][x].hiddenBonus = EMPTY;
             map->grid[y][x].bomb = NULL;
             if (map->grid[y][x].type == PLAYER_POS) {
                 map->starty = y;
