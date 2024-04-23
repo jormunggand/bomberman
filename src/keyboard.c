@@ -30,6 +30,9 @@ void handleEvent(KeyboardHandler* self, SDL_KeyboardEvent event) {
         case (SDLK_SPACE):
             key = K_SPACE;
             break;
+        case (SDLK_g):
+            key = K_g;
+            break;
         default:
             break;
     }

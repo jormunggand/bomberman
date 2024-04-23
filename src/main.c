@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
     KeyboardHandler handler;
     initHandler(&handler);
 
-    bool done = false;
+    bool done = false, draw_hitboxes = false;
     int cpt_reset = 0;
     float vx = 0, vy = 0;
 
@@ -77,40 +77,42 @@ int main(int argc, char* argv[]) {
                 int i = x / TILE_SIZE, j = y / TILE_SIZE;
                 add_bomb(&map, i, j);
             }
-
-
-            if (anyDirectionPressed(&handler)) {
-                player.isWalking = true;
-                cpt_reset++;
-                update_sprite(&player);
-                if (cpt_reset == 200){
-                    cpt_reset = 0;
-                    player.isWalking = false;
-                }
-                if (handler.keyState[K_DOWN] == SDL_PRESSED) {
-                    vy += player.speed;
-                    change_direction(&player, FRONT);
-                }
-                if (handler.keyState[K_UP] == SDL_PRESSED) {
-                    vy -= player.speed;
-                    change_direction(&player, BACK);
-                }
-                if (handler.keyState[K_RIGHT] == SDL_PRESSED) {
-                    vx += player.speed;
-                    change_direction(&player, RIGHT);
-                } 
-                if (handler.keyState[K_LEFT] == SDL_PRESSED) {
-                    vx -= player.speed;
-                    change_direction(&player, LEFT);
-                }
-            }
-
-            if (handler.keyState[K_SPACE] == SDL_PRESSED) {
-                player_place_bomb(&player, &map);
-            }
-
-
         }
+
+        if (anyDirectionPressed(&handler)) {
+            player.isWalking = true;
+            cpt_reset++;
+            update_sprite(&player);
+            if (cpt_reset == 200){
+                cpt_reset = 0;
+                player.isWalking = false;
+            }
+            if (handler.keyState[K_DOWN] == SDL_PRESSED) {
+                vy += player.speed;
+                change_direction(&player, FRONT);
+            }
+            if (handler.keyState[K_UP] == SDL_PRESSED) {
+                vy -= player.speed;
+                change_direction(&player, BACK);
+            }
+            if (handler.keyState[K_RIGHT] == SDL_PRESSED) {
+                vx += player.speed;
+                change_direction(&player, RIGHT);
+            } 
+            if (handler.keyState[K_LEFT] == SDL_PRESSED) {
+                vx -= player.speed;
+                change_direction(&player, LEFT);
+            }
+        }
+
+        if (handler.keyState[K_SPACE] == SDL_PRESSED) {
+            player_place_bomb(&player, &map);
+        }
+
+        if (handler.keyState[K_g] == SDL_PRESSED) {
+            draw_hitboxes = !draw_hitboxes;
+        }
+
 
         
         edge_collision(window, &player, &map, vx, vy);
@@ -121,8 +123,10 @@ int main(int argc, char* argv[]) {
         display_map(render, &map);
         display_bombs(render, &map);
         display_player(render, &player);
-        //SDL_RenderDrawRect(render, &player.rect);
-        //SDL_RenderDrawRect(render, &player.collisionRect);
+        if (draw_hitboxes) {
+            SDL_RenderDrawRect(render, &player.rect);
+            SDL_RenderDrawRect(render, &player.collisionRect);
+        }
         SDL_RenderPresent(render);
     }
 

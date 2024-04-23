@@ -8,7 +8,7 @@
 
 #include <stdbool.h>
 
-#define N_KEYS (6)
+#define N_KEYS (10)
 
 typedef enum Key{
     NONE = -1,
@@ -17,7 +17,8 @@ typedef enum Key{
     K_RIGHT = 2,
     K_DOWN = 3,
     K_LEFT = 4,
-    K_SPACE = 5
+    K_SPACE = 5,
+    K_g = 6
 } Key;
 
 
