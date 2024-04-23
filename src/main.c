@@ -12,8 +12,14 @@
 
 #ifndef MOVE_H
 #define MOVE_H
-#include "move.h"
+#include "player.h"
 #endif
+
+#ifndef BONUS_H
+#define BONUS_H
+#include "bonus.h"
+#endif
+
 
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
