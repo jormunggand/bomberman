@@ -17,8 +17,8 @@
 
 // Powerups constants
 #define BASE_SPEED (256) // in pixels / second
-#define SPEED_BOOST (4) // in pixels
-#define MAX_SPEED (28)
+#define SPEED_BOOST (32) // in pixels
+#define MAX_SPEED (352)
 
 #define MAX_BOMBS (5)
 #define MAX_POWER (5) // in number of tiles
