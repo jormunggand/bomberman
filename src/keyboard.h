@@ -11,7 +11,7 @@
 #define N_KEYS (10)
 
 typedef enum Key{
-    NONE = -1,
+    K_NONE = -1,
     K_ESC = 0,
     K_UP = 1,
     K_RIGHT = 2,

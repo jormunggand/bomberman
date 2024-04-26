@@ -6,7 +6,7 @@ void initHandler(KeyboardHandler* self) {
 }
 
 void handleEvent(KeyboardHandler* self, SDL_KeyboardEvent event) {
-    Key key = NONE;
+    Key key = K_NONE;
     switch (event.keysym.sym) {
         case (SDLK_ESCAPE):
             key = K_ESC;
@@ -36,7 +36,7 @@ void handleEvent(KeyboardHandler* self, SDL_KeyboardEvent event) {
         default:
             break;
     }
-    if (key != NONE)
+    if (key != K_NONE)
         self->keyState[key] = event.state;
 }
 

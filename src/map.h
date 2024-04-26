@@ -13,15 +13,19 @@ typedef enum {
     HARD_WALL = 0,
     EMPTY = 1,
     SOFT_WALL = 2,
-    PLAYER_POS = 3,
+    PLAYER_SPAWN = 3,
+} TileType;
+
+typedef enum {
     BOMB_BONUS = 4,
     SPEED_BONUS = 5,
-    FLAME_BONUS = 6
-} TileType;
+    FLAME_BONUS = 6,
+    NONE = 7,
+} BonusType;
 
 typedef struct Tile {
     TileType type; // currently shown texture
-    TileType hiddenBonus; // bonus to be displayed when a SOFT_WALL is broken
+    BonusType bonus; // bonus to be displayed when a SOFT_WALL is broken
     struct Bomb* bomb;
 } Tile;
 
