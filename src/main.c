@@ -25,6 +25,17 @@
 #endif
 
 
+int load_all_textures(SDL_Renderer* render) {
+    int r1 = load_map_textures(render);
+    int r2 = load_bomb_textures(render);
+    int r3 = load_player_textures(render);
+    if (r1 + r2 + r3 != 0) {
+        printf("%s\n", SDL_GetError());
+        return -1;
+    }
+    return 0;
+}
+
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
 
@@ -37,6 +48,7 @@ int main(int argc, char* argv[]) {
     } else {
         read_map_from_file(&map, "../maps/map_collision.txt");
     }
+    init_bonus(&map);
 
 
     SDL_Window* window = NULL;
@@ -52,6 +64,7 @@ int main(int argc, char* argv[]) {
     init_player(&player, map.starty, map.startx);
 
     // load and display map and player
+    load_all_textures(render);
     display_map(render, &map);
     display_player(render, &player);
 
@@ -91,7 +104,7 @@ int main(int argc, char* argv[]) {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
                 int i = x / TILE_SIZE, j = y / TILE_SIZE;
-                add_bomb(&map, i, j);
+                add_bomb(&map, i, j, 1);
             }
         }
         while (accumulator > targetfps)

@@ -37,10 +37,9 @@ void init_player(Player* player, int x, int y);
 void change_direction(Player* player, SpriteDirection newDir);
 void update_sprite(Player* player);
 void display_player(SDL_Renderer* render, Player* player);
-//void destroy_player(Player* player);
 
-int load_animations_aux(SDL_Renderer* render, char* base, SDL_Texture** textures);
-int load_animations(SDL_Renderer* render);
+int load_player_aux(SDL_Renderer* render, char* base, SDL_Texture** textures);
+int load_player_textures(SDL_Renderer* render);
 
 void edge_collision(SDL_Window* window, Player* player, struct Map *map, int deltaX, int deltaY, double elapsedTime);
 bool check_collision(SDL_Rect* r, struct Map *map);

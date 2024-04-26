@@ -13,6 +13,7 @@
 
 struct Player;
 struct Map;
+struct Tile;
 
 typedef struct Bomb {
     SDL_Rect rect;
@@ -25,11 +26,11 @@ typedef struct Bomb {
 int ij_to_expl_index(int i, int j, int radius);
 void exlp_index_to_ij(int expl_index, int radius, int* i, int* j);
 
-void init_bomb(Bomb* bomb, int x, int y);
-void add_bomb(struct Map* map, int x, int y);
+void init_bomb(Bomb* bomb, int x, int y, int radius);
+void add_bomb(struct Map* map, int x, int y, int radius);
 void player_place_bomb(struct Player* player, struct Map* map);
 void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, struct Map* map);
-int display_bomb(SDL_Renderer* render, Bomb* bomb, struct Map* map);
+int display_bomb(SDL_Renderer* render, struct Tile* tile, struct Map* map);
 void display_bombs(SDL_Renderer* render, struct Map* map);
-int load_textures_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int nb_textures);
-int load_textures(SDL_Renderer* render);
+int load_bomb_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int nb_textures);
+int load_bomb_textures(SDL_Renderer* render);
