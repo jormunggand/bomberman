@@ -98,18 +98,24 @@ void edge_collision(SDL_Window* window, Player* player, Map *map, int deltaX, in
     SDL_Rect* collision_rect = &player->collisionRect;
     if (deltaX != 0){
         int dx = (int) (deltaX * deltaTime * player->speed);
+        bool collidedwithBomb = bomb_collision(collision_rect, map);
         player_rect->x += dx;
         collision_rect->x += dx;
-        if (collision_rect->x < 0 || collision_rect->x + collision_rect->w > width || check_collision(collision_rect, map)){
+        if (collision_rect->x < 0 || collision_rect->x + collision_rect->w > width 
+            || check_collision(collision_rect, map)
+            || (!collidedwithBomb && bomb_collision(collision_rect, map))){
             player_rect->x -= dx;
             collision_rect->x -= dx;
         }
     }
     if (deltaY != 0){
         int dy = (int) (deltaY * deltaTime * player->speed);
+        bool collidedwithBomb = bomb_collision(collision_rect, map);
         collision_rect->y += dy;
         player_rect->y += dy;
-        if (collision_rect->y < 0 || collision_rect->y + collision_rect->h > height || check_collision(collision_rect, map)){
+        if (collision_rect->y < 0 || collision_rect->y + collision_rect->h > height 
+            || check_collision(collision_rect, map)
+            || (!collidedwithBomb && bomb_collision(collision_rect, map))){
             collision_rect->y -= dy;
             player_rect->y -= dy;
         }
@@ -122,6 +128,20 @@ bool check_collision(SDL_Rect* r, Map *map) {
             int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;
             int y = (r->y + j * (r->h - eps)  + (1 - j) * eps) / TILE_SIZE;
             if (map->grid[y][x].type == HARD_WALL || map->grid[y][x].type == SOFT_WALL){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// check if the rectangle is colliding with a bomb
+bool bomb_collision(SDL_Rect* r, Map *map) {
+    for (int i = 0; i < 2; i++){
+        for (int j = 0; j < 2; j++){
+            int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;
+            int y = (r->y + j * (r->h - eps)  + (1 - j) * eps) / TILE_SIZE;
+            if (map->grid[y][x].bomb != NULL){
                 return true;
             }
         }
