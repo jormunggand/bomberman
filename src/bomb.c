@@ -80,7 +80,7 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
                         case EMPTY:
                         case PLAYER_SPAWN:
                             bomb->explosion_tiles[ij_to_expl_index(i, 0, bomb->radius)] = true;
-                            if (map->grid[i + ib][jb].bonus != NONE && flag == true) {map->grid[i + ib][jb].bonus = NONE;}
+                            if (map->grid[i + ib][jb].bonus != NONE && !flag) {map->grid[i + ib][jb].bonus = NONE;}
                             SDL_RenderCopy(render, texture, NULL, &rect);
                             break;
                         default:
@@ -106,6 +106,7 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
                         case EMPTY:
                         case PLAYER_SPAWN:
                             bomb->explosion_tiles[ij_to_expl_index(0, j, bomb->radius)] = true;
+                            if (map->grid[ib][j + jb].bonus != NONE && !flag) {map->grid[ib][j + jb].bonus = NONE;}
                             SDL_RenderCopy(render, texture, NULL, &rect);
                             break;
                         default:
