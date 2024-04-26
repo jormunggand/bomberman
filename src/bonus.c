@@ -7,7 +7,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define SPAWN_RATE (2)
+#define SPAWN_RATE (4)
 
 
 void init_bonus(Map* map) {
