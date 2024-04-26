@@ -30,7 +30,8 @@ void init_player(Player* player, int y, int x) {
 
     player->animations = front_walking;
 
-    player->nBombs = 1;
+    player->nMaxBombs = 1;
+    player->nCurBombs = 0;
     player->speed = BASE_SPEED;
     player->flamePower = 1;
 }

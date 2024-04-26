@@ -26,7 +26,8 @@ typedef struct Player {
     SDL_Rect rect;
     SDL_Rect collisionRect;
 
-    int nBombs;
+    int nMaxBombs; // the maximum number of bombs the player can fire simultaneously
+    int nCurBombs; // the current number of bombs the player has lit
     float speed;
     int flamePower;
 } Player;

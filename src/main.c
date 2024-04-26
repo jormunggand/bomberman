@@ -39,6 +39,7 @@ int load_all_textures(SDL_Renderer* render) {
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
 
+    // Read a map using the command line argument or load a default map
     Map map;
     if (argc == 2) {
         if (read_map_from_file(&map, argv[1]) == -1) {
@@ -48,6 +49,7 @@ int main(int argc, char* argv[]) {
     } else {
         read_map_from_file(&map, "../maps/map_collision.txt");
     }
+    // Randomly place powerups in the soft walls of the map
     init_bonus(&map);
 
 
@@ -58,7 +60,6 @@ int main(int argc, char* argv[]) {
         printf("%s", SDL_GetError());
         goto Quit;
     }
-    // SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
     Player player;
     init_player(&player, map.starty, map.startx);
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
     
 
     SDL_Event event;
-    KeyboardHandler handler;
+    KeyboardHandler handler; // to handle multiple keypresses
     initHandler(&handler);
 
     bool done = false, draw_hitboxes = false;
@@ -99,12 +100,6 @@ int main(int argc, char* argv[]) {
                 done = true;
             else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
                 handleEvent(&handler, event.key);
-            }
-            else if (event.type == SDL_MOUSEBUTTONDOWN) {
-                int x, y;
-                SDL_GetMouseState(&x, &y);
-                int i = x / TILE_SIZE, j = y / TILE_SIZE;
-                add_bomb(&map, i, j, 1);
             }
         }
         while (accumulator > targetfps)

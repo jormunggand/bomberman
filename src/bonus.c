@@ -47,7 +47,7 @@ void get_bonus(Player* player, Map* map) {
             int y = (r->y + j * (r->h - eps)  + (1 - j) * eps) / TILE_SIZE;
             switch (map->grid[y][x].type) {
                 case BOMB_BONUS:
-                    player->nBombs = min(MAX_BOMBS, player->nBombs+1);
+                    player->nMaxBombs = min(MAX_BOMBS, player->nMaxBombs+1);
                     map->grid[y][x].type = EMPTY;
                     break;
                 case FLAME_BONUS:
