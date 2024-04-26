@@ -60,7 +60,7 @@ int load_map_textures(SDL_Renderer* render) {
     textures[EMPTY] = empty_texture;
     textures[SOFT_WALL] = soft_wall_texture;
 
-    textures[PLAYER_POS] = empty_texture;
+    textures[PLAYER_SPAWN] = empty_texture;
 
     textures[BOMB_BONUS] = bomb_bonus;
     textures[SPEED_BONUS] = speed_bonus;
@@ -89,9 +89,9 @@ int read_map_from_file(Map* map, char* file_name) {
         map->grid[y] = malloc(size * sizeof(Tile));
         for (int x = 0; x < size; x++) {
             map->grid[y][x].type = fgetc(file) - '0';
-            map->grid[y][x].hiddenBonus = EMPTY;
+            map->grid[y][x].bonus = NONE;
             map->grid[y][x].bomb = NULL;
-            if (map->grid[y][x].type == PLAYER_POS) {
+            if (map->grid[y][x].type == PLAYER_SPAWN) {
                 map->starty = y;
                 map->startx = x;
             }
@@ -111,8 +111,15 @@ int display_map(SDL_Renderer* renderer, Map* map) {
         for (int x = 0; x < map->size; x++) {
             rect.x = x * TILE_SIZE;
             rect.y = y * TILE_SIZE;
-            if (SDL_RenderCopy(renderer, textures[map->grid[y][x].type], NULL, &rect) != 0){
-                printf("%s", SDL_GetError());
+            int r;
+            if (map->grid[y][x].bonus != NONE && map->grid[y][x].type == EMPTY){
+                r = SDL_RenderCopy(renderer, textures[map->grid[y][x].bonus], NULL, &rect);
+            }
+            else{
+                r = SDL_RenderCopy(renderer, textures[map->grid[y][x].type], NULL, &rect);
+            } 
+            if (r != 0) {
+                printf("%s\n", SDL_GetError());
                 return -1;
             }
         }

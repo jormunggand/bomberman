@@ -62,6 +62,7 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
     int r = bomb->radius;
     int ib = bomb->rect.y / TILE_SIZE; 
     int jb = bomb->rect.x / TILE_SIZE;
+    bool flag = false;
     if (!bomb->detonated) {
         for (int sgn = -1; sgn <= 1; sgn += 2) {
             for (int k = 0; k <= r; k++) {
@@ -71,18 +72,23 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
                     SDL_Rect rect = {jb * TILE_SIZE, (i + ib) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
                     switch (map->grid[i + ib][jb].type){
                         case HARD_WALL:
-                            k = r; // to stop the loop
+                            flag = true; // to stop the loop
                             break;
                         case SOFT_WALL:
-                            map->grid[i + ib][jb].type = map->grid[i+ib][jb].hiddenBonus;
-                            map->grid[i+ib][jb].hiddenBonus = EMPTY;
-                            k = r; // to stop the loop
+                            map->grid[i+ib][jb].type = EMPTY;
+                            flag = true; // to stop the loop
                         case EMPTY:
+                        case PLAYER_SPAWN:
                             bomb->explosion_tiles[ij_to_expl_index(i, 0, bomb->radius)] = true;
+                            if (map->grid[i + ib][jb].bonus != NONE && flag == true) {map->grid[i + ib][jb].bonus = NONE;}
                             SDL_RenderCopy(render, texture, NULL, &rect);
                             break;
                         default:
                             break;
+                    }
+                    if (flag) {
+                        flag = false;
+                        break;
                     }
                 }
             }
@@ -92,18 +98,22 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
                     SDL_Rect rect = {(j + jb) * TILE_SIZE, ib * TILE_SIZE, TILE_SIZE, TILE_SIZE};
                     switch (map->grid[ib][j + jb].type){
                         case HARD_WALL:
-                            k = r; // to stop the loop
+                            flag = true; // to stop the loop
                             break;
                         case SOFT_WALL:
-                            map->grid[ib][j + jb].type = map->grid[ib][j + jb].hiddenBonus;
-                            map->grid[ib][j + jb].hiddenBonus = EMPTY;
-                            k = r; // to stop the loop
+                            map->grid[ib][j + jb].type = EMPTY;
+                            flag = true; // to stop the loop
                         case EMPTY:
+                        case PLAYER_SPAWN:
                             bomb->explosion_tiles[ij_to_expl_index(0, j, bomb->radius)] = true;
                             SDL_RenderCopy(render, texture, NULL, &rect);
                             break;
                         default:
                             break;
+                    }
+                    if (flag) {
+                        flag = false;
+                        break;
                     }
                 }
             }

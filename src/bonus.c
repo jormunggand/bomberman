@@ -19,13 +19,13 @@ void init_bonus(Map* map) {
                 if (random() % 10 > SPAWN_RATE) {
                     switch (random() % 3) {
                         case (0):
-                            map->grid[y][x].hiddenBonus = BOMB_BONUS;
+                            map->grid[y][x].bonus = BOMB_BONUS;
                             break;
                         case (1):
-                            map->grid[y][x].hiddenBonus = SPEED_BONUS;
+                            map->grid[y][x].bonus = SPEED_BONUS;
                             break;
                         case (2):
-                            map->grid[y][x].hiddenBonus = FLAME_BONUS;
+                            map->grid[y][x].bonus = FLAME_BONUS;
                             break;
                     }
                 }
@@ -45,18 +45,18 @@ void get_bonus(Player* player, Map* map) {
         for (int j = 0; j < 2; j++){
             int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;
             int y = (r->y + j * (r->h - eps)  + (1 - j) * eps) / TILE_SIZE;
-            switch (map->grid[y][x].type) {
+            switch (map->grid[y][x].bonus) {
                 case BOMB_BONUS:
                     player->nBombs = min(MAX_BOMBS, player->nBombs+1);
-                    map->grid[y][x].type = EMPTY;
+                    map->grid[y][x].bonus = NONE;
                     break;
                 case FLAME_BONUS:
                     player->flamePower = min(MAX_POWER, player->flamePower+1);
-                    map->grid[y][x].type = EMPTY;
+                    map->grid[y][x].bonus = NONE;
                     break;
                 case SPEED_BONUS:
                     player->speed = min(MAX_SPEED, player->speed + SPEED_BOOST);
-                    map->grid[y][x].type = EMPTY;
+                    map->grid[y][x].bonus = NONE;
                     break;
                 default:
                     break;
