@@ -16,11 +16,6 @@ SDL_Texture* speed_bonus = NULL;
 
 SDL_Texture* textures[N_TEXTURES];
 
-SDL_Texture* splashscreen;
-SDL_Texture* local_multi_btn;
-SDL_Texture* online_multi_btn;
-SDL_Texture* playervcpu_btn;
-
 
 
 // draw the bonus icon on top of the background tile
@@ -74,19 +69,6 @@ int load_map_textures(SDL_Renderer* render) {
 
     
     return 0;
-}
-
-
-int load_menu_textures(SDL_Renderer* render) {
-    splashscreen = loadImage("../assets/title_flat.jpg", render);
-    local_multi_btn = loadImage("../assets/Menu/local_multiplayer_button.png", render);
-    online_multi_btn = loadImage("../assets/Menu/online_multiplayer_button.png", render);
-    playervcpu_btn = loadImage("../assets/Menu/player_vs_cpu_button.png", render);
-
-    if (splashscreen == NULL || local_multi_btn == NULL || online_multi_btn == NULL || playervcpu_btn == NULL) {
-        printf("%s\n", SDL_GetError());
-        return -1;      
-    }
 }
 
 

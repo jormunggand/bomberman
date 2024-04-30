@@ -36,7 +36,6 @@ typedef struct Map {
 
 SDL_Texture* create_bonus_texture(SDL_Renderer* render, SDL_Texture* icon);
 int load_map_textures(SDL_Renderer* render);
-int load_menu_textures(SDL_Renderer* render);
 int read_map_from_file(Map* map, char* file_name);
 int display_map(SDL_Renderer* renderer, Map* map);
 void destroy_map(Map* map);

@@ -24,15 +24,32 @@
 #include "bonus.h"
 #endif
 
-#define SPLASH_SIZE (576)
+#define SPLASH_SIZE (800)
+
+SDL_Texture* splashscreen;
+SDL_Texture* local_multi_btn;
+SDL_Texture* online_multi_btn;
+SDL_Texture* playervcpu_btn;
+
+int load_menu_textures(SDL_Renderer* render) {
+    splashscreen = loadImage("../assets/title_flat.jpg", render);
+    local_multi_btn = loadImage("../assets/Menu/local_multiplayer_button.png", render);
+    online_multi_btn = loadImage("../assets/Menu/online_multiplayer_button.png", render);
+    playervcpu_btn = loadImage("../assets/Menu/player_vs_cpu_button.png", render);
+
+    if (splashscreen == NULL || local_multi_btn == NULL || online_multi_btn == NULL || playervcpu_btn == NULL) {
+        printf("%s\n", SDL_GetError());
+        return -1;      
+    }
+    return 0;
+}
 
 
 int load_all_textures(SDL_Renderer* render) {
-    int r0  = load_menu_textures(render);
     int r1 = load_map_textures(render);
     int r2 = load_bomb_textures(render);
     int r3 = load_player_textures(render);
-    if (r0 + r1 + r2 + r3 != 0) {
+    if (r1 + r2 + r3 != 0) {
         printf("%s\n", SDL_GetError());
         return -1;
     }
@@ -40,6 +57,11 @@ int load_all_textures(SDL_Renderer* render) {
 }
 
 void display_splashcreen(SDL_Renderer* render) {
+    if (load_menu_textures(render) != 0)
+        printf("%s\n", SDL_GetError());
+    SDL_RenderCopy(render, splashscreen, NULL, NULL);
+    SDL_RenderPresent(render);
+    SDL_Delay(5000);
     return;
 }
 
