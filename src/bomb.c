@@ -7,8 +7,8 @@
 
 const int bomb_cycle = 2600;
 const int flame_cycle = 500;
-const double bomb_cycle_2 = 0.5;
-const double flame_cycle_2 = 0.7;
+const double bomb_cycle_2 = 1.5;
+const double flame_cycle_2 = 0.5;
 
 
 SDL_Texture* bombTextures[NB_BOMB_TEXTURES];
@@ -155,6 +155,7 @@ int display_bomb(SDL_Renderer* render, Tile* tile, Map* map) {
     else {
         return 1;
     }
+    
 }
 
 // display all bombs present on the map
