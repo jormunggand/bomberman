@@ -8,6 +8,7 @@
 
 #include <stdbool.h>
 
+
 #define NB_BOMB_TEXTURES (3)
 #define NB_FLAME_TEXTURES (5)
 
@@ -18,6 +19,7 @@ struct Tile;
 typedef struct Bomb {
     SDL_Rect rect;
     int nb_ticks;
+    time_t start_time;
     int radius; // does not count the center tile
     bool detonated;
     bool* explosion_tiles; // array of size (2 * radius + 1)^2 to represent on which tiles the explosion must be displayed 
