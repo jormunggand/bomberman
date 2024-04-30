@@ -60,6 +60,11 @@ void display_splashcreen(SDL_Renderer* render) {
     if (load_menu_textures(render) != 0)
         printf("%s\n", SDL_GetError());
     SDL_RenderCopy(render, splashscreen, NULL, NULL);
+
+    SDL_Rect lmb_rect = {.x=300, .y=440, .w=0, .h=0};
+    SDL_QueryTexture(local_multi_btn, NULL, NULL, &lmb_rect.w, &lmb_rect.h);
+    SDL_RenderCopy(render, local_multi_btn, NULL, &lmb_rect);
+
     SDL_RenderPresent(render);
     SDL_Delay(5000);
     return;
