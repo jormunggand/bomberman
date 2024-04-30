@@ -4,7 +4,6 @@
 - gérer le multijoueur local
 - gérer le multijoueur en réseau
 
-- les bonus doivent être détruits par les bombes
 
 ## Moins important
 - rajouter des nouveaux bonus (taper dans une bombe)
@@ -13,6 +12,7 @@
 - changer le nb de frames dans un cycle pour une animation plus fluide
 
 ## Fait
+- les bonus doivent être détruits par les bombes
 - une fois la bombe posée, le joueur ne peut plus la traverser
 - apparition de bonus sur la map
 - gestion des bonus pour le joueur
