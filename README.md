@@ -16,6 +16,11 @@ Clone the repository, go into the src subfolder and run ```make``` to launch the
 
 If you have already compiled once, you can run ./main.exe for faster execution.
 
+## Choosing your map
+
+Maps are currently stored in maps/
+You can select which map you want to play one by running ```./main.exe ../maps/FILE```
+
 ### Authors
 Arthur Foucard
 Théo Atakpama
