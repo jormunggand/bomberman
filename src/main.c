@@ -80,18 +80,18 @@ int main(int argc, char* argv[]) {
     int cpt_reset = 0;
     int deltaX = 0, deltaY = 0;
 
-    double now = (double) clock(); 
-    double last = 0.0;
-    double deltaTime;
+    Uint64 NOW = SDL_GetPerformanceCounter();
+    Uint64 LAST = 0;
+    double deltaTime = 0;
     double targetfps = 1.0 / 60.0;
     double accumulator = 0.0;
 
     // int cpt = 0;
 
     while (!done) {
-        last = now;
-        now = (double) clock();
-        deltaTime = (now - last) / (double) CLOCKS_PER_SEC; // delta time in seconds
+        LAST = NOW;
+        NOW = SDL_GetPerformanceCounter();
+        deltaTime = (double)( (NOW - LAST) / (double) SDL_GetPerformanceFrequency() ); // delta time in seconds
         accumulator += deltaTime;
 
         int eventPresent = SDL_PollEvent(&event);
