@@ -24,42 +24,34 @@
 #include "bonus.h"
 #endif
 
+#define SPLASH_SIZE (576)
+
 
 int load_all_textures(SDL_Renderer* render) {
+    int r0  = load_menu_textures(render);
     int r1 = load_map_textures(render);
     int r2 = load_bomb_textures(render);
     int r3 = load_player_textures(render);
-    if (r1 + r2 + r3 != 0) {
+    if (r0 + r1 + r2 + r3 != 0) {
         printf("%s\n", SDL_GetError());
         return -1;
     }
     return 0;
 }
 
-int main(int argc, char* argv[]) {
-    int exit_status = EXIT_FAILURE;
+void display_splashcreen(SDL_Renderer* render) {
+    return;
+}
 
-    // Read a map using the command line argument or load a default map
+void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
     Map map;
-    if (argc == 2) {
-        if (read_map_from_file(&map, argv[1]) == -1) {
-            printf("Error while opening the map file - Usage: %s FILE\n", argv[0]);
-            return exit_status;
-        } 
-    } else {
-        read_map_from_file(&map, "../maps/map_collision.txt");
+    if (read_map_from_file(&map, map_filename) != 0) {
+        printf("Error while opening the map file (%s)\n", SDL_GetError());
     }
-    // Randomly place powerups in the soft walls of the map
-    init_bonus(&map);
+    init_bonus(&map); // randomly add hidden bonuses in soft walls
 
-
-    SDL_Window* window = NULL;
-    SDL_Renderer* render = NULL;
-    int windowWidth = map.size * TILE_SIZE, windowHeight = map.size * TILE_SIZE;
-    if (0 != init(&window, &render, windowWidth, windowHeight)) {
-        printf("%s", SDL_GetError());
-        goto Quit;
-    }
+    // Resize the window to fit the map
+    SDL_SetWindowSize(window, map.size * TILE_SIZE, map.size * TILE_SIZE);
 
     Player player;
     init_player(&player, map.starty, map.startx);
@@ -71,9 +63,8 @@ int main(int argc, char* argv[]) {
 
     SDL_RenderPresent(render);
     
-
     SDL_Event event;
-    KeyboardHandler handler; // to handle multiple keypresses
+    KeyboardHandler handler; // to handle simultneous keypresses
     initHandler(&handler);
 
     bool done = false, draw_hitboxes = false;
@@ -156,13 +147,37 @@ int main(int argc, char* argv[]) {
         SDL_RenderPresent(render);
     }
 
+}
+
+int main(int argc, char* argv[]) {
+    int exit_status = EXIT_FAILURE;
+
+    // Read the command line argument
+    char map_filename[100];
+    if (argc == 2) {
+        strcpy(map_filename, argv[1]);
+    } else {
+        strcpy(map_filename,  "../maps/map_bonus.txt"); // default map
+    }
+   
+    // Create and init the SDL Window and Renderer
+    SDL_Window* window = NULL;
+    SDL_Renderer* render = NULL;
+    int windowWidth = SPLASH_SIZE, windowHeight = SPLASH_SIZE;
+    if (0 != init(&window, &render, windowWidth, windowHeight)) {
+        printf("%s", SDL_GetError());
+        goto Quit;
+    }
+
+    // Start the game
+    display_splashcreen(render);
+    play_game(window, render, map_filename);
+
 
     exit_status = EXIT_SUCCESS;
 Quit:
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
     SDL_Quit();
-    destroy_map(&map);
-    // destroy_player(&player);
     return exit_status;
 }
