@@ -4,6 +4,7 @@
 #include "player.h"
 #include "map.h"
 
+#define BILLION (1000000000L)
 
 const int bomb_cycle = 2600;
 const int flame_cycle = 500;
@@ -23,7 +24,7 @@ void init_bomb(Bomb* bomb, int x, int y, Player* owner) {
     bomb->rect.w = TILE_SIZE;
     bomb->rect.h = TILE_SIZE;
     bomb->nb_ticks = 0;
-    bomb->start_time = time(NULL);
+    clock_gettime(CLOCK_REALTIME, &bomb->start_time);
     bomb->radius = owner->flamePower;
     bomb->detonated = false;
     bomb->explosion_tiles = calloc((4 * bomb->radius + 1), sizeof(bool));
@@ -143,7 +144,9 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
 // return 1 if the bomb animation is done and the bomb should be removed
 int display_bomb(SDL_Renderer* render, Tile* tile, Map* map) {
     Bomb* bomb = tile->bomb;
-    double dt = difftime(time(NULL), bomb->start_time);
+    struct timespec cur_time;
+    clock_gettime(CLOCK_REALTIME, &cur_time);
+    double dt = (cur_time.tv_sec - bomb->start_time.tv_sec) + (double) (cur_time.tv_nsec - bomb->start_time.tv_nsec) / (double) BILLION;
     if (dt < NB_BOMB_TEXTURES * bomb_cycle_2){
         SDL_RenderCopy(render, bombTextures[(int) (dt / bomb_cycle_2)], NULL, &bomb->rect);
         return 0;

@@ -7,6 +7,7 @@
 #endif
 
 #include <stdbool.h>
+#include <time.h>
 
 
 #define NB_BOMB_TEXTURES (3)
