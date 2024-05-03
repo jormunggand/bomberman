@@ -12,12 +12,11 @@
 
 ## Moins important
 - rajouter des nouveaux bonus (taper dans une bombe)
-- ajouter un splashscreen au début avec un menu
-    - Boutons Multijoueur local, Multijoueur en ligne, Joueur contre Ordinteur
 - rajouter un HUD avec le temps restant
-- changer le nb de frames dans un cycle pour une animation plus fluide
 
 ## Fait
+- ajouter un splashscreen au début avec un menu
+    - Boutons Multijoueur local, Multijoueur en ligne, Joueur contre Ordinteur
 - les bonus doivent être détruits par les bombes
 - une fois la bombe posée, le joueur ne peut plus la traverser
 - apparition de bonus sur la map
