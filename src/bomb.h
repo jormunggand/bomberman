@@ -31,8 +31,8 @@ void exlp_index_to_ij(int expl_index, int radius, int* i, int* j);
 
 void init_bomb(Bomb* bomb, int x, int y, struct Player* player);
 void player_place_bomb(struct Player* player, struct Map* map);
-void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, struct Map* map);
-int display_bomb(SDL_Renderer* render, struct Tile* tile, struct Map* map);
-void display_bombs(SDL_Renderer* render, struct Map* map);
+void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, struct Map* map, struct Player* player);
+int display_bomb(SDL_Renderer* render, struct Tile* tile, struct Map* map, struct Player* player);
+void display_bombs(SDL_Renderer* render, struct Map* map, struct Player* player);
 int load_bomb_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int nb_textures);
 int load_bomb_textures(SDL_Renderer* render);

@@ -30,6 +30,8 @@ typedef struct Player {
     int nCurBombs; // the current number of bombs the player has lit
     float speed;
     int flamePower;
+
+    bool isAlive;
 } Player;
 
 struct Map;

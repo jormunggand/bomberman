@@ -35,6 +35,8 @@ void init_player(Player* player, int y, int x) {
     player->nCurBombs = 0;
     player->speed = BASE_SPEED;
     player->flamePower = 1;
+
+    player->isAlive = true;
 }
 
 void display_player(SDL_Renderer* render, Player* player) {
@@ -123,6 +125,7 @@ void edge_collision(SDL_Window* window, Player* player, Map *map, int deltaX, in
     }
 }
 
+// check if the rectangle is colliding with a wall
 bool check_collision(SDL_Rect* r, Map *map) {
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
