@@ -31,6 +31,7 @@ SDL_Texture* local_multi_btn;
 SDL_Texture* online_multi_btn;
 SDL_Texture* playervcpu_btn;
 
+// load textures needed for the booting menu
 int load_menu_textures(SDL_Renderer* render) {
     splashscreen = loadImage("../assets/title_flat.jpg", render);
     local_multi_btn = loadImage("../assets/Menu/local_multiplayer_button.png", render);
@@ -56,18 +57,36 @@ int load_all_textures(SDL_Renderer* render) {
     return 0;
 }
 
-void display_splashcreen(SDL_Renderer* render) {
-    if (load_menu_textures(render) != 0)
+// display the screen where the player can choose the gamemode
+int display_splashcreen(SDL_Renderer* render, int windowWidth, int windowHeight) {
+    // display the buttons
+    if (load_menu_textures(render) != 0) {
         printf("%s\n", SDL_GetError());
+        return -1;
+    }
     SDL_RenderCopy(render, splashscreen, NULL, NULL);
 
-    SDL_Rect lmb_rect = {.x=300, .y=440, .w=0, .h=0};
+    SDL_Rect lmb_rect, omb_rect, pvc_rect;
     SDL_QueryTexture(local_multi_btn, NULL, NULL, &lmb_rect.w, &lmb_rect.h);
+    lmb_rect.x = windowWidth/2 - lmb_rect.w/2;
+    lmb_rect.y = windowHeight/2 + lmb_rect.h - 10;
+    SDL_QueryTexture(online_multi_btn, NULL, NULL, &omb_rect.w, &omb_rect.h);
+    omb_rect.x = windowWidth/2 - omb_rect.w/2;
+    omb_rect.y = lmb_rect.y + lmb_rect.h + 20;
+    SDL_QueryTexture(playervcpu_btn, NULL, NULL, &pvc_rect.w, &pvc_rect.h);
+    pvc_rect.x = windowWidth/2 - pvc_rect.w/2;
+    pvc_rect.y = omb_rect.y + omb_rect.h + 20;
+
     SDL_RenderCopy(render, local_multi_btn, NULL, &lmb_rect);
+    SDL_RenderCopy(render, online_multi_btn, NULL, &omb_rect);
+    SDL_RenderCopy(render, playervcpu_btn, NULL, &pvc_rect);
 
     SDL_RenderPresent(render);
-    SDL_Delay(5000);
-    return;
+
+    // wait for the player to choose the mode
+    SDL_Event event;
+    bool done = false;
+    return 0;
 }
 
 void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
@@ -197,8 +216,8 @@ int main(int argc, char* argv[]) {
     }
 
     // Start the game
-    display_splashcreen(render);
-    play_game(window, render, map_filename);
+    display_splashcreen(render, windowWidth, windowHeight);
+    //play_game(window, render, map_filename);
 
 
     exit_status = EXIT_SUCCESS;
