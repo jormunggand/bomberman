@@ -10,7 +10,7 @@
 
 #define N_KEYS (15)
 
-typedef enum Key{
+typedef enum {
     K_NONE = -1,
     K_ESC = 0,
     K_UP = 1,

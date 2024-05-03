@@ -14,7 +14,7 @@ SDL_Texture* right_walking[ANIMATION_FRAMES];
 
 
 // create a player structure positioned at map.grid[y][x]
-void init_player(Player* player, int x, int y, Key* controls) {
+void init_player(Player* player, int x, int y, int* controls) {
     player->curDir = FRONT;
     player->iframe = 0;
     player->isWalking = false;

@@ -10,6 +10,9 @@
 
 #define ANIMATION_FRAMES (8)
 
+struct Map;
+enum Key;
+
 typedef enum {
     FRONT,
     BACK,
@@ -34,12 +37,12 @@ typedef struct Player {
     int flamePower;
 
     // keyboard controls to go Up, Right, Down, Left and to Fire
-    Key controls[5];
+    int controls[5];
 } Player;
 
-struct Map;
 
-void init_player(Player* player, int x, int y, Key* controls);
+
+void init_player(Player* player, int x, int y, int* controls);
 void change_direction(Player* player, SpriteDirection newDir);
 void update_sprite(Player* player);
 void display_player(SDL_Renderer* render, Player* player);

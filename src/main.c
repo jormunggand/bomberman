@@ -116,7 +116,7 @@ Gamemode choose_gamemode(SDL_Renderer* render, int windowWidth, int windowHeight
     return mode;
 }
 
-void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
+/*void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
     Map map;
     if (read_map_from_file(&map, map_filename) != 0)
     {
@@ -221,7 +221,7 @@ void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
         SDL_RenderPresent(render);
     }
 
-}
+}*/
 
 // launch a game with two players
 void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
@@ -238,10 +238,10 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
     // Init the players
     const short nPlayers = 2;
     Player players[nPlayers];
-    Key controls1 = {K_z, K_d, K_s, K_q, K_SPACE};
-    Key controls2 = {K_UP, K_RIGHT, K_DOWN, K_LEFT, K_RSHIFT};
-    init_player(&players[0], 1, 1, &controls1);
-    init_player(&players[1], map.size-2, map.size-2, &controls2);
+    Key controls1[5] = {K_z, K_d, K_s, K_q, K_SPACE};
+    Key controls2[5] = {K_UP, K_RIGHT, K_DOWN, K_LEFT, K_RSHIFT};
+    init_player(&players[0], 1, 1, controls1);
+    init_player(&players[1], map.size-2, map.size-2, controls2);
 
     // Load and display map and players
     load_all_textures(render);
@@ -249,17 +249,19 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
     for (int i = 0; i < nPlayers; i++)
         display_player(render, &players[i]);
     SDL_RenderPresent(render);
+    //SDL_Delay(5000);
     
     SDL_Event event;
     KeyboardHandler handler; // to handle simultaneous keypresses
     initHandler(&handler);
 
-    bool done = false, draw_hitboxes = false;
+    bool done = false;
     Delta deltas[nPlayers];
     for (int i = 0; i < nPlayers; i++) {
         deltas[i].x = 0;
         deltas[i].y = 0;
     }
+    printf("%d\n", deltas[0].x);
 
     Uint64 NOW = SDL_GetPerformanceCounter();
     Uint64 LAST = 0;
@@ -277,12 +279,10 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
         if (eventPresent) {
             if (event.type == SDL_QUIT || handler.keyState[K_ESC] == SDL_PRESSED)
                 done = true;
-            else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
+            else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
                 handleEvent(&handler, event.key);
-            }
         }
-        while (accumulator > targetfps)
-        {
+        while (accumulator > targetfps) {
             for (int iPlayer = 0; iPlayer < nPlayers; iPlayer++) {
                 Player* curPlayer = &players[iPlayer];
                 if (anyDirectionPressed(&handler, iPlayer+1)) {
@@ -293,10 +293,28 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
                         curPlayer->cpt_reset = 0;
                         curPlayer->isWalking = false;
                     }
-                }
 
-                edge_collision(window, curPlayer, 
-                    &map, deltas[iPlayer].x, deltas[iPlayer].y, targetfps);
+                    if (handler.keyState[curPlayer->controls[0]] == SDL_PRESSED) {
+                        deltas[iPlayer].y -= 1;
+                        change_direction(curPlayer, BACK);
+                    }
+                    if (handler.keyState[curPlayer->controls[1]] == SDL_PRESSED) {
+                        deltas[iPlayer].x += 1;
+                        change_direction(curPlayer, RIGHT);
+                    }
+                    if (handler.keyState[curPlayer->controls[2]] == SDL_PRESSED) {
+                        deltas[iPlayer].y += 1;
+                        change_direction(curPlayer, FRONT);
+                    }
+                    if (handler.keyState[curPlayer->controls[3]] == SDL_PRESSED) {
+                        deltas[iPlayer].x -= 1;
+                        change_direction(curPlayer, LEFT);
+                    }
+                }
+                if (handler.keyState[curPlayer->controls[4]] == SDL_PRESSED)
+                    player_place_bomb(curPlayer, &map);
+
+                edge_collision(window, curPlayer, &map, deltas[iPlayer].x, deltas[iPlayer].y, targetfps);
                 deltas[iPlayer].x = 0;
                 deltas[iPlayer].y = 0;
                 get_bonus(curPlayer, &map);
@@ -304,31 +322,6 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
             accumulator -= targetfps;
         }
 
-            /*
-                if (handler.keyState[K_DOWN] == SDL_PRESSED) {
-                    deltaY += 1;
-                    change_direction(&player, FRONT);
-                }
-                if (handler.keyState[K_UP] == SDL_PRESSED) {
-                    deltaY -= 1;
-                    change_direction(&player, BACK);
-                }
-                if (handler.keyState[K_RIGHT] == SDL_PRESSED) {
-                    deltaX += 1;
-                    change_direction(&player, RIGHT);
-                } 
-                if (handler.keyState[K_LEFT] == SDL_PRESSED) {
-                    deltaX -= 1;
-                    change_direction(&player, LEFT);
-                }
-            }
-
-            if (handler.keyState[K_SPACE] == SDL_PRESSED) {
-                player_place_bomb(&player1, &map);
-            }
-            if (handler.keyState[K_RSHIFT] == SDL_PRESSED) {
-                player_place_bomb(&player2, &map);
-            }*/
         
         SDL_RenderClear(render);
         display_map(render, &map);

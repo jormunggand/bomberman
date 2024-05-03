@@ -56,4 +56,5 @@ bool anyDirectionPressed(KeyboardHandler* self, int iPlayer) {
         return (self->keyState[K_UP] == SDL_PRESSED || self->keyState[K_RIGHT] == SDL_PRESSED 
         || self->keyState[K_DOWN] == SDL_PRESSED || self->keyState[K_LEFT] == SDL_PRESSED);
     }
+    return false;
 }
