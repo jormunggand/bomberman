@@ -6,6 +6,7 @@
 
 #define BILLION (1000000000L)
 
+const double initial_bomb_time = 0.7;
 const double bomb_cycle = 0.5;
 const double flame_cycle = 0.4;
 
@@ -144,8 +145,12 @@ int display_bomb(SDL_Renderer* render, Tile* tile, Map* map) {
     struct timespec cur_time;
     clock_gettime(CLOCK_REALTIME, &cur_time);
     double dt = (cur_time.tv_sec - bomb->start_time.tv_sec) + (double) (cur_time.tv_nsec - bomb->start_time.tv_nsec) / (double) BILLION;
-    if (dt < NB_BOMB_TEXTURES * bomb_cycle){
-        SDL_RenderCopy(render, bombTextures[(int) (dt / bomb_cycle)], NULL, &bomb->rect);
+    if (dt < initial_bomb_time) {
+        SDL_RenderCopy(render, bombTextures[0], NULL, &bomb->rect);
+        return 0;
+    }
+    else if (dt < initial_bomb_time + (NB_BOMB_TEXTURES - 1) * bomb_cycle){
+        SDL_RenderCopy(render, bombTextures[(int) ((dt - initial_bomb_time) / bomb_cycle)], NULL, &bomb->rect);
         return 0;
     }
     else if (dt < NB_BOMB_TEXTURES * bomb_cycle + NB_FLAME_TEXTURES * flame_cycle){
