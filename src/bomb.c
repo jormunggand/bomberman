@@ -4,9 +4,12 @@
 #include "player.h"
 #include "map.h"
 
+#define BILLION (1000000000L)
 
-int bomb_cycle = 2600;
-int flame_cycle = 500;
+const double initial_bomb_time = 0.7;
+const double bomb_cycle = 0.5;
+const double flame_cycle = 0.4;
+
 
 SDL_Texture* bombTextures[NB_BOMB_TEXTURES];
 SDL_Texture* flameTextures[NB_FLAME_TEXTURES];
@@ -19,7 +22,7 @@ void init_bomb(Bomb* bomb, int x, int y, Player* owner) {
     bomb->rect.y = y * TILE_SIZE;
     bomb->rect.w = TILE_SIZE;
     bomb->rect.h = TILE_SIZE;
-    bomb->nb_ticks = 0;
+    clock_gettime(CLOCK_REALTIME, &bomb->start_time);
     bomb->radius = owner->flamePower;
     bomb->detonated = false;
     bomb->explosion_tiles = calloc((4 * bomb->radius + 1), sizeof(bool));
@@ -139,19 +142,25 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
 // return 1 if the bomb animation is done and the bomb should be removed
 int display_bomb(SDL_Renderer* render, Tile* tile, Map* map) {
     Bomb* bomb = tile->bomb;
-    if (bomb->nb_ticks < NB_BOMB_TEXTURES * bomb_cycle){
-        SDL_RenderCopy(render, bombTextures[bomb->nb_ticks / bomb_cycle], NULL, &bomb->rect);
-        bomb->nb_ticks++;
+    struct timespec cur_time;
+    clock_gettime(CLOCK_REALTIME, &cur_time);
+    double dt = (cur_time.tv_sec - bomb->start_time.tv_sec) + (double) (cur_time.tv_nsec - bomb->start_time.tv_nsec) / (double) BILLION;
+    if (dt < initial_bomb_time) {
+        SDL_RenderCopy(render, bombTextures[0], NULL, &bomb->rect);
         return 0;
     }
-    else if (bomb->nb_ticks < NB_BOMB_TEXTURES * bomb_cycle + NB_FLAME_TEXTURES * flame_cycle){
-        display_explosion(render, flameTextures[(bomb->nb_ticks - NB_BOMB_TEXTURES * bomb_cycle) / flame_cycle], bomb, map);
-        bomb->nb_ticks++;   
+    else if (dt < initial_bomb_time + (NB_BOMB_TEXTURES - 1) * bomb_cycle){
+        SDL_RenderCopy(render, bombTextures[(int) ((dt - initial_bomb_time) / bomb_cycle)], NULL, &bomb->rect);
+        return 0;
+    }
+    else if (dt < NB_BOMB_TEXTURES * bomb_cycle + NB_FLAME_TEXTURES * flame_cycle){
+        display_explosion(render, flameTextures[(int) ((dt - NB_BOMB_TEXTURES * bomb_cycle) / flame_cycle)], bomb, map);
         return 0;
     }
     else {
         return 1;
     }
+    
 }
 
 // display all bombs present on the map
