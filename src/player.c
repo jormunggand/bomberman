@@ -3,6 +3,7 @@
 
 #include "utils.h"
 #include "map.h"
+#include "bomb.h"
 
 
 SDL_Texture* front_walking[ANIMATION_FRAMES];
@@ -141,7 +142,7 @@ bool bomb_collision(SDL_Rect* r, Map *map) {
         for (int j = 0; j < 2; j++){
             int x = (r->x + i * (r->w - eps) + (1 - i) * eps) / TILE_SIZE;
             int y = (r->y + j * (r->h - eps)  + (1 - j) * eps) / TILE_SIZE;
-            if (map->grid[y][x].bomb != NULL){
+            if (map->grid[y][x].bomb != NULL && !(map->grid[y][x].bomb->detonated)){
                 return true;
             }
         }

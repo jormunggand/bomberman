@@ -1,0 +1,10 @@
+https://www.clickminded.com/button-generator/
+
+Roboto
+Size 26
+Hor padding 45
+Vert padding 20
+
+Gradient
+#ff0000
+#cc0000

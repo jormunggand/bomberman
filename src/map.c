@@ -17,6 +17,7 @@ SDL_Texture* speed_bonus = NULL;
 SDL_Texture* textures[N_TEXTURES];
 
 
+
 // draw the bonus icon on top of the background tile
 
 SDL_Texture* create_bonus_texture(SDL_Renderer* render, SDL_Texture* icon) {
@@ -69,7 +70,6 @@ int load_map_textures(SDL_Renderer* render) {
     
     return 0;
 }
-
 
 
 // function to load the map from a text file

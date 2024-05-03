@@ -15,7 +15,7 @@ int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h){
         fprintf(stderr, "Erreur SDL_Init : %s", SDL_GetError());
         return -1;
     }
-    if(0 != SDL_CreateWindowAndRenderer(w, h, SDL_WINDOW_SHOWN, window, renderer))
+    if(0 != SDL_CreateWindowAndRenderer(w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE, window, renderer))
     {
         fprintf(stderr, "Erreur SDL_CreateWindowAndRenderer : %s", SDL_GetError());
         return -1;
@@ -44,3 +44,7 @@ SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer){
 int setColor(SDL_Renderer *renderer, SDL_Color color){
     return SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 }
+
+bool point_in_rect(SDL_Rect rect, int x, int y) {
+    return x >= rect.x && (x <= rect.x + rect.w) && y >= rect.y && (y <= rect.y + rect.h);
+} 
