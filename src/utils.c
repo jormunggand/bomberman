@@ -44,3 +44,7 @@ SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer){
 int setColor(SDL_Renderer *renderer, SDL_Color color){
     return SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 }
+
+bool point_in_rect(SDL_Rect rect, int x, int y) {
+    return x >= rect.x && (x <= rect.x + rect.w) && y >= rect.y && (y <= rect.y + rect.h);
+} 

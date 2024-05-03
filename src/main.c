@@ -26,6 +26,14 @@
 
 #define SPLASH_SIZE (800)
 
+typedef enum {
+    LOCAL_MULTI,
+    ONLINE_MULTI,
+    PvC,
+    CHOOSING, // the player has not chosed yet
+    QUIT  // the player has closed the window
+} Gamemode;
+
 SDL_Texture* splashscreen;
 SDL_Texture* local_multi_btn;
 SDL_Texture* online_multi_btn;
@@ -58,11 +66,11 @@ int load_all_textures(SDL_Renderer* render) {
 }
 
 // display the screen where the player can choose the gamemode
-int display_splashcreen(SDL_Renderer* render, int windowWidth, int windowHeight) {
-    // display the buttons
+Gamemode choose_gamemode(SDL_Renderer* render, int windowWidth, int windowHeight) {
+    // display the background and the buttons
     if (load_menu_textures(render) != 0) {
         printf("%s\n", SDL_GetError());
-        return -1;
+        return QUIT;
     }
     SDL_RenderCopy(render, splashscreen, NULL, NULL);
 
@@ -83,10 +91,29 @@ int display_splashcreen(SDL_Renderer* render, int windowWidth, int windowHeight)
 
     SDL_RenderPresent(render);
 
-    // wait for the player to choose the mode
+    // wait for the player to chose the gamemode
+    Gamemode mode = CHOOSING;
     SDL_Event event;
-    bool done = false;
-    return 0;
+    while (mode == CHOOSING) {
+        if (SDL_WaitEvent(&event)) {
+            if (event.type == SDL_QUIT)
+                mode = QUIT;
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                int x = event.button.x;
+                int y = event.button.y;
+                if (point_in_rect(lmb_rect, x, y)) {
+                    mode = LOCAL_MULTI;
+                } else if (point_in_rect(omb_rect, x, y)) {
+                    mode = ONLINE_MULTI;
+                } else if (point_in_rect(pvc_rect, x, y)) {
+                    mode = PvC;
+                }
+            }
+
+        }
+    }
+
+    return mode;
 }
 
 void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
@@ -216,9 +243,9 @@ int main(int argc, char* argv[]) {
     }
 
     // Start the game
-    display_splashcreen(render, windowWidth, windowHeight);
-    //play_game(window, render, map_filename);
-
+    Gamemode gamemode = choose_gamemode(render, windowWidth, windowHeight);
+    if (gamemode == LOCAL_MULTI)
+        play_game(window, render, map_filename);
 
     exit_status = EXIT_SUCCESS;
 Quit:

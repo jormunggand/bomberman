@@ -28,3 +28,4 @@ int max(int a, int b);
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);
 SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer);
 int setColor(SDL_Renderer *renderer, SDL_Color color);
+bool point_in_rect(SDL_Rect rect, int x, int y); // check wheter (x,y) is inside the rect
