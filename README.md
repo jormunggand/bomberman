@@ -24,6 +24,7 @@ You can select which map you want to play one by running ```./main.exe ../maps/F
 
 ### Authors
 Arthur Foucard
+
 Théo Atakpama
 
 
