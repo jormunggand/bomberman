@@ -7,8 +7,8 @@
 #define BILLION (1000000000L)
 
 const double initial_bomb_time = 0.7;
-const double bomb_cycle = 0.5;
-const double flame_cycle = 0.4;
+const double bomb_cycle = 0.4;
+const double flame_cycle = 0.3;
 
 
 SDL_Texture* bombTextures[NB_BOMB_TEXTURES];
