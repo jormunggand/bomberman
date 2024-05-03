@@ -23,6 +23,11 @@
 #define MAX_BOMBS (5)
 #define MAX_POWER (5) // in number of tiles
 
+typedef struct {
+    int x;
+    int y;
+} Delta;
+
 int min(int a, int b);
 int max(int a, int b);
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);
