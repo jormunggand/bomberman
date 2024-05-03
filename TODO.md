@@ -11,7 +11,13 @@
 
 
 ## Moins important
-- rajouter des nouveaux bonus (taper dans une bombe)
+- rajouter des nouveaux bonus
+    1. Kick powerup: 
+        lorsque le joueur entre en contact avec la bombe, celle-ci est poussée dans la
+        direction opposée jusqu'au prochain mur
+    2. Punch powerup
+        lorsque le joueur appuie sur un certain bouton et en contact avec la bombe, celle-ci
+        est déplacée deux blocs plus loin
 - rajouter un HUD avec le temps restant
 
 ## Fait
