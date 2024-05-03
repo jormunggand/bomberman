@@ -11,6 +11,7 @@
 
 
 ## Moins important
+- faire un meilleur keyboard handler (trop de copy paste)
 - rajouter des nouveaux bonus (taper dans une bombe)
 - rajouter un HUD avec le temps restant
 

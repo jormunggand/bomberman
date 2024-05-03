@@ -22,6 +22,8 @@ typedef struct Player {
     SpriteDirection curDir;
     bool isWalking;
     int iframe;
+    int cpt_reset; // reset the player animation when idling
+
     SDL_Texture** animations;
     SDL_Rect rect;
     SDL_Rect collisionRect;
@@ -30,11 +32,14 @@ typedef struct Player {
     int nCurBombs; // the current number of bombs the player has lit
     float speed;
     int flamePower;
+
+    // keyboard controls to go Up, Right, Down, Left and to Fire
+    Key controls[5];
 } Player;
 
 struct Map;
 
-void init_player(Player* player, int x, int y);
+void init_player(Player* player, int x, int y, Key* controls);
 void change_direction(Player* player, SpriteDirection newDir);
 void update_sprite(Player* player);
 void display_player(SDL_Renderer* render, Player* player);
