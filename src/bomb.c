@@ -6,10 +6,8 @@
 
 #define BILLION (1000000000L)
 
-const int bomb_cycle = 2600;
-const int flame_cycle = 500;
-const double bomb_cycle_2 = 1.5;
-const double flame_cycle_2 = 0.5;
+const double bomb_cycle = 0.5;
+const double flame_cycle = 0.4;
 
 
 SDL_Texture* bombTextures[NB_BOMB_TEXTURES];
@@ -23,7 +21,6 @@ void init_bomb(Bomb* bomb, int x, int y, Player* owner) {
     bomb->rect.y = y * TILE_SIZE;
     bomb->rect.w = TILE_SIZE;
     bomb->rect.h = TILE_SIZE;
-    bomb->nb_ticks = 0;
     clock_gettime(CLOCK_REALTIME, &bomb->start_time);
     bomb->radius = owner->flamePower;
     bomb->detonated = false;
@@ -147,12 +144,12 @@ int display_bomb(SDL_Renderer* render, Tile* tile, Map* map) {
     struct timespec cur_time;
     clock_gettime(CLOCK_REALTIME, &cur_time);
     double dt = (cur_time.tv_sec - bomb->start_time.tv_sec) + (double) (cur_time.tv_nsec - bomb->start_time.tv_nsec) / (double) BILLION;
-    if (dt < NB_BOMB_TEXTURES * bomb_cycle_2){
-        SDL_RenderCopy(render, bombTextures[(int) (dt / bomb_cycle_2)], NULL, &bomb->rect);
+    if (dt < NB_BOMB_TEXTURES * bomb_cycle){
+        SDL_RenderCopy(render, bombTextures[(int) (dt / bomb_cycle)], NULL, &bomb->rect);
         return 0;
     }
-    else if (dt < NB_BOMB_TEXTURES * bomb_cycle_2 + NB_FLAME_TEXTURES * flame_cycle_2){
-        display_explosion(render, flameTextures[(int) ((dt - NB_BOMB_TEXTURES * bomb_cycle_2) / flame_cycle_2)], bomb, map);
+    else if (dt < NB_BOMB_TEXTURES * bomb_cycle + NB_FLAME_TEXTURES * flame_cycle){
+        display_explosion(render, flameTextures[(int) ((dt - NB_BOMB_TEXTURES * bomb_cycle) / flame_cycle)], bomb, map);
         return 0;
     }
     else {
