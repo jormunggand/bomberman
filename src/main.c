@@ -269,7 +269,7 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
 
     char timerStr[8];
     SDL_Color White = {255, 255, 255};
-    TTF_Font* sans = TTF_OpenFont("../assets/nasa.ttf", 24);
+    TTF_Font* sans = TTF_OpenFont("../assets/nasa.ttf", 12);
     if (sans == NULL) {
         printf("Error while loading font: %s\n", TTF_GetError());
         return;
@@ -279,9 +279,9 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
     SDL_Rect Message_rect; //create a rect
     int ww, wh;
     SDL_GetWindowSize(window, &ww, &wh);
-    Message_rect.w = 100; // controls the width of the rect
-    Message_rect.h = 100; // controls the height of the rect
-    Message_rect.y = 10; // controls the rect's y coordinte
+    Message_rect.w = 50; // controls the width of the rect
+    Message_rect.h = 50; // controls the height of the rect
+    Message_rect.y = 0; // controls the rect's y coordinte
     Message_rect.x = ww / 2 - Message_rect.w / 2;  //controls the rect's x coordinate 
 
     while (!done) {
