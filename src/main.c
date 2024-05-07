@@ -3,7 +3,6 @@
 
 #include "utils.h"
 #include "keyboard.h"
-#include "hud.h"
 
 #ifndef MAP_H
 #define MAP_H
@@ -23,6 +22,11 @@
 #ifndef BONUS_H
 #define BONUS_H
 #include "bonus.h"
+#endif
+
+#ifndef HUD_H
+#define HUD_H
+#include "hud.h"
 #endif
 
 #define SPLASH_SIZE (800)
@@ -259,7 +263,7 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
 }
 
 void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
-
+    return;
 }
 
 int main(int argc, char* argv[]) {
