@@ -18,6 +18,7 @@
     2. Punch powerup
         lorsque le joueur appuie sur un certain bouton et en contact avec la bombe, celle-ci
         est déplacée deux blocs plus loin
+- faire un meilleur keyboard handler (trop de copy paste)
 - rajouter un HUD avec le temps restant
 
 ## Fait

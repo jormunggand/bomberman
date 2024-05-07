@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "map.h"
 #include "bomb.h"
+#include "keyboard.h"
 
 
 SDL_Texture* front_walking[ANIMATION_FRAMES];
@@ -13,10 +14,11 @@ SDL_Texture* right_walking[ANIMATION_FRAMES];
 
 
 // create a player structure positioned at map.grid[y][x]
-void init_player(Player* player, int y, int x) {
+void init_player(Player* player, int x, int y, int* controls) {
     player->curDir = FRONT;
     player->iframe = 0;
     player->isWalking = false;
+    player->cpt_reset = 0;
 
     player->rect.w = TILE_SIZE;
     player->rect.h = 2 * TILE_SIZE;
@@ -35,6 +37,9 @@ void init_player(Player* player, int y, int x) {
     player->nCurBombs = 0;
     player->speed = BASE_SPEED;
     player->flamePower = 1;
+
+    for (int i = 0; i < 5; i++)
+        player->controls[i] = controls[i];
 }
 
 void display_player(SDL_Renderer* render, Player* player) {
