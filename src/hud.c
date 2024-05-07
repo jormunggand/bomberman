@@ -1,5 +1,12 @@
 #include "hud.h"
 
+#include "utils.h"
+
+SDL_Texture* splashscreen;
+SDL_Texture* local_multi_btn;
+SDL_Texture* online_multi_btn;
+SDL_Texture* playervcpu_btn;
+
 // load textures needed for the booting menu
 int load_menu_textures(SDL_Renderer* render) {
     splashscreen = loadImage("../assets/title_flat.jpg", render);
