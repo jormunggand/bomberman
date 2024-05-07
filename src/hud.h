@@ -6,11 +6,6 @@
 #include <SDL_image.h>
 #endif
 
-SDL_Texture* splashscreen;
-SDL_Texture* local_multi_btn;
-SDL_Texture* online_multi_btn;
-SDL_Texture* playervcpu_btn;
-
 typedef enum {
     LOCAL_MULTI,
     ONLINE_MULTI,
