@@ -131,7 +131,7 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
             if (i + ib >= 0 && i + ib < map->size && j + jb >= 0 && j + jb < map->size){
                 if (bomb->explosion_tiles[k]) {
                     SDL_Rect rect = {(j + jb) * TILE_SIZE, (i + ib) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-                    if (SDL_HasIntersection(&rect, &player->collisionRect) == SDL_TRUE){
+                    if (SDL_HasIntersection(&rect, &player->flameHitbox) == SDL_TRUE){
                         player->isAlive = false;
                     }
                     SDL_RenderCopy(render, texture, NULL, &rect);

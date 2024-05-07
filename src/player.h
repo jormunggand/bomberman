@@ -25,6 +25,7 @@ typedef struct Player {
     SDL_Texture** animations;
     SDL_Rect rect;
     SDL_Rect collisionRect;
+    SDL_Rect flameHitbox;
 
     int nMaxBombs; // the maximum number of bombs the player can fire simultaneously
     int nCurBombs; // the current number of bombs the player has lit
@@ -32,6 +33,7 @@ typedef struct Player {
     int flamePower;
 
     bool isAlive;
+
 } Player;
 
 struct Map;

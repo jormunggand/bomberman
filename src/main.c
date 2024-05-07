@@ -150,7 +150,6 @@ void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
     double targetfps = 1.0 / 60.0;
     double accumulator = 0.0;
 
-    // int cpt = 0;
 
     while (!done) {
         LAST = NOW;
@@ -168,7 +167,6 @@ void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
         }
         while (accumulator > targetfps)
         {
-            // cpt++;
             if (player.isAlive) {
                 if (anyDirectionPressed(&handler)) {
                     player.isWalking = true;
@@ -199,7 +197,6 @@ void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
                 if (handler.keyState[K_SPACE] == SDL_PRESSED) {
                     player_place_bomb(&player, &map);
                 }
-                // printf("%lf\n", elapsedTime);
                 edge_collision(window, &player, &map, deltaX, deltaY, targetfps);
             
                 deltaX = 0; deltaY = 0;
@@ -215,6 +212,7 @@ void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
         if (player.isAlive) {display_player(render, &player);}
         if (draw_hitboxes) {
             SDL_RenderDrawRect(render, &player.rect);
+            SDL_RenderDrawRect(render, &player.flameHitbox);
             SDL_RenderDrawRect(render, &player.collisionRect);
         }
         SDL_RenderPresent(render);
