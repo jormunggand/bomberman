@@ -60,7 +60,7 @@ void exlp_index_to_ij(int expl_index, int radius, int* i, int* j) {
     }
 }
 
-void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, Map* map){
+void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, Map* map, Player* player){
     int r = bomb->radius;
     int ib = bomb->rect.y / TILE_SIZE; 
     int jb = bomb->rect.x / TILE_SIZE;
@@ -131,6 +131,9 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
             if (i + ib >= 0 && i + ib < map->size && j + jb >= 0 && j + jb < map->size){
                 if (bomb->explosion_tiles[k]) {
                     SDL_Rect rect = {(j + jb) * TILE_SIZE, (i + ib) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+                    if (SDL_HasIntersection(&rect, &player->flameHitbox) == SDL_TRUE){
+                        player->isAlive = false;
+                    }
                     SDL_RenderCopy(render, texture, NULL, &rect);
                 }
             }
@@ -140,7 +143,7 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
 
 // display a single bomb on the screen
 // return 1 if the bomb animation is done and the bomb should be removed
-int display_bomb(SDL_Renderer* render, Tile* tile, Map* map) {
+int display_bomb(SDL_Renderer* render, Tile* tile, Map* map, Player* player) {
     Bomb* bomb = tile->bomb;
     struct timespec cur_time;
     clock_gettime(CLOCK_REALTIME, &cur_time);
@@ -154,7 +157,7 @@ int display_bomb(SDL_Renderer* render, Tile* tile, Map* map) {
         return 0;
     }
     else if (dt < NB_BOMB_TEXTURES * bomb_cycle + NB_FLAME_TEXTURES * flame_cycle){
-        display_explosion(render, flameTextures[(int) ((dt - NB_BOMB_TEXTURES * bomb_cycle) / flame_cycle)], bomb, map);
+        display_explosion(render, flameTextures[(int) ((dt - NB_BOMB_TEXTURES * bomb_cycle) / flame_cycle)], bomb, map, player);
         return 0;
     }
     else {
@@ -164,11 +167,11 @@ int display_bomb(SDL_Renderer* render, Tile* tile, Map* map) {
 }
 
 // display all bombs present on the map
-void display_bombs(SDL_Renderer* render, Map* map) {
+void display_bombs(SDL_Renderer* render, Map* map, Player* player) {
     for (int i = 0; i < map->size; i++) {
         for (int j = 0; j < map->size; j++) {
             if (map->grid[i][j].bomb != NULL) {
-                int r = display_bomb(render, &map->grid[i][j], map);
+                int r = display_bomb(render, &map->grid[i][j], map, player);
                 if (r == 1) {
                     free(map->grid[i][j].bomb->explosion_tiles);
                     free(map->grid[i][j].bomb);

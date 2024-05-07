@@ -30,11 +30,15 @@ typedef struct Player {
     SDL_Texture** animations;
     SDL_Rect rect;
     SDL_Rect collisionRect;
+    SDL_Rect flameHitbox;
 
     int nMaxBombs; // the maximum number of bombs the player can fire simultaneously
     int nCurBombs; // the current number of bombs the player has lit
     float speed;
     int flamePower;
+
+    bool isAlive;
+
 
     // keyboard controls to go Up, Right, Down, Left and to Fire
     int controls[5];

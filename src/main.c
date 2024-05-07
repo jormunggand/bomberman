@@ -151,7 +151,6 @@ Gamemode choose_gamemode(SDL_Renderer* render, int windowWidth, int windowHeight
     double targetfps = 1.0 / 60.0;
     double accumulator = 0.0;
 
-    // int cpt = 0;
 
     while (!done) {
         LAST = NOW;
@@ -169,53 +168,52 @@ Gamemode choose_gamemode(SDL_Renderer* render, int windowWidth, int windowHeight
         }
         while (accumulator > targetfps)
         {
-            // cpt++;
-            if (anyDirectionPressed(&handler)) {
-                player.isWalking = true;
-                cpt_reset++;
-                update_sprite(&player);
-                if (cpt_reset == 200){
-                    cpt_reset = 0;
-                    player.isWalking = false;
+            if (player.isAlive) {
+                if (anyDirectionPressed(&handler)) {
+                    player.isWalking = true;
+                    cpt_reset++;
+                    update_sprite(&player);
+                    if (cpt_reset == 200){
+                        cpt_reset = 0;
+                        player.isWalking = false;
+                    }
+                    if (handler.keyState[K_DOWN] == SDL_PRESSED) {
+                        deltaY += 1;
+                        change_direction(&player, FRONT);
+                    }
+                    if (handler.keyState[K_UP] == SDL_PRESSED) {
+                        deltaY -= 1;
+                        change_direction(&player, BACK);
+                    }
+                    if (handler.keyState[K_RIGHT] == SDL_PRESSED) {
+                        deltaX += 1;
+                        change_direction(&player, RIGHT);
+                    } 
+                    if (handler.keyState[K_LEFT] == SDL_PRESSED) {
+                        deltaX -= 1;
+                        change_direction(&player, LEFT);
+                    }
                 }
-                if (handler.keyState[K_DOWN] == SDL_PRESSED) {
-                    deltaY += 1;
-                    change_direction(&player, FRONT);
-                }
-                if (handler.keyState[K_UP] == SDL_PRESSED) {
-                    deltaY -= 1;
-                    change_direction(&player, BACK);
-                }
-                if (handler.keyState[K_RIGHT] == SDL_PRESSED) {
-                    deltaX += 1;
-                    change_direction(&player, RIGHT);
-                } 
-                if (handler.keyState[K_LEFT] == SDL_PRESSED) {
-                    deltaX -= 1;
-                    change_direction(&player, LEFT);
-                }
-            }
 
-            if (handler.keyState[K_SPACE] == SDL_PRESSED) {
-                player_place_bomb(&player, &map);
+                if (handler.keyState[K_SPACE] == SDL_PRESSED) {
+                    player_place_bomb(&player, &map);
+                }
+                edge_collision(window, &player, &map, deltaX, deltaY, targetfps);
+            
+                deltaX = 0; deltaY = 0;
+                get_bonus(&player, &map);
             }
-            // printf("%lf\n", elapsedTime);
-            edge_collision(window, &player, &map, deltaX, deltaY, targetfps);
-        
-            deltaX = 0; deltaY = 0;
-            get_bonus(&player, &map);
 
             accumulator -= targetfps;
         }
-        // printf("nb while  = %d\n", cpt); 
-        // cpt = 0; 
         
         SDL_RenderClear(render);
         display_map(render, &map);
-        display_bombs(render, &map);
-        display_player(render, &player);
+        display_bombs(render, &map, &player);
+        if (player.isAlive) {display_player(render, &player);}
         if (draw_hitboxes) {
             SDL_RenderDrawRect(render, &player.rect);
+            SDL_RenderDrawRect(render, &player.flameHitbox);
             SDL_RenderDrawRect(render, &player.collisionRect);
         }
         SDL_RenderPresent(render);
