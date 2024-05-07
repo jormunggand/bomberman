@@ -25,6 +25,7 @@
 #endif
 
 #define SPLASH_SIZE (800)
+#define BILLION (1000000000L)
 
 typedef enum {
     LOCAL_MULTI,
@@ -266,6 +267,23 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
     double targetfps = 1.0 / 60.0;
     double accumulator = 0.0;
 
+    char timerStr[8];
+    SDL_Color White = {255, 255, 255};
+    TTF_Font* sans = TTF_OpenFont("../assets/nasa.ttf", 24);
+    if (sans == NULL) {
+        printf("Error while loading font: %s\n", TTF_GetError());
+        return;
+    }
+    struct timespec start_time;
+    clock_gettime(CLOCK_REALTIME, &start_time);
+    SDL_Rect Message_rect; //create a rect
+    int ww, wh;
+    SDL_GetWindowSize(window, &ww, &wh);
+    Message_rect.w = 100; // controls the width of the rect
+    Message_rect.h = 100; // controls the height of the rect
+    Message_rect.y = 10; // controls the rect's y coordinte
+    Message_rect.x = ww / 2 - Message_rect.w / 2;  //controls the rect's x coordinate 
+
     while (!done) {
         LAST = NOW;
         NOW = SDL_GetPerformanceCounter();
@@ -321,7 +339,15 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
             accumulator -= targetfps;
         }
 
+        struct timespec cur_time;
+        clock_gettime(CLOCK_REALTIME, &cur_time);
+        double dt = (cur_time.tv_sec - start_time.tv_sec) + (double) (cur_time.tv_nsec - start_time.tv_nsec) / (double) BILLION;
+        sprintf(timerStr, "%.2f", dt);
+        SDL_Surface* surfaceMessage = TTF_RenderText_Solid(sans, timerStr, White); 
+        SDL_Texture* message = SDL_CreateTextureFromSurface(render, surfaceMessage);
         
+
+
         SDL_RenderClear(render);
         display_map(render, &map);
         for (int i = 0; i < nPlayers; i++)
@@ -329,6 +355,7 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
         for (int i = 0; i < nPlayers; i++) {
             if (players[i].isAlive) display_player(render, &players[i]);
         }
+        SDL_RenderCopy(render, message, NULL, &Message_rect);
         SDL_RenderPresent(render);
     }
 }
