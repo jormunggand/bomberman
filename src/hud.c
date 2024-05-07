@@ -6,6 +6,8 @@ SDL_Texture* splashscreen;
 SDL_Texture* local_multi_btn;
 SDL_Texture* online_multi_btn;
 SDL_Texture* playervcpu_btn;
+SDL_Texture* host_btn;
+SDL_Texture* join_btn;
 
 // load textures needed for the booting menu
 int load_menu_textures(SDL_Renderer* render) {
@@ -14,7 +16,11 @@ int load_menu_textures(SDL_Renderer* render) {
     online_multi_btn = loadImage("../assets/Menu/online_multiplayer_button.png", render);
     playervcpu_btn = loadImage("../assets/Menu/player_vs_cpu_button.png", render);
 
-    if (splashscreen == NULL || local_multi_btn == NULL || online_multi_btn == NULL || playervcpu_btn == NULL) {
+    host_btn = loadImage("../assets/Menu/host_btn.png", render);
+    join_btn = loadImage("../assets/Menu/join_btn.png", render);
+
+    if (splashscreen == NULL || local_multi_btn == NULL || online_multi_btn == NULL 
+        || playervcpu_btn == NULL || host_btn == NULL || join_btn == NULL) {
         printf("%s\n", SDL_GetError());
         return -1;      
     }

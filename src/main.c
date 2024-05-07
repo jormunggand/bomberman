@@ -44,8 +44,6 @@ int load_all_textures(SDL_Renderer* render) {
     return 0;
 }
 
-
-
 /*void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
     Map map;
     if (read_map_from_file(&map, map_filename) != 0)
