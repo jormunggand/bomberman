@@ -247,7 +247,6 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
     for (int i = 0; i < nPlayers; i++)
         display_player(render, &players[i]);
     SDL_RenderPresent(render);
-    //SDL_Delay(5000);
     
     SDL_Event event;
     KeyboardHandler handler; // to handle simultaneous keypresses
@@ -282,6 +281,8 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
         }
         while (accumulator > targetfps) {
             for (int iPlayer = 0; iPlayer < nPlayers; iPlayer++) {
+                if (!players[iPlayer].isAlive)
+                    continue;
                 Player* curPlayer = &players[iPlayer];
                 if (anyDirectionPressed(&handler, iPlayer+1)) {
                     curPlayer->isWalking = true;
@@ -323,9 +324,10 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
         
         SDL_RenderClear(render);
         display_map(render, &map);
-        display_bombs(render, &map);
+        for (int i = 0; i < nPlayers; i++)
+            display_bombs(render, &map, &players[i]);
         for (int i = 0; i < nPlayers; i++) {
-            display_player(render, &players[i]);
+            if (players[i].isAlive) display_player(render, &players[i]);
         }
         SDL_RenderPresent(render);
     }
