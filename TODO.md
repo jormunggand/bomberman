@@ -1,16 +1,17 @@
 # TODO
 
 ## Important
-- le personnage doit mourir au contact d'une bombe
-
-- gérer le multijoueur local
+- rajouter un HUD avec le temps restant et des stats
 - gérer le multijoueur en réseau
-- gérer un mode ou le joueur affronte une IA
+- écran de victoire et bouton rejouer
 
+- gérer un mode ou le joueur affronte une IA
 - rajouter des ennemis
 
 
+
 ## Moins important
+- ne pas de déplacer plus vite en diagonale
 - rajouter des nouveaux bonus
     1. Kick powerup: 
         lorsque le joueur entre en contact avec la bombe, celle-ci est poussée dans la
@@ -19,9 +20,10 @@
         lorsque le joueur appuie sur un certain bouton et en contact avec la bombe, celle-ci
         est déplacée deux blocs plus loin
 - faire un meilleur keyboard handler (trop de copy paste)
-- rajouter un HUD avec le temps restant
 
 ## Fait
+- le personnage doit mourir au contact d'une bombe
+- gérer le multijoueur local
 - ajouter un splashscreen au début avec un menu
     - Boutons Multijoueur local, Multijoueur en ligne, Joueur contre Ordinteur
 - les bonus doivent être détruits par les bombes
