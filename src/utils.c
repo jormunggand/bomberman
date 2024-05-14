@@ -10,7 +10,7 @@ int min(int a, int b) {
 }
 
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h){
-    if(0 != SDL_Init(SDL_INIT_VIDEO))
+    if(0 != SDL_Init(SDL_INIT_VIDEO) || 0 != SDLNet_Init()) 
     {
         fprintf(stderr, "Erreur SDL_Init : %s", SDL_GetError());
         return -1;
