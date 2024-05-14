@@ -8,7 +8,9 @@
 
 typedef enum {
     LOCAL_MULTI,
-    ONLINE_MULTI,
+    ONLINE_MENU, 
+    ONLINE_HOSTING,
+    ONLINE_JOINING,
     PvC,
     CHOOSING, // the player has not chosed yet
     QUIT  // the player has closed the window

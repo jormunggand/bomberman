@@ -75,12 +75,11 @@ Gamemode choose_gamemode(SDL_Renderer* render, int windowWidth, int windowHeight
                 if (point_in_rect(lmb_rect, x, y)) {
                     mode = LOCAL_MULTI;
                 } else if (point_in_rect(omb_rect, x, y)) {
-                    mode = ONLINE_MULTI;
+                    mode = ONLINE_MENU;
                 } else if (point_in_rect(pvc_rect, x, y)) {
                     mode = PvC;
                 }
             }
-
         }
     }
 
@@ -117,6 +116,10 @@ Gamemode online_menu(SDL_Renderer* render, int windowWidth, int windowHeight) {
             int y = event.button.y;
             if (point_in_rect(back_rect, x, y)) {
                 return CHOOSING;
+            } else if (point_in_rect(host_rect, x, y)) {
+                return ONLINE_HOSTING;
+            } else if (point_in_rect(join_rect, x, y)) {
+                return ONLINE_JOINING;
             }
         }
     }
