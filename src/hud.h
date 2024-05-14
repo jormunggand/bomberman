@@ -15,4 +15,6 @@ typedef enum {
 } Gamemode;
 
 int load_menu_textures(SDL_Renderer* render);
+void draw_button(SDL_Renderer* render, SDL_Texture* text, int baseX, int baseY);
 Gamemode choose_gamemode(SDL_Renderer* render, int windowWidth, int windowHeight);
+Gamemode online_menu(SDL_Renderer* render, int windowWidth, int windowHeight);

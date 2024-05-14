@@ -289,10 +289,16 @@ int main(int argc, char* argv[]) {
 
     // Start the game
     Gamemode gamemode = choose_gamemode(render, windowWidth, windowHeight);
-    if (gamemode == LOCAL_MULTI)
-        local_multiplayer(window, render, map_filename);
-    else if (gamemode == ONLINE_MULTI)
-        online_multiplayer(window, render, map_filename);
+    while (gamemode != QUIT) {
+        if (gamemode == LOCAL_MULTI) {
+            local_multiplayer(window, render, map_filename);
+            gamemode = QUIT;
+        } else if (gamemode == ONLINE_MULTI) {
+            gamemode = online_menu(render, windowWidth, windowHeight);
+        } else if (gamemode == CHOOSING) {
+            gamemode = choose_gamemode(render, windowWidth, windowHeight);
+        }
+    }
 
     exit_status = EXIT_SUCCESS;
 Quit:
