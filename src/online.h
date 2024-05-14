@@ -11,5 +11,5 @@
 #endif
 
 int receiveMessages(void *data);
-void host_server(SDL_Renderer* render, int windowWidth, int windowHeight);
-void join_server(SDL_Renderer* render, int windowWidth, int windowHeight);
+int host_server(SDL_Renderer* render, int windowWidth, int windowHeight);
+int join_server(SDL_Renderer* render, int windowWidth, int windowHeight);
