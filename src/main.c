@@ -212,6 +212,7 @@ int main(int argc, char* argv[]) {
 Quit:
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
+    SDLNet_Quit();
     SDL_Quit();
     return exit_status;
 }
