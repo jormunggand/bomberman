@@ -29,6 +29,13 @@
 #include "hud.h"
 #endif
 
+#ifndef ONLINE_H
+#define ONLINE_H
+#include "online.h"
+#endif
+
+
+
 #define SPLASH_SIZE (800)
 
 
@@ -43,113 +50,6 @@ int load_all_textures(SDL_Renderer* render) {
     }
     return 0;
 }
-
-/*void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
-    Map map;
-    if (read_map_from_file(&map, map_filename) != 0)
-    {
-        printf("Error while opening the map file (%s)\n", SDL_GetError());
-    }
-    init_bonus(&map); // randomly add hidden bonuses in soft walls
-
-    // Resize the window to fit the map
-    SDL_SetWindowSize(window, map.size * TILE_SIZE, map.size * TILE_SIZE);
-
-    Player player;
-    init_player(&player, map.starty, map.startx);
-
-    // load and display map and player
-    load_all_textures(render);
-    display_map(render, &map);
-    display_player(render, &player);
-
-    SDL_RenderPresent(render);
-    
-    SDL_Event event;
-    KeyboardHandler handler; // to handle simultneous keypresses
-    initHandler(&handler);
-
-    bool done = false, draw_hitboxes = false;
-    int cpt_reset = 0;
-    int deltaX = 0, deltaY = 0;
-
-    Uint64 NOW = SDL_GetPerformanceCounter();
-    Uint64 LAST = 0;
-    double deltaTime = 0;
-    double targetfps = 1.0 / 60.0;
-    double accumulator = 0.0;
-
-    // int cpt = 0;
-
-    while (!done) {
-        LAST = NOW;
-        NOW = SDL_GetPerformanceCounter();
-        deltaTime = (double)( (NOW - LAST) / (double) SDL_GetPerformanceFrequency() ); // delta time in seconds
-        accumulator += deltaTime;
-
-        int eventPresent = SDL_PollEvent(&event);
-        if (eventPresent) {
-            if (event.type == SDL_QUIT || handler.keyState[K_ESC] == SDL_PRESSED)
-                done = true;
-            else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-                handleEvent(&handler, event.key);
-            }
-        }
-        while (accumulator > targetfps)
-        {
-            // cpt++;
-            if (anyDirectionPressed(&handler)) {
-                player.isWalking = true;
-                cpt_reset++;
-                update_sprite(&player);
-                if (cpt_reset == 200){
-                    cpt_reset = 0;
-                    player.isWalking = false;
-                }
-                if (handler.keyState[K_DOWN] == SDL_PRESSED) {
-                    deltaY += 1;
-                    change_direction(&player, FRONT);
-                }
-                if (handler.keyState[K_UP] == SDL_PRESSED) {
-                    deltaY -= 1;
-                    change_direction(&player, BACK);
-                }
-                if (handler.keyState[K_RIGHT] == SDL_PRESSED) {
-                    deltaX += 1;
-                    change_direction(&player, RIGHT);
-                } 
-                if (handler.keyState[K_LEFT] == SDL_PRESSED) {
-                    deltaX -= 1;
-                    change_direction(&player, LEFT);
-                }
-            }
-
-            if (handler.keyState[K_SPACE] == SDL_PRESSED) {
-                player_place_bomb(&player, &map);
-            }
-            // printf("%lf\n", elapsedTime);
-            edge_collision(window, &player, &map, deltaX, deltaY, targetfps);
-        
-            deltaX = 0; deltaY = 0;
-            get_bonus(&player, &map);
-
-            accumulator -= targetfps;
-        }
-        // printf("nb while  = %d\n", cpt); 
-        // cpt = 0; 
-        
-        SDL_RenderClear(render);
-        display_map(render, &map);
-        display_bombs(render, &map);
-        display_player(render, &player);
-        if (draw_hitboxes) {
-            SDL_RenderDrawRect(render, &player.rect);
-            SDL_RenderDrawRect(render, &player.collisionRect);
-        }
-        SDL_RenderPresent(render);
-    }
-
-}*/
 
 // launch a game with two players
 void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
@@ -293,10 +193,18 @@ int main(int argc, char* argv[]) {
         if (gamemode == LOCAL_MULTI) {
             local_multiplayer(window, render, map_filename);
             gamemode = QUIT;
-        } else if (gamemode == ONLINE_MULTI) {
+        } else if (gamemode == ONLINE_MENU) {
             gamemode = online_menu(render, windowWidth, windowHeight);
-        } else if (gamemode == CHOOSING) {
+        } else if (gamemode == ONLINE_HOSTING) {
+            host_server(render, windowWidth, windowHeight);
+            gamemode = CHOOSING;
+        } else if (gamemode == ONLINE_JOINING) {
+            join_server(render, windowWidth, windowHeight);
+            gamemode = CHOOSING;
+        } else if(gamemode == CHOOSING) {
             gamemode = choose_gamemode(render, windowWidth, windowHeight);
+        } else if (gamemode == PvC) {
+            gamemode = QUIT;
         }
     }
 
