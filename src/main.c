@@ -192,7 +192,7 @@ int main(int argc, char* argv[]) {
     while (gamemode != QUIT) {
         if (gamemode == LOCAL_MULTI) {
             local_multiplayer(window, render, map_filename);
-            gamemode = QUIT;
+            gamemode = CHOOSING;
         } else if (gamemode == ONLINE_MENU) {
             gamemode = online_menu(render, windowWidth, windowHeight);
         } else if (gamemode == ONLINE_HOSTING) {

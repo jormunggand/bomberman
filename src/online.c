@@ -1,6 +1,9 @@
 #include "online.h"
 
+#include "cJSON.h"
+
 #include <stdbool.h>
+#include <string.h>
 
 #define MAX_MESSAGE_LENGTH 1024
 
@@ -19,7 +22,11 @@ int receiveMessages(void *data)
     return 0;
 }
 
-/*int sendControls(void* data) 
+
+// send keyboard input to the server socket in data
+// the format is a string "KEY_SCANCODE*STATE" where KEY_SCANCODE is the scancode of the key and STATE either
+// SDL_PRESSED or SDL_RELEASED (both are integers)
+int sendControls(void* data) 
 {
     TCPsocket socket = (TCPsocket)data; // Casting de data en TCPsocket
     char message[MAX_MESSAGE_LENGTH];
@@ -30,8 +37,14 @@ int receiveMessages(void *data)
     {
         if (SDL_PollEvent(&event))
         {
-            if (event.type == SDL_KEYDOWN) {
-                event.key.keysym.scancode
+            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
+                sprintf(message, "%s*%s\0", itoa(event.key.keysym.scancode), itoa(event.key.state));
+                int size = strlen(message);
+                int bytesSent = SDLNet_TCP_Send(socket, message, size);
+                if (bytesSent < size) {
+                    printf("Error while sending controls (only %d bytes were sent)\n", bytesSent);
+                    printf("%s\n", SDLNet_GetError());
+                }
             }
         }
     }
