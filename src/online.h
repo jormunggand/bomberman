@@ -12,4 +12,5 @@
 
 int receiveMessages(void *data);
 int host_server(SDL_Renderer* render, int windowWidth, int windowHeight);
+int sendControls(void* data);
 int join_server(SDL_Renderer* render, int windowWidth, int windowHeight);

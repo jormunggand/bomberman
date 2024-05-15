@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h> 
 
 #define MAX_MESSAGE_LENGTH 1024
 
@@ -22,34 +23,6 @@ int receiveMessages(void *data)
     return 0;
 }
 
-
-// send keyboard input to the server socket in data
-// the format is a string "KEY_SCANCODE*STATE" where KEY_SCANCODE is the scancode of the key and STATE either
-// SDL_PRESSED or SDL_RELEASED (both are integers)
-int sendControls(void* data) 
-{
-    TCPsocket socket = (TCPsocket)data; // Casting de data en TCPsocket
-    char message[MAX_MESSAGE_LENGTH];
-
-    SDL_Event event;
-    bool done = false;
-    while (!done) 
-    {
-        if (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-                sprintf(message, "%s*%s\0", itoa(event.key.keysym.scancode), itoa(event.key.state));
-                int size = strlen(message);
-                int bytesSent = SDLNet_TCP_Send(socket, message, size);
-                if (bytesSent < size) {
-                    printf("Error while sending controls (only %d bytes were sent)\n", bytesSent);
-                    printf("%s\n", SDLNet_GetError());
-                }
-            }
-        }
-    }
-
-}*/
 
 int host_server(SDL_Renderer* render, int windowWidth, int windowHeight) {
     IPaddress ip; // server's ip address
@@ -125,29 +98,54 @@ NetworkError:
     return -1;
 }
 
-int join_server(SDL_Renderer* render, int windowWidth, int windowHeight) {
-    IPaddress ip;           // Adresse IP du serveur
-    TCPsocket clientSocket; // Socket du client
+// send keyboard input to the server socket in data
+// the format is a string "KEY_SCANCODE*STATE" where KEY_SCANCODE is the scancode of the key and STATE either
+// SDL_PRESSED or SDL_RELEASED (both are integers)
+int sendControls(void* data) 
+{
+    TCPsocket socket = (TCPsocket)data; // Casting de data en TCPsocket
+    char message[MAX_MESSAGE_LENGTH];
 
-    SDLNet_ResolveHost(&ip, "127.0.0.1", 1234); // Se connecter au serveur a l'adresse IP 127.0.0.1 sur le port 1234
-    clientSocket = SDLNet_TCP_Open(&ip);        // Ouvrir une connexion TCP avec le serveur
-
-    SDL_Thread *recvThread = SDL_CreateThread(receiveMessages, "ReceiveMessages", (void *)clientSocket); // Créer un thread pour recevoir les messages du serveur
-
-    char message[MAX_MESSAGE_LENGTH]; // Buffer pour stocker les messages entrés par l'utilisateur
-
-    while (1)
+    SDL_Event event;
+    bool done = false;
+    while (!done) 
     {
-        fgets(message, MAX_MESSAGE_LENGTH, stdin); // Lire l'entrée utilisateur
-
-        if (SDLNet_TCP_Send(clientSocket, message, strlen(message) + 1) < strlen(message) + 1) // Envoyer le message au serveur
+        if (SDL_PollEvent(&event))
         {
-            fprintf(stderr, "SDLNet_TCP_Send: %s\n", SDLNet_GetError()); // Afficher une erreur si l'envoi échoue
-            break;
+            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) 
+            {
+                if (event.key.keysym.sym == SDLK_ESCAPE)
+                    done = true;
+                else 
+                {
+                    sprintf(message, "%d*%d", event.key.keysym.scancode, event.key.state);
+                    int size = strlen(message);
+                    int bytesSent = SDLNet_TCP_Send(socket, message, size);
+                    if (bytesSent < size) {
+                        printf("Error while sending controls (only %d bytes were sent)\n", bytesSent);
+                        printf("%s\n", SDLNet_GetError());
+                        return -1;
+                    }
+                }
+            }
         }
     }
+    return 0;
+}
 
-    SDL_WaitThread(recvThread, NULL); // Attendre la fin du thread de réception
-    SDLNet_TCP_Close(clientSocket);
+int join_server(SDL_Renderer* render, int windowWidth, int windowHeight) {
+    IPaddress ip;           // Adresse IP du serveur
+    TCPsocket serverSocket; // Socket du client
+
+    SDLNet_ResolveHost(&ip, "127.0.0.1", 1234); // Se connecter au serveur a l'adresse IP 127.0.0.1 sur le port 1234
+    serverSocket = SDLNet_TCP_Open(&ip);        // Ouvrir une connexion TCP avec le serveur
+
+    SDL_Thread *sendContThread = SDL_CreateThread(sendControls, "SendControls", (void *)serverSocket); // Créer un thread pour recevoir les messages du serveur
+
+    
+
+
+    SDL_WaitThread(sendContThread, NULL); // Attendre la fin du thread de réception
+    SDLNet_TCP_Close(serverSocket);
     return 0;
 }
