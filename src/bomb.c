@@ -49,7 +49,6 @@ void player_place_bomb(Player* player, Map* map) {
             if (bombs[i] == NULL) { 
                 bombs[i] = (Bomb*) malloc(sizeof(Bomb));
                 assert(bombs[i] != NULL);
-                printf("ok\n");
                 init_bomb(bombs[i], x / TILE_SIZE, y / TILE_SIZE, player);
                 player->nCurBombs++;
                 break;
@@ -142,7 +141,6 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
         }
         bomb->detonated = true;
         bomb->isMoving = false;
-        bomb->owner->nCurBombs--;
     }
     else {
         int i, j;
@@ -209,7 +207,7 @@ int display_bomb(SDL_Renderer* render, Bomb* bomb, Map* map) {
 
 // update the bomb positions according to their direction
 void update_bombs_positions(Map* map, double dt){
-    int speed = 4 * MAX_SPEED;
+    int speed = 5 * MAX_SPEED;
     for (int k = 0; k < MAX_BOMBS && bombs[k] != NULL; k++){
         if (bombs[k]->isMoving) {
             switch (bombs[k]->direction){
@@ -252,6 +250,7 @@ void display_bombs(SDL_Renderer* render, Map* map) {
     for (int k = 0; k < MAX_BOMBS && bombs[k] != NULL; k++) {
         int r = display_bomb(render, bombs[k], map);
         if (r == 1) {
+            bombs[k]->owner->nCurBombs--;
             free(bombs[k]->explosion_tiles);
             free(bombs[k]);
             bombs[k] = NULL;
