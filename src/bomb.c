@@ -4,7 +4,10 @@
 #include "player.h"
 #include "map.h"
 
+#include <assert.h>
+
 #define BILLION (1000000000L)
+
 
 const double initial_bomb_time = 0.7;
 const double bomb_cycle = 0.4;
@@ -14,6 +17,8 @@ const double flame_cycle = 0.3;
 SDL_Texture* bombTextures[NB_BOMB_TEXTURES];
 SDL_Texture* flameTextures[NB_FLAME_TEXTURES];
 
+Bomb* bombs[MAX_BOMBS] = {NULL};
+
 // initialize a bomb at the given map coordinates with a firepower of radius
 // the bomb needs a pointer to the player who placed it to make sure he cannot
 // place too many bombs
@@ -22,20 +27,34 @@ void init_bomb(Bomb* bomb, int x, int y, Player* owner) {
     bomb->rect.y = y * TILE_SIZE;
     bomb->rect.w = TILE_SIZE;
     bomb->rect.h = TILE_SIZE;
-    clock_gettime(CLOCK_REALTIME, &bomb->start_time);
+    clock_gettime(CLOCK_REALTIME, &(bomb->start_time));
     bomb->radius = owner->flamePower;
     bomb->detonated = false;
     bomb->explosion_tiles = calloc((4 * bomb->radius + 1), sizeof(bool));
     bomb->owner = owner;
+    bomb->isMoving = false;
+    bomb->direction = -1;
 }
 
 void player_place_bomb(Player* player, Map* map) {
-    int x = (player->collisionRect.x + player->collisionRect.w / 2) / TILE_SIZE;
-    int y = (player->collisionRect.y + player->collisionRect.h / 2) / TILE_SIZE;
-    if (map->grid[y][x].bomb == NULL && player->nCurBombs < player->nMaxBombs) {
-        map->grid[y][x].bomb = malloc(sizeof(Bomb));
-        init_bomb(map->grid[y][x].bomb, x, y, player);
-        player->nCurBombs++;
+    int x = (player->collisionRect.x + player->collisionRect.w / 2);
+    int y = (player->collisionRect.y + player->collisionRect.h / 2);
+    if (player->nCurBombs < player->nMaxBombs) {
+        for (int i = 0; i < MAX_BOMBS; i++) {
+            if (bombs[i] != NULL && point_in_rect(bombs[i]->rect, x, y)) {
+                return; // the player is already standing on a bomb
+            }
+        }
+        for (int i = 0; i < MAX_BOMBS; i++) {
+            if (bombs[i] == NULL) { 
+                bombs[i] = (Bomb*) malloc(sizeof(Bomb));
+                assert(bombs[i] != NULL);
+                printf("ok\n");
+                init_bomb(bombs[i], x / TILE_SIZE, y / TILE_SIZE, player);
+                player->nCurBombs++;
+                break;
+            }
+        }
     }
 }
 
@@ -60,10 +79,10 @@ void exlp_index_to_ij(int expl_index, int radius, int* i, int* j) {
     }
 }
 
-void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, Map* map, Player* player){
+void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, Map* map){
     int r = bomb->radius;
-    int ib = bomb->rect.y / TILE_SIZE; 
-    int jb = bomb->rect.x / TILE_SIZE;
+    int ib = (bomb->rect.y + bomb->rect.h / 2) / TILE_SIZE; 
+    int jb = (bomb->rect.x + bomb->rect.w / 2) / TILE_SIZE;
     bool flag = false;
     if (!bomb->detonated) {
         for (int sgn = -1; sgn <= 1; sgn += 2) {
@@ -122,6 +141,7 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
             }
         }
         bomb->detonated = true;
+        bomb->isMoving = false;
         bomb->owner->nCurBombs--;
     }
     else {
@@ -131,9 +151,6 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
             if (i + ib >= 0 && i + ib < map->size && j + jb >= 0 && j + jb < map->size){
                 if (bomb->explosion_tiles[k]) {
                     SDL_Rect rect = {(j + jb) * TILE_SIZE, (i + ib) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-                    if (SDL_HasIntersection(&rect, &player->flameHitbox) == SDL_TRUE){
-                        player->isAlive = false;
-                    }
                     SDL_RenderCopy(render, texture, NULL, &rect);
                 }
             }
@@ -141,23 +158,47 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
     }
 }
 
+void updateDeathStatus(Map* map, Player* player){
+    for (int b = 0; b < MAX_BOMBS; b++){
+        Bomb* bomb = bombs[b];
+        if (bomb == NULL) continue;
+        if (!bomb->detonated) continue;
+        int ib = (bomb->rect.y + bomb->rect.h / 2) / TILE_SIZE; 
+        int jb = (bomb->rect.x + bomb->rect.w / 2) / TILE_SIZE;
+        int i, j;
+        for (int k = 0; k < 4 * bomb->radius + 1; k++) {
+            exlp_index_to_ij(k, bomb->radius, &i, &j);
+            if (i + ib >= 0 && i + ib < map->size && j + jb >= 0 && j + jb < map->size){
+                if (bomb->explosion_tiles[k]) {
+                    SDL_Rect rect = {(j + jb) * TILE_SIZE, (i + ib) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+                    for (int k = 0; k < 2; k++){
+                        if (SDL_HasIntersection(&rect, &(player->flameHitbox)) == SDL_TRUE){
+                            player->isAlive = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 // display a single bomb on the screen
 // return 1 if the bomb animation is done and the bomb should be removed
-int display_bomb(SDL_Renderer* render, Tile* tile, Map* map, Player* player) {
-    Bomb* bomb = tile->bomb;
+int display_bomb(SDL_Renderer* render, Bomb* bomb, Map* map) {
     struct timespec cur_time;
     clock_gettime(CLOCK_REALTIME, &cur_time);
     double dt = (cur_time.tv_sec - bomb->start_time.tv_sec) + (double) (cur_time.tv_nsec - bomb->start_time.tv_nsec) / (double) BILLION;
     if (dt < initial_bomb_time) {
-        SDL_RenderCopy(render, bombTextures[0], NULL, &bomb->rect);
+        SDL_RenderCopy(render, bombTextures[0], NULL, &(bomb->rect));
         return 0;
     }
     else if (dt < initial_bomb_time + (NB_BOMB_TEXTURES - 1) * bomb_cycle){
-        SDL_RenderCopy(render, bombTextures[(int) ((dt - initial_bomb_time) / bomb_cycle)], NULL, &bomb->rect);
+        SDL_RenderCopy(render, bombTextures[(int) ((dt - initial_bomb_time) / bomb_cycle)], NULL, &(bomb->rect));
         return 0;
     }
     else if (dt < NB_BOMB_TEXTURES * bomb_cycle + NB_FLAME_TEXTURES * flame_cycle){
-        display_explosion(render, flameTextures[(int) ((dt - NB_BOMB_TEXTURES * bomb_cycle) / flame_cycle)], bomb, map, player);
+        display_explosion(render, flameTextures[(int) ((dt - NB_BOMB_TEXTURES * bomb_cycle) / flame_cycle)], bomb, map);
         return 0;
     }
     else {
@@ -166,18 +207,54 @@ int display_bomb(SDL_Renderer* render, Tile* tile, Map* map, Player* player) {
     
 }
 
-// display all bombs present on the map
-void display_bombs(SDL_Renderer* render, Map* map, Player* player) {
-    for (int i = 0; i < map->size; i++) {
-        for (int j = 0; j < map->size; j++) {
-            if (map->grid[i][j].bomb != NULL) {
-                int r = display_bomb(render, &map->grid[i][j], map, player);
-                if (r == 1) {
-                    free(map->grid[i][j].bomb->explosion_tiles);
-                    free(map->grid[i][j].bomb);
-                    map->grid[i][j].bomb = NULL;
+// update the bomb positions according to their direction
+void update_bombs_positions(Map* map, double dt){
+    int speed = 4 * MAX_SPEED;
+    for (int k = 0; k < MAX_BOMBS && bombs[k] != NULL; k++){
+        if (bombs[k]->isMoving) {
+            switch (bombs[k]->direction){
+                case FRONT:
+                    bombs[k]->rect.y += speed * dt;
+                    break;
+                case BACK:
+                    bombs[k]->rect.y -= speed * dt;
+                    break;
+                case LEFT:
+                    bombs[k]->rect.x -= speed * dt;
+                    break;
+                case RIGHT:
+                    bombs[k]->rect.x += speed * dt;
+                    break;
+            }
+            if (check_collision(&(bombs[k]->rect), map)) {
+                bombs[k]->isMoving = false;
+                switch(bombs[k]->direction){
+                    case FRONT:
+                        bombs[k]->rect.y -= speed * dt;
+                        break;
+                    case BACK:
+                        bombs[k]->rect.y += speed * dt;
+                        break;
+                    case LEFT:
+                        bombs[k]->rect.x += speed * dt;
+                        break;
+                    case RIGHT:
+                        bombs[k]->rect.x -= speed * dt;
+                        break;
                 }
             }
+        }
+    }
+}
+
+// display all bombs present on the map
+void display_bombs(SDL_Renderer* render, Map* map) {
+    for (int k = 0; k < MAX_BOMBS && bombs[k] != NULL; k++) {
+        int r = display_bomb(render, bombs[k], map);
+        if (r == 1) {
+            free(bombs[k]->explosion_tiles);
+            free(bombs[k]);
+            bombs[k] = NULL;
         }
     }
 }

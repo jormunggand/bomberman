@@ -56,5 +56,5 @@ int load_player_textures(SDL_Renderer* render);
 
 void edge_collision(SDL_Window* window, Player* player, struct Map *map, int deltaX, int deltaY, double elapsedTime);
 bool check_collision(SDL_Rect* r, struct Map *map);
-bool bomb_collision(SDL_Rect* r, struct Map *map);
+bool bomb_collision(SDL_Rect* r, struct Map *map, int sign, bool collidedWithBomb);
 

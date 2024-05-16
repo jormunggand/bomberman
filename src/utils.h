@@ -23,7 +23,7 @@
 #define SPEED_BOOST (32) // in pixels
 #define MAX_SPEED (256)
 
-#define MAX_BOMBS (5)
+#define MAX_BOMBS_PER_PLAYER (5)
 #define MAX_POWER (5) // in number of tiles
 
 typedef struct {

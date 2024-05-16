@@ -111,15 +111,17 @@ void edge_collision(SDL_Window* window, Player* player, Map *map, int deltaX, in
     SDL_Rect* player_rect = &player->rect;
     SDL_Rect* collision_rect = &player->collisionRect;
     SDL_Rect* flame_rect = &player->flameHitbox;
+    if (deltaX != 0 && deltaY != 0){deltaTime /= sqrt(2);} // to avoid diagonal speed boost
     if (deltaX != 0){
         int dx = (int) (deltaX * deltaTime * player->speed);
-        bool collidedwithBomb = bomb_collision(collision_rect, map);
+        int sign = (dx > 0) - (dx < 0);
+        bool collidedWithBomb = bomb_collision(collision_rect, map, sign, true);
         player_rect->x += dx;
         collision_rect->x += dx;
         flame_rect->x += dx;
         if (collision_rect->x < 0 || collision_rect->x + collision_rect->w > width 
-            || check_collision(collision_rect, map)
-            || (!collidedwithBomb && bomb_collision(collision_rect, map))){
+            || check_collision(collision_rect, map) 
+            || (!collidedWithBomb && bomb_collision(collision_rect, map, sign, collidedWithBomb))){
             player_rect->x -= dx;
             collision_rect->x -= dx;
             flame_rect->x -= dx;
@@ -127,13 +129,14 @@ void edge_collision(SDL_Window* window, Player* player, Map *map, int deltaX, in
     }
     if (deltaY != 0){
         int dy = (int) (deltaY * deltaTime * player->speed);
-        bool collidedwithBomb = bomb_collision(collision_rect, map);
+        int sign = (dy > 0) - (dy < 0);
+        bool collidedWithBomb = bomb_collision(collision_rect, map, sign, true);
         collision_rect->y += dy;
         player_rect->y += dy;
         flame_rect->y += dy;
         if (collision_rect->y < 0 || collision_rect->y + collision_rect->h > height 
             || check_collision(collision_rect, map)
-            || (!collidedwithBomb && bomb_collision(collision_rect, map))){
+            || (!collidedWithBomb && bomb_collision(collision_rect, map, sign, collidedWithBomb))){
             collision_rect->y -= dy;
             player_rect->y -= dy;
             flame_rect->y -= dy;
@@ -145,9 +148,9 @@ void edge_collision(SDL_Window* window, Player* player, Map *map, int deltaX, in
 bool check_collision(SDL_Rect* r, Map *map) {
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
-            int x = (r->x + i * r->w) / TILE_SIZE;
-            int y = (r->y + j * r->h) / TILE_SIZE;
-            if (map->grid[y][x].type == HARD_WALL || map->grid[y][x].type == SOFT_WALL){
+            int ix = (r->x + i * r->w) / TILE_SIZE;
+            int iy = (r->y + j * r->h) / TILE_SIZE;
+            if (map->grid[iy][ix].type == HARD_WALL || map->grid[iy][ix].type == SOFT_WALL){
                 return true;
             }
         }
@@ -156,13 +159,30 @@ bool check_collision(SDL_Rect* r, Map *map) {
 }
 
 // check if the rectangle is colliding with a bomb
-bool bomb_collision(SDL_Rect* r, Map *map) {
+bool bomb_collision(SDL_Rect* r, Map *map, int sign, bool collidedWithBomb) {
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
-            int x = (r->x + i * r->w) / TILE_SIZE;
-            int y = (r->y + j * r->h)  / TILE_SIZE;
-            if (map->grid[y][x].bomb != NULL && !(map->grid[y][x].bomb->detonated)){
-                return true;
+            SDL_Rect intersectRect;
+            for (int k = 0; k < MAX_BOMBS && bombs[k] != NULL; k++){
+                if (!(bombs[k]->detonated) 
+                && SDL_IntersectRect(r, &(bombs[k]->rect), &intersectRect) == SDL_TRUE){
+                    if (collidedWithBomb) return true;
+                    if (bombs[k]->isMoving){
+                        bombs[k]->isMoving = false;
+                    }
+                    else{
+                        SpriteDirection d;
+                        if (sign == 1){
+                            d = intersectRect.w > intersectRect.h ? FRONT : RIGHT;
+                        }
+                        else{
+                            d = intersectRect.w > intersectRect.h ? BACK : LEFT;
+                        }
+                        bombs[k]->isMoving = true;
+                        bombs[k]->direction = d;
+                    }
+                    return true;
+                }
             }
         }
     }

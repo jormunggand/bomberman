@@ -336,9 +336,9 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
                 deltas[iPlayer].y = 0;
                 get_bonus(curPlayer, &map);
             }
+            update_bombs_positions(&map, targetfps);
             accumulator -= targetfps;
         }
-
         struct timespec cur_time;
         clock_gettime(CLOCK_REALTIME, &cur_time);
         double dt = (cur_time.tv_sec - start_time.tv_sec) + (double) (cur_time.tv_nsec - start_time.tv_nsec) / (double) BILLION;
@@ -346,14 +346,12 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
         SDL_Surface* surfaceMessage = TTF_RenderText_Solid(sans, timerStr, White); 
         SDL_Texture* message = SDL_CreateTextureFromSurface(render, surfaceMessage);
         
-
-
         SDL_RenderClear(render);
         display_map(render, &map);
-        for (int i = 0; i < nPlayers; i++)
-            display_bombs(render, &map, &players[i]);
+        display_bombs(render, &map);
         for (int i = 0; i < nPlayers; i++) {
-            if (players[i].isAlive) display_player(render, &players[i]);
+            updateDeathStatus(&map, &players[i]);
+            if (players[i].isAlive) {display_player(render, &players[i]);}
         }
         SDL_RenderCopy(render, message, NULL, &Message_rect);
         SDL_RenderPresent(render);
