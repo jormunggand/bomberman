@@ -12,7 +12,7 @@ SDL_Texture* back_walking[ANIMATION_FRAMES];
 SDL_Texture* left_walking[ANIMATION_FRAMES];
 SDL_Texture* right_walking[ANIMATION_FRAMES];
 
-const float flame_histbox_tolerance = 2 * TILE_SIZE / 5;
+const float flame_hitbox_tolerance = 2 * TILE_SIZE / 5;
 const float wall_hitbox_tolerance = TILE_SIZE / 4 + 0.5;
 
 // create a player structure positioned at map.grid[y][x]
@@ -32,10 +32,10 @@ void init_player(Player* player, int x, int y, int* controls) {
     player->collisionRect.w = TILE_SIZE - 2 * wall_hitbox_tolerance;
     player->collisionRect.h = TILE_SIZE - 2 * wall_hitbox_tolerance;
 
-    player->flameHitbox.x = x * TILE_SIZE + flame_histbox_tolerance;
-    player->flameHitbox.y = (y - 1) * TILE_SIZE + 5*player->rect.h/8 + flame_histbox_tolerance;
-    player->flameHitbox.w = TILE_SIZE - 2 * flame_histbox_tolerance;
-    player->flameHitbox.h = TILE_SIZE - 2 * flame_histbox_tolerance;
+    player->flameHitbox.x = x * TILE_SIZE + flame_hitbox_tolerance;
+    player->flameHitbox.y = (y - 1) * TILE_SIZE + 5*player->rect.h/8 + flame_hitbox_tolerance;
+    player->flameHitbox.w = TILE_SIZE - 2 * flame_hitbox_tolerance;
+    player->flameHitbox.h = TILE_SIZE - 2 * flame_hitbox_tolerance;
 
     player->animations = front_walking;
 

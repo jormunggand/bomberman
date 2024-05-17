@@ -9,6 +9,7 @@
 #define BILLION (1000000000L)
 
 
+const float bomb_hitbox_tolerance = TILE_SIZE / 16;
 const double initial_bomb_time = 0.7;
 const double bomb_cycle = 0.4;
 const double flame_cycle = 0.3;
@@ -27,6 +28,12 @@ void init_bomb(Bomb* bomb, int x, int y, Player* owner) {
     bomb->rect.y = y * TILE_SIZE;
     bomb->rect.w = TILE_SIZE;
     bomb->rect.h = TILE_SIZE;
+
+    bomb->collision_rect.x = x * TILE_SIZE + bomb_hitbox_tolerance;
+    bomb->collision_rect.y = y * TILE_SIZE + bomb_hitbox_tolerance;
+    bomb->collision_rect.w = TILE_SIZE - 2 * bomb_hitbox_tolerance;
+    bomb->collision_rect.h = TILE_SIZE - 2 * bomb_hitbox_tolerance;
+
     clock_gettime(CLOCK_REALTIME, &(bomb->start_time));
     bomb->radius = owner->flamePower;
     bomb->detonated = false;
@@ -206,38 +213,51 @@ int display_bomb(SDL_Renderer* render, Bomb* bomb, Map* map) {
 }
 
 // update the bomb positions according to their direction
-void update_bombs_positions(Map* map, double dt){
+void update_bombs_positions(SDL_Window* window, Map* map, double dt){
     int speed = 5 * MAX_SPEED;
+    int width, height;
+    SDL_GetWindowSize(window, &width, &height);
     for (int k = 0; k < MAX_BOMBS && bombs[k] != NULL; k++){
+        Bomb* bomb = bombs[k];
         if (bombs[k]->isMoving) {
-            switch (bombs[k]->direction){
+            switch (bomb->direction){
                 case FRONT:
-                    bombs[k]->rect.y += speed * dt;
+                    bomb->rect.y += speed * dt;
+                    bomb->collision_rect.y += speed * dt;
                     break;
                 case BACK:
-                    bombs[k]->rect.y -= speed * dt;
+                    bomb->rect.y -= speed * dt;
+                    bomb->collision_rect.y -= speed * dt;
                     break;
                 case LEFT:
-                    bombs[k]->rect.x -= speed * dt;
+                    bomb->rect.x -= speed * dt;
+                    bomb->collision_rect.x -= speed * dt;
                     break;
                 case RIGHT:
-                    bombs[k]->rect.x += speed * dt;
+                    bomb->rect.x += speed * dt;
+                    bomb->collision_rect.x += speed * dt;
                     break;
             }
-            if (check_collision(&(bombs[k]->rect), map)) {
+            if (bomb->rect.x < 0 
+            || bomb->rect.x + bomb->rect.w > width 
+            || check_collision(&(bomb->collision_rect), map)) {
                 bombs[k]->isMoving = false;
                 switch(bombs[k]->direction){
                     case FRONT:
-                        bombs[k]->rect.y -= speed * dt;
+                        bomb->rect.y -= speed * dt;
+                        bomb->collision_rect.y -= speed * dt;
                         break;
                     case BACK:
-                        bombs[k]->rect.y += speed * dt;
+                        bomb->rect.y += speed * dt;
+                        bomb->collision_rect.y += speed * dt;
                         break;
                     case LEFT:
-                        bombs[k]->rect.x += speed * dt;
+                        bomb->rect.x += speed * dt;
+                        bomb->collision_rect.x += speed * dt;
                         break;
                     case RIGHT:
-                        bombs[k]->rect.x -= speed * dt;
+                        bomb->rect.x -= speed * dt;
+                        bomb->collision_rect.x -= speed * dt;
                         break;
                 }
             }

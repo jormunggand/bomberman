@@ -336,7 +336,7 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
                 deltas[iPlayer].y = 0;
                 get_bonus(curPlayer, &map);
             }
-            update_bombs_positions(&map, targetfps);
+            update_bombs_positions(window, &map, targetfps);
             accumulator -= targetfps;
         }
         struct timespec cur_time;

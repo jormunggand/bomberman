@@ -23,6 +23,7 @@ struct Tile;
 
 typedef struct Bomb {
     SDL_Rect rect;
+    SDL_Rect collision_rect;
     struct timespec start_time;
     int radius; // does not count the center tile
     bool detonated;
@@ -38,7 +39,7 @@ void exlp_index_to_ij(int expl_index, int radius, int* i, int* j);
 void init_bomb(Bomb* bomb, int x, int y, struct Player* player);
 void player_place_bomb(struct Player* player, struct Map* map);
 void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, struct Map* map);
-void update_bombs_positions(struct Map* map, double dt);
+void update_bombs_positions(SDL_Window* window, struct Map* map, double dt);
 void updateDeathStatus(struct Map* map, struct Player* player);
 int display_bomb(SDL_Renderer* render, Bomb* bomb, struct Map* map);
 void display_bombs(SDL_Renderer* render, struct Map* map);
