@@ -9,7 +9,7 @@
 #define BILLION (1000000000L)
 
 
-const float bomb_hitbox_tolerance = TILE_SIZE / 16;
+const float bomb_hitbox_tolerance = TILE_SIZE / 8;
 const double initial_bomb_time = 0.7;
 const double bomb_cycle = 0.4;
 const double flame_cycle = 0.3;
@@ -214,7 +214,7 @@ int display_bomb(SDL_Renderer* render, Bomb* bomb, Map* map) {
 
 // update the bomb positions according to their direction
 void update_bombs_positions(SDL_Window* window, Map* map, double dt){
-    int speed = 5 * MAX_SPEED;
+    int speed = 8 * MAX_SPEED;
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
     for (int k = 0; k < MAX_BOMBS && bombs[k] != NULL; k++){
