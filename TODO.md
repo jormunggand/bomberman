@@ -1,12 +1,9 @@
 # TODO
 
 ## Important
-- le personnage doit mourir au contact d'une bombe
 
-- gérer le multijoueur local
 - gérer le multijoueur en réseau
 - gérer un mode ou le joueur affronte une IA
-
 - rajouter des ennemis
 
 
@@ -22,6 +19,8 @@
 - rajouter un HUD avec le temps restant
 
 ## Fait
+- gérer le multijoueur local
+- le personnage doit mourir au contact d'une bombe
 - ajouter un splashscreen au début avec un menu
     - Boutons Multijoueur local, Multijoueur en ligne, Joueur contre Ordinteur
 - les bonus doivent être détruits par les bombes
