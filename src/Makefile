@@ -2,7 +2,7 @@ UNAME := $(shell uname)
 
 ifeq ($(UNAME), Darwin)
 CFLAGS = -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE -Wall -g
-LDFLAGS = -L/opt/homebrew/lib -lSDL2 -lSDL2_image
+LDFLAGS = -L/opt/homebrew/lib -lSDL2 -lSDL2_image -lSDL2_net -lSDL2_ttf
 endif
 
 ifeq ($(UNAME), Linux)

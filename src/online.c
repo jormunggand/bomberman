@@ -6,11 +6,11 @@
 #include <string.h>
 #include <stdlib.h> 
 
-#define MAX_MESSAGE_LENGTH 1024
+#define MAX_MESSAGE_LENGTH (1024)
 
 int receiveMessages(void *data)
 {
-    TCPsocket socket = (TCPsocket)data; // Casting de data en TCPsocket
+    TCPsocket socket = (TCPsocket) data; // Casting de data en TCPsocket
     char message[MAX_MESSAGE_LENGTH];   // Buffer pour stocker les messages reçus
 
     while (1)
