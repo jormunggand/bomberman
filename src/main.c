@@ -349,6 +349,9 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
         SDL_RenderClear(render);
         display_map(render, &map);
         display_bombs(render, &map);
+        for (int b = 0; b < MAX_BOMBS && bombs[b] != NULL; b++){
+            SDL_RenderDrawRect(render, &bombs[b]->collision_rect);
+        }
         for (int i = 0; i < nPlayers; i++) {
             updateDeathStatus(&map, &players[i]);
             if (players[i].isAlive) {display_player(render, &players[i]);}

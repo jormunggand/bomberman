@@ -115,13 +115,13 @@ void edge_collision(SDL_Window* window, Player* player, Map *map, int deltaX, in
     if (deltaX != 0){
         int dx = (int) (deltaX * deltaTime * player->speed);
         int sign = (dx > 0) - (dx < 0);
-        bool collidedWithBomb = bomb_collision(collision_rect, map, sign, true);
+        bool collidedWithBomb = bomb_collision(collision_rect, sign, true);
         player_rect->x += dx;
         collision_rect->x += dx;
         flame_rect->x += dx;
         if (collision_rect->x < 0 || collision_rect->x + collision_rect->w > width 
             || check_collision(collision_rect, map) 
-            || (!collidedWithBomb && bomb_collision(collision_rect, map, sign, collidedWithBomb))){
+            || (!collidedWithBomb && bomb_collision(collision_rect, sign, collidedWithBomb))){
             player_rect->x -= dx;
             collision_rect->x -= dx;
             flame_rect->x -= dx;
@@ -130,13 +130,13 @@ void edge_collision(SDL_Window* window, Player* player, Map *map, int deltaX, in
     if (deltaY != 0){
         int dy = (int) (deltaY * deltaTime * player->speed);
         int sign = (dy > 0) - (dy < 0);
-        bool collidedWithBomb = bomb_collision(collision_rect, map, sign, true);
+        bool collidedWithBomb = bomb_collision(collision_rect, sign, true);
         collision_rect->y += dy;
         player_rect->y += dy;
         flame_rect->y += dy;
         if (collision_rect->y < 0 || collision_rect->y + collision_rect->h > height 
             || check_collision(collision_rect, map)
-            || (!collidedWithBomb && bomb_collision(collision_rect, map, sign, collidedWithBomb))){
+            || (!collidedWithBomb && bomb_collision(collision_rect, sign, collidedWithBomb))){
             collision_rect->y -= dy;
             player_rect->y -= dy;
             flame_rect->y -= dy;
@@ -159,7 +159,7 @@ bool check_collision(SDL_Rect* r, Map *map) {
 }
 
 // check if the rectangle is colliding with a bomb
-bool bomb_collision(SDL_Rect* r, Map *map, int sign, bool collidedWithBomb) {
+bool bomb_collision(SDL_Rect* r, int sign, bool collidedWithBomb) {
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
             SDL_Rect intersectRect;

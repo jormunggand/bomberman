@@ -217,8 +217,9 @@ void update_bombs_positions(SDL_Window* window, Map* map, double dt){
     int speed = 8 * MAX_SPEED;
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
-    for (int k = 0; k < MAX_BOMBS && bombs[k] != NULL; k++){
+    for (int k = 0; k < MAX_BOMBS; k++){
         Bomb* bomb = bombs[k];
+        if (bomb == NULL) {continue;}
         if (bombs[k]->isMoving) {
             switch (bomb->direction){
                 case FRONT:
@@ -240,7 +241,7 @@ void update_bombs_positions(SDL_Window* window, Map* map, double dt){
             }
             if (bomb->rect.x < 0 
             || bomb->rect.x + bomb->rect.w > width 
-            || check_collision(&(bomb->collision_rect), map)) {
+            || check_collision(&(bomb->collision_rect), map)){
                 bombs[k]->isMoving = false;
                 switch(bombs[k]->direction){
                     case FRONT:
@@ -267,7 +268,8 @@ void update_bombs_positions(SDL_Window* window, Map* map, double dt){
 
 // display all bombs present on the map
 void display_bombs(SDL_Renderer* render, Map* map) {
-    for (int k = 0; k < MAX_BOMBS && bombs[k] != NULL; k++) {
+    for (int k = 0; k < MAX_BOMBS; k++) {
+        if (bombs[k] == NULL) {continue;}
         int r = display_bomb(render, bombs[k], map);
         if (r == 1) {
             bombs[k]->owner->nCurBombs--;

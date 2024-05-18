@@ -27,7 +27,7 @@ typedef struct Bomb {
     struct timespec start_time;
     int radius; // does not count the center tile
     bool detonated;
-    bool* explosion_tiles; // array of size (2 * radius + 1)^2 to represent on which tiles the explosion must be displayed 
+    bool* explosion_tiles; // array of size (4 * radius + 1) to represent on which tiles the explosion must be displayed 
     struct Player* owner; // the player who placed the bomb
     bool isMoving;
     int direction;
