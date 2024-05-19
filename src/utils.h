@@ -6,10 +6,12 @@
 #ifdef __linux__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_net.h>
 #include <SDL2/SDL_ttf.h>
 #elif __APPLE__
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_net.h>
 #include <SDL_ttf.h>
 #endif
 
@@ -31,6 +33,7 @@ typedef struct {
     int y;
 } Delta;
 
+bool is_in_tab(int x, int* tab, int size);
 int min(int a, int b);
 int max(int a, int b);
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);

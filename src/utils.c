@@ -1,5 +1,15 @@
 #include "utils.h"
 
+#include <stdbool.h>
+
+
+
+bool is_in_tab(int x, int* tab, int size) {
+    for (int i = 0; i < size; i++)
+        if (tab[i] == x)
+            return true;
+    return false;
+}
 
 int max(int a, int b) {
     return a > b ? a : b;
@@ -10,16 +20,21 @@ int min(int a, int b) {
 }
 
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h){
-    if(0 != SDL_Init(SDL_INIT_VIDEO))
+    if( 0 != SDL_Init(SDL_INIT_VIDEO)) 
     {
         fprintf(stderr, "Erreur SDL_Init : %s", SDL_GetError());
         return -1;
     }
-    if (0 != TTF_Init())
-    {
+    if (0 != TTF_Init()) {
         fprintf(stderr, "Erreur TTF_Init : %s", TTF_GetError());
+    }
+    if (0 != SDLNet_Init())  
+    {
+        fprintf(stderr, "Erreur SDLNet_Init : %s", SDLNet_GetError());
         return -1;
     }
+
+
     if(0 != SDL_CreateWindowAndRenderer(w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE, window, renderer))
     {
         fprintf(stderr, "Erreur SDL_CreateWindowAndRenderer : %s", SDL_GetError());

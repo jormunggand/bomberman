@@ -24,97 +24,32 @@
 #include "bonus.h"
 #endif
 
+#ifndef HUD_H
+#define HUD_H
+#include "hud.h"
+#endif
+
+#ifndef ONLINE_H
+#define ONLINE_H
+#include "online.h"
+#endif
+
+
+
 #define SPLASH_SIZE (800)
 #define BILLION (1000000000L)
-
-typedef enum {
-    LOCAL_MULTI,
-    ONLINE_MULTI,
-    PvC,
-    CHOOSING, // the player has not chosed yet
-    QUIT  // the player has closed the window
-} Gamemode;
-
-SDL_Texture* splashscreen;
-SDL_Texture* local_multi_btn;
-SDL_Texture* online_multi_btn;
-SDL_Texture* playervcpu_btn;
-
-// load textures needed for the booting menu
-int load_menu_textures(SDL_Renderer* render) {
-    splashscreen = loadImage("../assets/title_flat.jpg", render);
-    local_multi_btn = loadImage("../assets/Menu/local_multiplayer_button.png", render);
-    online_multi_btn = loadImage("../assets/Menu/online_multiplayer_button.png", render);
-    playervcpu_btn = loadImage("../assets/Menu/player_vs_cpu_button.png", render);
-
-    if (splashscreen == NULL || local_multi_btn == NULL || online_multi_btn == NULL || playervcpu_btn == NULL) {
-        printf("%s\n", SDL_GetError());
-        return -1;      
-    }
-    return 0;
-}
 
 
 int load_all_textures(SDL_Renderer* render) {
     int r1 = load_map_textures(render);
     int r2 = load_bomb_textures(render);
     int r3 = load_player_textures(render);
-    if (r1 + r2 + r3 != 0) {
+    int r4 = load_menu_textures(render);
+    if (r1 + r2 + r3 + r4 != 0) {
         printf("%s\n", SDL_GetError());
         return -1;
     }
     return 0;
-}
-
-// display the screen where the player can choose the gamemode
-Gamemode choose_gamemode(SDL_Renderer* render, int windowWidth, int windowHeight) {
-    // display the background and the buttons
-    if (load_menu_textures(render) != 0) {
-        printf("%s\n", SDL_GetError());
-        return QUIT;
-    }
-    SDL_RenderCopy(render, splashscreen, NULL, NULL);
-
-    SDL_Rect lmb_rect, omb_rect, pvc_rect;
-    SDL_QueryTexture(local_multi_btn, NULL, NULL, &lmb_rect.w, &lmb_rect.h);
-    lmb_rect.x = windowWidth/2 - lmb_rect.w/2;
-    lmb_rect.y = windowHeight/2 + lmb_rect.h - 10;
-    SDL_QueryTexture(online_multi_btn, NULL, NULL, &omb_rect.w, &omb_rect.h);
-    omb_rect.x = windowWidth/2 - omb_rect.w/2;
-    omb_rect.y = lmb_rect.y + lmb_rect.h + 20;
-    SDL_QueryTexture(playervcpu_btn, NULL, NULL, &pvc_rect.w, &pvc_rect.h);
-    pvc_rect.x = windowWidth/2 - pvc_rect.w/2;
-    pvc_rect.y = omb_rect.y + omb_rect.h + 20;
-
-    SDL_RenderCopy(render, local_multi_btn, NULL, &lmb_rect);
-    SDL_RenderCopy(render, online_multi_btn, NULL, &omb_rect);
-    SDL_RenderCopy(render, playervcpu_btn, NULL, &pvc_rect);
-
-    SDL_RenderPresent(render);
-
-    // wait for the player to chose the gamemode
-    Gamemode mode = CHOOSING;
-    SDL_Event event;
-    while (mode == CHOOSING) {
-        if (SDL_WaitEvent(&event)) {
-            if (event.type == SDL_QUIT)
-                mode = QUIT;
-            if (event.type == SDL_MOUSEBUTTONDOWN) {
-                int x = event.button.x;
-                int y = event.button.y;
-                if (point_in_rect(lmb_rect, x, y)) {
-                    mode = LOCAL_MULTI;
-                } else if (point_in_rect(omb_rect, x, y)) {
-                    mode = ONLINE_MULTI;
-                } else if (point_in_rect(pvc_rect, x, y)) {
-                    mode = PvC;
-                }
-            }
-
-        }
-    }
-
-    return mode;
 }
 
 /*void play_game(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
@@ -243,7 +178,6 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
     init_player(&players[1], map.size-2, map.size-2, controls2);
 
     // Load and display map and players
-    load_all_textures(render);
     display_map(render, &map);
     for (int i = 0; i < nPlayers; i++)
         display_player(render, &players[i]);
@@ -444,6 +378,8 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
     return QUIT;
 }
 
+
+
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
 
@@ -464,15 +400,36 @@ int main(int argc, char* argv[]) {
         goto Quit;
     }
 
+    // Load all textures once and for all
+    load_all_textures(render);
+
     // Start the game
     Gamemode gamemode = choose_gamemode(render, windowWidth, windowHeight);
-    if (gamemode == LOCAL_MULTI)
-        local_multiplayer(window, render, map_filename);
+    while (gamemode != QUIT) {
+        if (gamemode == LOCAL_MULTI) {
+            local_multiplayer(window, render, map_filename);
+            gamemode = CHOOSING;
+        } else if (gamemode == ONLINE_MENU) {
+            gamemode = online_menu(render, windowWidth, windowHeight);
+        } else if (gamemode == ONLINE_HOSTING) {
+            host_server(window, render, map_filename);
+            gamemode = CHOOSING;
+        } else if (gamemode == ONLINE_JOINING) {
+            join_server(render, windowWidth, windowHeight);
+            gamemode = CHOOSING;
+        } else if(gamemode == CHOOSING) {
+            SDL_SetWindowSize(window, SPLASH_SIZE, SPLASH_SIZE);
+            gamemode = choose_gamemode(render, windowWidth, windowHeight);
+        } else if (gamemode == PvC) {
+            gamemode = QUIT;
+        }
+    }
 
     exit_status = EXIT_SUCCESS;
     Quit:
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
+    SDLNet_Quit();
     SDL_Quit();
     return exit_status;
 }
