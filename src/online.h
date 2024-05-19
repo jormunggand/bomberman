@@ -11,6 +11,6 @@
 #endif
 
 int receiveMessages(void *data);
-int host_server(SDL_Renderer* render, int windowWidth, int windowHeight);
+int host_server(SDL_Window* window, SDL_Renderer* render, char* map_filename);
 int sendControls(void* data);
 int join_server(SDL_Renderer* render, int windowWidth, int windowHeight);

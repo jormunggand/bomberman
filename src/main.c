@@ -295,9 +295,7 @@ void local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filen
     }
 }
 
-void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
-    return;
-}
+
 
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
@@ -331,12 +329,13 @@ int main(int argc, char* argv[]) {
         } else if (gamemode == ONLINE_MENU) {
             gamemode = online_menu(render, windowWidth, windowHeight);
         } else if (gamemode == ONLINE_HOSTING) {
-            host_server(render, windowWidth, windowHeight);
+            host_server(window, render, map_filename);
             gamemode = CHOOSING;
         } else if (gamemode == ONLINE_JOINING) {
             join_server(render, windowWidth, windowHeight);
             gamemode = CHOOSING;
         } else if(gamemode == CHOOSING) {
+            SDL_SetWindowSize(window, SPLASH_SIZE, SPLASH_SIZE);
             gamemode = choose_gamemode(render, windowWidth, windowHeight);
         } else if (gamemode == PvC) {
             gamemode = QUIT;
