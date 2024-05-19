@@ -30,11 +30,15 @@ typedef struct Player {
     SDL_Texture** animations;
     SDL_Rect rect;
     SDL_Rect collisionRect;
+    SDL_Rect flameHitbox;
 
     int nMaxBombs; // the maximum number of bombs the player can fire simultaneously
     int nCurBombs; // the current number of bombs the player has lit
     float speed;
     int flamePower;
+
+    bool isAlive;
+
 
     // keyboard controls to go Up, Right, Down, Left and to Fire
     int controls[5];
@@ -52,5 +56,5 @@ int load_player_textures(SDL_Renderer* render);
 
 void edge_collision(SDL_Window* window, Player* player, struct Map *map, int deltaX, int deltaY, double elapsedTime);
 bool check_collision(SDL_Rect* r, struct Map *map);
-bool bomb_collision(SDL_Rect* r, struct Map *map);
+bool bomb_collision(SDL_Rect* r, int sign, bool collidedWithBomb);
 

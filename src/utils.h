@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 #ifdef __linux__
 #include <SDL2/SDL.h>
@@ -20,11 +21,11 @@
 #define TILE_SIZE (64)
 
 // Powerups constants
-#define BASE_SPEED (256) // in pixels / second
+#define BASE_SPEED (128) // in pixels / second
 #define SPEED_BOOST (32) // in pixels
-#define MAX_SPEED (352)
+#define MAX_SPEED (256)
 
-#define MAX_BOMBS (5)
+#define MAX_BOMBS_PER_PLAYER (5)
 #define MAX_POWER (5) // in number of tiles
 
 typedef struct {

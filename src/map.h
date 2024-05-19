@@ -26,7 +26,6 @@ typedef enum {
 typedef struct Tile {
     TileType type; // currently shown texture
     BonusType bonus; // bonus to be displayed when a SOFT_WALL is broken
-    struct Bomb* bomb;
 } Tile;
 
 typedef struct Map {

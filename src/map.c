@@ -90,7 +90,6 @@ int read_map_from_file(Map* map, char* file_name) {
         for (int x = 0; x < size; x++) {
             map->grid[y][x].type = fgetc(file) - '0';
             map->grid[y][x].bonus = NONE;
-            map->grid[y][x].bomb = NULL;
             if (map->grid[y][x].type == PLAYER_SPAWN) {
                 map->starty = y;
                 map->startx = x;
