@@ -16,7 +16,7 @@
 // might be changed in the future
 #define N_TEXTURES (10)
 // the size of the board is currently fixed by defines but this will maybe be changed in the future to have variable sizes
-#define TILE_SIZE (64)
+#define TILE_SIZE (48)
 
 // Powerups constants
 #define BASE_SPEED (128) // in pixels / second
@@ -37,3 +37,4 @@ int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);
 SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer);
 int setColor(SDL_Renderer *renderer, SDL_Color color);
 bool point_in_rect(SDL_Rect rect, int x, int y); // check wheter (x,y) is inside the rect
+void gaussian_blur(Uint32 *pixels, int width, int height);

@@ -74,6 +74,8 @@ int load_map_textures(SDL_Renderer* render) {
 
 // function to load the map from a text file
 int read_map_from_file(Map* map, char* file_name) {
+    map->nPlayersAlive = 2;
+
     FILE* file = fopen(file_name, "r");
     if (file == NULL) {
         printf("Error opening %s\n", file_name);

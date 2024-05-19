@@ -179,6 +179,7 @@ void updateDeathStatus(Map* map, Player* player){
                     for (int k = 0; k < 2; k++){
                         if (SDL_HasIntersection(&rect, &(player->flameHitbox)) == SDL_TRUE){
                             player->isAlive = false;
+                            map->nPlayersAlive--;
                         }
                     }
                 }

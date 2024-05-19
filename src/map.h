@@ -31,6 +31,7 @@ typedef struct Tile {
 typedef struct Map {
     Tile** grid;
     int size, starty, startx;
+    int nPlayersAlive; // number of players alive on the map
 } Map;
 
 SDL_Texture* create_bonus_texture(SDL_Renderer* render, SDL_Texture* icon);
