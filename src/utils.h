@@ -33,6 +33,7 @@ typedef struct {
     int y;
 } Delta;
 
+bool is_in_tab(int x, int* tab, int size);
 int min(int a, int b);
 int max(int a, int b);
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);

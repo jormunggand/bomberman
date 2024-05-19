@@ -1,5 +1,15 @@
 #include "utils.h"
 
+#include <stdbool.h>
+
+
+
+bool is_in_tab(int x, int* tab, int size) {
+    for (int i = 0; i < size; i++)
+        if (tab[i] == x)
+            return true;
+    return false;
+}
 
 int max(int a, int b) {
     return a > b ? a : b;
