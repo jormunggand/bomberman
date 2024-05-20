@@ -14,10 +14,10 @@ struct Map;
 enum Key;
 
 typedef enum {
-    FRONT,
-    BACK,
-    RIGHT,
-    LEFT
+    FRONT = 0,
+    BACK = 1,
+    RIGHT = 2,
+    LEFT = 3
 } SpriteDirection;
 
 

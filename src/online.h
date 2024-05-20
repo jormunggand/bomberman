@@ -18,6 +18,6 @@ int receiveControls(void *data);
 int host_server(SDL_Window* window, SDL_Renderer* render, char* map_filename);
 
 //void decode_map(Map* map, char* encodedMap);
-//void decode_map_first(Map* map, char* encodedMap);
+//void decode_map_first(Map* map, char* encodedMap, char* encodedBonus);
 int sendControls(void* data);
 int join_server(SDL_Window* window, SDL_Renderer *render);
