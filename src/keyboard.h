@@ -26,11 +26,16 @@ typedef enum {
 } Key;
 
 
+// KeyboardHandler is a structure that stores the state of the keys (up or down)
 typedef struct KeyboardHandler {
     int keyState[N_KEYS];
 } KeyboardHandler;
 
-
+// set all keys to released
 void initHandler(KeyboardHandler* self);
+
+// update the state of the keys according to the event received
 void handleEvent(KeyboardHandler* self, SDL_KeyboardEvent event);
+
+// check if any direction key is pressed for the given player
 bool anyDirectionPressed(KeyboardHandler* self, int iPlayer);

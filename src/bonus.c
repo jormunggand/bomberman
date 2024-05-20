@@ -41,7 +41,7 @@ void get_bonus(Player* player, Map* map) {
     SDL_Rect* r = &player->flameHitbox;
     for (int i = 0; i < 2; i++){
         for (int j = 0; j < 2; j++){
-            int x = (r->x + i * r->w )/ TILE_SIZE;
+            int x = (r->x + i * r->w ) / TILE_SIZE;
             int y = (r->y + j * r->h) / TILE_SIZE;
             switch (map->grid[y][x].bonus) {
                 case BOMB_BONUS:
