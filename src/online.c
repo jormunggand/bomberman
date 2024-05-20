@@ -152,7 +152,7 @@ void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_file
             updateDeathStatus(&map, &players[i]);
             if (players[i].isAlive) {display_player(render, &players[i]);}
         }
-        SDL_RenderCopy(render, message, NULL, &Message_rect);
+        renderTexture(render, message, NULL, &Message_rect);
         SDL_RenderPresent(render);
     }
 }
@@ -205,7 +205,7 @@ int host_server(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
     SDL_GetWindowSize(window, &windowWidth, &windowHeight);
     SDL_Rect mess_rect = {.w=200, .h=50, .x=windowWidth/2 - 100, .y=windowHeight/2 - 50};
 
-    SDL_RenderCopy(render, mess, NULL, &mess_rect);
+    renderTexture(render, mess, NULL, &mess_rect);
     SDL_RenderPresent(render);
 
     // Wait for a connection

@@ -45,3 +45,4 @@ int display_bomb(SDL_Renderer* render, Bomb* bomb, struct Map* map);
 void display_bombs(SDL_Renderer* render, struct Map* map);
 int load_bomb_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int nb_textures);
 int load_bomb_textures(SDL_Renderer* render);
+void free_bombs();

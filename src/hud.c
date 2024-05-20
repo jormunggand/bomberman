@@ -1,6 +1,9 @@
 #include "hud.h"
 
 #include "utils.h"
+#include "player.h"
+#include "map.h"
+#include <SDL_ttf.h>
 
 SDL_Texture* splashscreen;
 SDL_Texture* local_multi_btn;
@@ -124,4 +127,65 @@ Gamemode online_menu(SDL_Renderer* render, int windowWidth, int windowHeight) {
         }
     }
     return QUIT;
+}
+
+void display_hud(SDL_Renderer* render, TTF_Font* sans, Player* p1, Player* p2, int windowWidth){
+    int icon_size = 3 * HUD_HEIGHT / 4;
+    SDL_Color white = {255, 255, 255};
+
+    SDL_Rect bomb_p1 = {0, 0, icon_size, icon_size};    
+    SDL_Rect flame_p1 = {windowWidth / 7, 0, icon_size, icon_size};
+    SDL_Rect speed_p1 = {2 * windowWidth / 7, 0, icon_size, icon_size};
+    SDL_Rect bomb_p2 = {4 * windowWidth / 7, 0, icon_size, icon_size};
+    SDL_Rect flame_p2 = {5 * windowWidth / 7, 0, icon_size, icon_size};
+    SDL_Rect speed_p2 = {6 * windowWidth / 7, 0, icon_size, icon_size};
+
+    SDL_Rect bomb_p1_text_rect = {icon_size + 5, 0, icon_size, icon_size};
+    SDL_Rect flame_p1_text_rect = {windowWidth / 7 + icon_size + 5, 0, 2 * icon_size, icon_size};
+    SDL_Rect speed_p1_text_rect = {2 * windowWidth / 7 + icon_size + 5, 0, 2 * icon_size, icon_size};
+    SDL_Rect bomb_p2_text_rect = {4 * windowWidth / 7 + icon_size + 5, 0, icon_size, icon_size};
+    SDL_Rect flame_p2_text_rect = {5 * windowWidth / 7 + icon_size + 5, 0, 2 * icon_size, icon_size};
+    SDL_Rect speed_p2_text_rect = {6 * windowWidth / 7 + icon_size + 5, 0, 2 * icon_size, icon_size};
+
+    char bomb_p1_str[5];
+    char flame_p1_str[5];
+    char speed_p1_str[10];
+    char bomb_p2_str[5];
+    char flame_p2_str[5];
+    char speed_p2_str[10];
+
+    sprintf(bomb_p1_str, ": %d", p1->nMaxBombs);
+    sprintf(flame_p1_str, ": %d", p1->flamePower);
+    sprintf(speed_p1_str, ": %.2f", p1->speed);
+    sprintf(bomb_p2_str, ": %d", p2->nMaxBombs);
+    sprintf(flame_p2_str, ": %d", p2->flamePower);
+    sprintf(speed_p2_str, ": %.2f", p2->speed);
+
+    SDL_Surface* bomb_p1_surf = TTF_RenderText_Solid(sans, bomb_p1_str, white);
+    SDL_Surface* flame_p1_surf = TTF_RenderText_Solid(sans, flame_p1_str, white);
+    SDL_Surface* speed_p1_surf = TTF_RenderText_Solid(sans, speed_p1_str, white);
+    SDL_Surface* bomb_p2_surf = TTF_RenderText_Solid(sans, bomb_p2_str, white);
+    SDL_Surface* flame_p2_surf = TTF_RenderText_Solid(sans, flame_p2_str, white);
+    SDL_Surface* speed_p2_surf = TTF_RenderText_Solid(sans, speed_p2_str, white);
+
+    SDL_Texture* bomb_p1_text_texture = SDL_CreateTextureFromSurface(render, bomb_p1_surf);
+    SDL_Texture* flame_p1_text_texture = SDL_CreateTextureFromSurface(render, flame_p1_surf);
+    SDL_Texture* speed_p1_text_texture = SDL_CreateTextureFromSurface(render, speed_p1_surf);
+    SDL_Texture* bomb_p2_text_texture = SDL_CreateTextureFromSurface(render, bomb_p2_surf);
+    SDL_Texture* flame_p2_text_texture = SDL_CreateTextureFromSurface(render, flame_p2_surf);
+    SDL_Texture* speed_p2_text_texture = SDL_CreateTextureFromSurface(render, speed_p2_surf);
+
+    SDL_RenderCopy(render, bomb_bonus_icon, NULL, &bomb_p1);
+    SDL_RenderCopy(render, flame_bonus_icon, NULL, &flame_p1);
+    SDL_RenderCopy(render, speed_bonus_icon, NULL, &speed_p1);
+    SDL_RenderCopy(render, bomb_bonus_icon, NULL, &bomb_p2);
+    SDL_RenderCopy(render, flame_bonus_icon, NULL, &flame_p2);
+    SDL_RenderCopy(render, speed_bonus_icon, NULL, &speed_p2);
+
+    SDL_RenderCopy(render, bomb_p1_text_texture, NULL, &bomb_p1_text_rect);
+    SDL_RenderCopy(render, flame_p1_text_texture, NULL, &flame_p1_text_rect);
+    SDL_RenderCopy(render, speed_p1_text_texture, NULL, &speed_p1_text_rect);
+    SDL_RenderCopy(render, bomb_p2_text_texture, NULL, &bomb_p2_text_rect);
+    SDL_RenderCopy(render, flame_p2_text_texture, NULL, &flame_p2_text_rect);
+    SDL_RenderCopy(render, speed_p2_text_texture, NULL, &speed_p2_text_rect);
 }

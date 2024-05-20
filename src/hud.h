@@ -6,6 +6,10 @@
 #include <SDL_image.h>
 #endif
 
+#include <SDL_ttf.h>
+
+struct Player;
+
 typedef enum {
     LOCAL_MULTI,
     ONLINE_MENU, 
@@ -20,3 +24,4 @@ int load_menu_textures(SDL_Renderer* render);
 void draw_button(SDL_Renderer* render, SDL_Texture* text, int baseX, int baseY);
 Gamemode choose_gamemode(SDL_Renderer* render, int windowWidth, int windowHeight);
 Gamemode online_menu(SDL_Renderer* render, int windowWidth, int windowHeight);
+void display_hud(SDL_Renderer* render, TTF_Font* sans, struct Player* p1, struct Player* p2, int windowWidth);

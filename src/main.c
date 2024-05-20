@@ -167,7 +167,7 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
     init_bonus(&map); // randomly add hidden bonuses in soft walls
 
     // Resize the window to fit the map
-    SDL_SetWindowSize(window, map.size * TILE_SIZE, map.size * TILE_SIZE);
+    SDL_SetWindowSize(window, map.size * TILE_SIZE, map.size * TILE_SIZE + HUD_HEIGHT);
 
     // Init the players
     const short nPlayers = 2;
@@ -289,6 +289,7 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
             if (players[i].isAlive) {display_player(render, &players[i]);}
         }
         SDL_RenderCopy(render, message, NULL, &timer_rect);
+        display_hud(render, sans, &players[0], &players[1], ww);
         SDL_RenderPresent(render);
 
         if (map.nPlayersAlive <= 1) {
@@ -300,7 +301,7 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
             SDL_Texture* texture = SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ww, wh);
             SDL_UpdateTexture(texture, NULL, pixels, pitch);
             SDL_RenderClear(render);
-            SDL_RenderCopy(render, texture, NULL, NULL);
+            renderTexture(render, texture, NULL, NULL);
             free(pixels);
 
             SDL_Rect game_over_rect;
@@ -352,6 +353,8 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
             SDL_Texture* mess_no = SDL_CreateTextureFromSurface(render, surface_no);
             SDL_RenderCopy(render, mess_no, NULL, &no_rect);
             SDL_RenderPresent(render);
+
+            free_bombs();
 
             SDL_Event event;
             while (1) {

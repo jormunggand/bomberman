@@ -169,3 +169,14 @@ void gaussian_blur(Uint32 *pixels, int width, int height) {
     free(blurred_pixels);
     free(kernel);
 }
+
+int renderTexture(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect *srcrect, SDL_Rect *dstrect){
+    if (dstrect != NULL){
+        dstrect->y += HUD_HEIGHT;
+    }
+    int res = SDL_RenderCopy(renderer, texture, srcrect, dstrect);
+    if (dstrect != NULL){
+        dstrect->y -= HUD_HEIGHT;
+    }
+    return res;
+}

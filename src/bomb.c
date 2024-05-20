@@ -9,7 +9,7 @@
 #define BILLION (1000000000L)
 
 
-const float bomb_hitbox_tolerance = TILE_SIZE / 8;
+const float bomb_hitbox_tolerance = TILE_SIZE / 16;
 const double initial_bomb_time = 0.7;
 const double bomb_cycle = 0.4;
 const double flame_cycle = 0.3;
@@ -108,7 +108,7 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
                         case PLAYER_SPAWN:
                             bomb->explosion_tiles[ij_to_expl_index(i, 0, bomb->radius)] = true;
                             if (map->grid[i + ib][jb].bonus != NONE && !flag) {map->grid[i + ib][jb].bonus = NONE;}
-                            SDL_RenderCopy(render, texture, NULL, &rect);
+                            renderTexture(render, texture, NULL, &rect);
                             break;
                         default:
                             break;
@@ -134,7 +134,7 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
                         case PLAYER_SPAWN:
                             bomb->explosion_tiles[ij_to_expl_index(0, j, bomb->radius)] = true;
                             if (map->grid[ib][j + jb].bonus != NONE && !flag) {map->grid[ib][j + jb].bonus = NONE;}
-                            SDL_RenderCopy(render, texture, NULL, &rect);
+                            renderTexture(render, texture, NULL, &rect);
                             break;
                         default:
                             break;
@@ -156,7 +156,7 @@ void display_explosion(SDL_Renderer* render, SDL_Texture* texture, Bomb* bomb, M
             if (i + ib >= 0 && i + ib < map->size && j + jb >= 0 && j + jb < map->size){
                 if (bomb->explosion_tiles[k]) {
                     SDL_Rect rect = {(j + jb) * TILE_SIZE, (i + ib) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-                    SDL_RenderCopy(render, texture, NULL, &rect);
+                    renderTexture(render, texture, NULL, &rect);
                 }
             }
         }
@@ -196,11 +196,11 @@ int display_bomb(SDL_Renderer* render, Bomb* bomb, Map* map) {
     clock_gettime(CLOCK_REALTIME, &cur_time);
     double dt = (cur_time.tv_sec - bomb->start_time.tv_sec) + (double) (cur_time.tv_nsec - bomb->start_time.tv_nsec) / (double) BILLION;
     if (dt < initial_bomb_time) {
-        SDL_RenderCopy(render, bombTextures[0], NULL, &(bomb->rect));
+        renderTexture(render, bombTextures[0], NULL, &(bomb->rect));
         return 0;
     }
     else if (dt < initial_bomb_time + (NB_BOMB_TEXTURES - 1) * bomb_cycle){
-        SDL_RenderCopy(render, bombTextures[(int) ((dt - initial_bomb_time) / bomb_cycle)], NULL, &(bomb->rect));
+        renderTexture(render, bombTextures[(int) ((dt - initial_bomb_time) / bomb_cycle)], NULL, &(bomb->rect));
         return 0;
     }
     else if (dt < NB_BOMB_TEXTURES * bomb_cycle + NB_FLAME_TEXTURES * flame_cycle){
@@ -303,4 +303,14 @@ int load_bomb_textures(SDL_Renderer* render) {
         return -1;
     }
     return 0;
+}
+
+void free_bombs(){
+    for (int i = 0; i < MAX_BOMBS; i++){
+        if (bombs[i] != NULL){
+            free(bombs[i]->explosion_tiles);
+            free(bombs[i]);
+            bombs[i] = NULL;
+        }
+    }
 }

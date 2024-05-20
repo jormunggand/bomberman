@@ -6,6 +6,9 @@
 #include <SDL_image.h>
 #endif
 
+extern SDL_Texture* bomb_bonus_icon;
+extern SDL_Texture* flame_bonus_icon;
+extern SDL_Texture* speed_bonus_icon;
 
 struct Bomb;
 

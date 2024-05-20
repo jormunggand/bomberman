@@ -24,9 +24,9 @@ SDL_Texture* create_bonus_texture(SDL_Renderer* render, SDL_Texture* icon) {
     SDL_Texture* text = SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, 
         SDL_TEXTUREACCESS_TARGET, TILE_SIZE, TILE_SIZE);
     SDL_SetRenderTarget(render, text);
-    SDL_RenderCopy(render, empty_texture, NULL, NULL);
+    renderTexture(render, empty_texture, NULL, NULL);
     SDL_Rect middle = {.x=TILE_SIZE/4, .y=TILE_SIZE/4, .w=TILE_SIZE/2, .h=TILE_SIZE/2};
-    SDL_RenderCopy(render, icon, NULL, &middle);
+    renderTexture(render, icon, NULL, &middle);
     SDL_SetRenderTarget(render, NULL);
     return text;
 }
@@ -51,11 +51,6 @@ int load_map_textures(SDL_Renderer* render) {
         printf("%s\n", SDL_GetError());
         return -1;
     }
-
-    // now useless
-    SDL_DestroyTexture(bomb_bonus_icon);
-    SDL_DestroyTexture(flame_bonus_icon);
-    SDL_DestroyTexture(speed_bonus_icon);
 
     textures[HARD_WALL] = wall_texture;
     textures[EMPTY] = empty_texture;
@@ -114,10 +109,10 @@ int display_map(SDL_Renderer* renderer, Map* map) {
             rect.y = y * TILE_SIZE;
             int r;
             if (map->grid[y][x].bonus != NONE && map->grid[y][x].type == EMPTY){
-                r = SDL_RenderCopy(renderer, textures[map->grid[y][x].bonus], NULL, &rect);
+                r = renderTexture(renderer, textures[map->grid[y][x].bonus], NULL, &rect);
             }
             else{
-                r = SDL_RenderCopy(renderer, textures[map->grid[y][x].type], NULL, &rect);
+                r = renderTexture(renderer, textures[map->grid[y][x].type], NULL, &rect);
             } 
             if (r != 0) {
                 printf("%s\n", SDL_GetError());

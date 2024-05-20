@@ -52,7 +52,7 @@ void init_player(Player* player, int x, int y, int* controls) {
 
 void display_player(SDL_Renderer* render, Player* player) {
     if (!player->isWalking) player->iframe = 0;
-    SDL_RenderCopy(render, player->animations[player->iframe], NULL, &(player->rect));
+    renderTexture(render, player->animations[player->iframe], NULL, &(player->rect));
 }
 
 void change_direction(Player* player, SpriteDirection newDir) {
