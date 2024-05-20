@@ -12,7 +12,7 @@
 
 struct Map;
 
-void online_multiplayer(SDL_Window *window, SDL_Renderer *render, char *map_filename, TCPsocket clientSocket);
+int online_multiplayer(SDL_Window *window, SDL_Renderer *render, char *map_filename, TCPsocket clientSocket);
 //int send_map(TCPsocket clientSocket, Map map);
 int receiveControls(void *data);
 int host_server(SDL_Window* window, SDL_Renderer* render, char* map_filename);

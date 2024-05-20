@@ -5,6 +5,7 @@
 #include "keyboard.h"
 #include "bomb.h"
 #include "bonus.h"
+#include "hud.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -41,7 +42,7 @@ int send_map(TCPsocket clientSocket, Map map)
     return 0;
 }
 
-void online_multiplayer(SDL_Window *window, SDL_Renderer *render, char *map_filename, TCPsocket clientSocket)
+int online_multiplayer(SDL_Window *window, SDL_Renderer *render, char *map_filename, TCPsocket clientSocket)
 {
     Map map;
     if (read_map_from_file(&map, map_filename) != 0)
@@ -94,7 +95,7 @@ void online_multiplayer(SDL_Window *window, SDL_Renderer *render, char *map_file
     if (sans == NULL)
     {
         printf("Error while loading font: %s\n", TTF_GetError());
-        return;
+        return QUIT;
     }
     struct timespec start_time;
     clock_gettime(CLOCK_REALTIME, &start_time);
@@ -203,6 +204,7 @@ void online_multiplayer(SDL_Window *window, SDL_Renderer *render, char *map_file
         SDL_RenderCopy(render, message, NULL, &Message_rect);
         SDL_RenderPresent(render);
     }
+    return QUIT;
 }
 
 int receiveControls(void *data)
@@ -241,7 +243,7 @@ int host_server(SDL_Window *window, SDL_Renderer *render, char *map_filename)
     if (nasa == NULL)
     {
         printf("%s\n", TTF_GetError());
-        return -1;
+        return QUIT;
     }
     SDL_Color red = {.r = 255, .g = 0, .b = 0, .a = 255};
     SDL_Surface *surf = TTF_RenderText_Solid(nasa, "En attente du joueur 2...", red);
@@ -261,7 +263,7 @@ int host_server(SDL_Window *window, SDL_Renderer *render, char *map_filename)
     while (clientSocket == NULL)
     {
         if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
-            return 0;
+            return QUIT;
 
         now = SDL_GetPerformanceCounter();
         delta = now - last;
@@ -276,17 +278,19 @@ int host_server(SDL_Window *window, SDL_Renderer *render, char *map_filename)
     SDL_Thread *recvThread = SDL_CreateThread(receiveControls, "ReceiveControls", (void *)clientSocket);
     // char message[MAX_MESSAGE_LENGTH]; // Buffer pour stocker les messages entrés par l'utilisateur
 
-    online_multiplayer(window, render, map_filename, clientSocket);
+    int nextAction = online_multiplayer(window, render, map_filename, clientSocket);
+    if (nextAction == QUIT)
+        return QUIT;
 
     SDL_WaitThread(recvThread, NULL);
 
     SDLNet_TCP_Close(clientSocket);
     SDLNet_TCP_Close(serverSocket);
-    return 0;
+    return CHOOSING;
 
 NetworkError:
     printf("Network Error: %s\n", SDLNet_GetError());
-    return -1;
+    return QUIT;
 }
 
 // send keyboard input to the server socket in data
@@ -339,7 +343,7 @@ void decode_map(Map* map, char* encodedMap) {
     int k = 2;
     for (int i = 0; i < map->size; i++) {
         for (int j = 0; j < map->size; j++) {
-            map->grid[i][j].type = encodedMap[k++];
+            map->grid[i][j].type = (int)(encodedMap[k++] - '0');
             map->grid[i][j].bonus = NONE;
         }
     }
@@ -360,9 +364,10 @@ int join_server(SDL_Window* window, SDL_Renderer *render)
     Map map;
     decode_map(&map, encodedMap);
 
-    SDL_SetWindowSize(window, map.size * TILE_SIZE, map.size * TILE_SIZE);
+    /*SDL_SetWindowSize(window, map.size * TILE_SIZE, map.size * TILE_SIZE);
     display_map(render, &map);
-    SDL_RenderPresent(render);
+    SDL_RenderPresent(render);*/
+    printf("%s\n", encodedMap);
     
     
 
