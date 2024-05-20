@@ -57,8 +57,8 @@ int send_map(TCPsocket clientSocket, Map map)
 
 int send_player_infos(TCPsocket clientSocket, Player player1, Player player2) {
     char infos[MAX_MESSAGE_LENGTH];
-    sprintf(infos, "%d %d %d %d %d %d %d %d %d %d", player1.iframe, player1.curDir, 
-    player1.cpt_reset, player1.rect.x, player1.rect.y, player2.iframe, player2.curDir, 
+    sprintf(infos, "%d %d %d %d %d %d %d %d %d %d %d %d", player1.iframe, player1.isWalking, player1.curDir, 
+    player1.cpt_reset, player1.rect.x, player1.rect.y, player2.iframe, player2.isWalking, player2.curDir, 
     player2.cpt_reset, player2.rect.x, player2.rect.y);
 
     int size = strlen(infos);
@@ -140,9 +140,6 @@ int online_multiplayer(SDL_Window *window, SDL_Renderer *render, char *map_filen
 
     while (!done) 
     {
-        send_map(clientSocket, map);
-        send_player_infos(clientSocket, players[0], players[1]);
-        
         LAST = NOW;
         NOW = SDL_GetPerformanceCounter();
         deltaTime = (double)((NOW - LAST) / (double)SDL_GetPerformanceFrequency()); // delta time in seconds
@@ -210,6 +207,8 @@ int online_multiplayer(SDL_Window *window, SDL_Renderer *render, char *map_filen
                 deltas[iPlayer].y = 0;
                 get_bonus(curPlayer, &map);
             }
+            send_map(clientSocket, map);
+            send_player_infos(clientSocket, players[0], players[1]);
             update_bombs_positions(window, &map, targetfps);
             accumulator -= targetfps;
         }
@@ -410,11 +409,15 @@ int get_player_infos(TCPsocket serverSocket, Player* player1, Player* player2) {
     SDLNet_TCP_Recv(serverSocket, infos, MAX_MESSAGE_LENGTH);
 
     int curDir1, curDir2;
-    sscanf(infos, "%d %d %d %d %d %d %d %d %d %d", &player1->iframe, &curDir1, 
-        &player1->cpt_reset, &player1->rect.x, &player1->rect.y, &player2->iframe, 
+    int isWalk1, isWalk2;
+    sscanf(infos, "%d %d %d %d %d %d %d %d %d %d %d %d", &player1->iframe, &isWalk1, &curDir1, 
+        &player1->cpt_reset, &player1->rect.x, &player1->rect.y, &player2->iframe, &isWalk2,
        &curDir2, &player2->cpt_reset, &player2->rect.x, &player2->rect.y);
     player1->curDir = curDir1;
     player2->curDir = curDir2;
+    player1->isWalking = isWalk1;
+    player2->isWalking = isWalk2;
+    printf("Iframe : %d %d\n", player1->iframe, player2->iframe);
     change_direction(player1, curDir1);
     change_direction(player2, curDir2);
     return 0;
@@ -476,9 +479,6 @@ int join_server(SDL_Window* window, SDL_Renderer *render)
     bool done = false;
     while (!done) 
     {
-        get_map(serverSocket, &map);
-        get_player_infos(serverSocket, &players[0], &players[1]);
-
         LAST = NOW;
         NOW = SDL_GetPerformanceCounter();
         deltaTime = (double)((NOW - LAST) / (double)SDL_GetPerformanceFrequency()); // delta time in seconds
@@ -499,6 +499,8 @@ int join_server(SDL_Window* window, SDL_Renderer *render)
                 Player *curPlayer = &players[iPlayer];
                 get_bonus(curPlayer, &map);
             }
+            get_map(serverSocket, &map);
+            get_player_infos(serverSocket, &players[0], &players[1]);
             //update_bombs_positions(window, &map, targetfps);
             accumulator -= targetfps;
         }
