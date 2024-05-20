@@ -53,6 +53,7 @@ int load_all_textures(SDL_Renderer* render) {
     return 0;
 }
 
+
 // launch a game with two players
 Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
     setColor(render, (SDL_Color){0, 0, 0});
@@ -232,7 +233,7 @@ int main(int argc, char* argv[]) {
             host_server(window, render, map_filename);
             gamemode = CHOOSING;
         } else if (gamemode == ONLINE_JOINING) {
-            join_server(render, windowWidth, windowHeight);
+            join_server(window, render);
             gamemode = CHOOSING;
         } else if(gamemode == CHOOSING) {
             SDL_SetWindowSize(window, SPLASH_SIZE, SPLASH_SIZE);

@@ -32,6 +32,8 @@ typedef struct KeyboardHandler {
 } KeyboardHandler;
 
 // set all keys to released
+
+int sdl_to_k(int SDL_key);
 void initHandler(KeyboardHandler* self);
 
 // update the state of the keys according to the event received
