@@ -87,11 +87,12 @@ void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_file
             if (event.type == SDL_QUIT || handler.keyState[K_ESC] == SDL_PRESSED)
                 done = true;
             else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-                if (is_in_tab(event.key.keysym.sym, controls1, 5)) {
+                if (is_in_tab(sdl_to_k(event.key.keysym.sym), controls1, 5)) {
                     handleEvent(&handler, event.key);
                 }
             }
         }
+        //printf("%d %d", recInput.keysym.sym, recInput.state);
         handleEvent(&handler, recInput); // player 2's input
         while (accumulator > targetfps) {
             for (int iPlayer = 0; iPlayer < nPlayers; iPlayer++) {
@@ -166,10 +167,9 @@ int receiveControls(void *data)
     {
         if (SDLNet_TCP_Recv(socket, message, MAX_MESSAGE_LENGTH) > 0) // Recevoir un message du client
         {
-            char* inputKey = strtok(message, "*");
-            recInput.keysym.sym = atoi(inputKey);
-            inputKey = strtok(NULL, "*");
-            recInput.state = atoi(inputKey);
+            recInput.state = (int)(message[0] - '0');
+            recInput.keysym.sym = atoi(message+1);
+            //printf("Received: %d %d\n", recInput.keysym.sym, recInput.state);
 
         }
     }
@@ -246,8 +246,8 @@ NetworkError:
 }
 
 // send keyboard input to the server socket in data
-// the format is a string "KEY_SCANCODE*STATE" where KEY_SCANCODE is the scancode of the key and STATE either
-// SDL_PRESSED or SDL_RELEASED (both are integers)
+// the format is a string "STATE*KEY_SCANCODE" where KEY_SCANCODE is the scancode of the key and STATE either
+// SDL_PRESSED or SDL_RELEASED (1 or 0 respectively)
 int sendControls(void* data) 
 {
     TCPsocket socket = (TCPsocket)data; // Casting de data en TCPsocket
@@ -265,7 +265,8 @@ int sendControls(void* data)
                     done = true;
                 else 
                 {
-                    sprintf(message, "%d*%d", event.key.keysym.scancode, event.key.state);
+                    sprintf(message, "%d%d", event.key.state, event.key.keysym.sym);
+                    //printf("Sending %d %d\n", event.key.keysym.sym, event.key.state);
                     int size = strlen(message);
                     int bytesSent = SDLNet_TCP_Send(socket, message, size);
                     if (bytesSent < size) {
