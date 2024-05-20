@@ -333,17 +333,29 @@ int sendControls(void *data)
 }
 
 
-void decode_map(Map* map, char* encodedMap) {
+void decode_map_first(Map* map, char* encodedMap) {
     char size_[3];
     size_[0] = encodedMap[0];
     size_[1] = encodedMap[1];
     size_[2] ='\0';
 
     map->size = atoi(size_);
+    map->grid = malloc(map->size*sizeof(Tile*));
     int k = 2;
     for (int i = 0; i < map->size; i++) {
+        map->grid[i] = malloc(map->size*sizeof(Tile));
         for (int j = 0; j < map->size; j++) {
-            map->grid[i][j].type = (int)(encodedMap[k++] - '0');
+            map->grid[i][j].type = encodedMap[k++] - '0';
+            map->grid[i][j].bonus = NONE;
+        }
+    }
+}
+
+void decode_map(Map* map, char* encodedMap) {
+    int k = 0;
+    for (int i = 0; i < map->size; i++) {
+        for (int j = 0; j < map->size; j++) {
+            map->grid[i][j].type = encodedMap[k++] - '0';
             map->grid[i][j].bonus = NONE;
         }
     }
@@ -357,22 +369,21 @@ int join_server(SDL_Window* window, SDL_Renderer *render)
     SDLNet_ResolveHost(&ip, "127.0.0.1", 1234); // Se connecter au serveur a l'adresse IP 127.0.0.1 sur le port 1234
     serverSocket = SDLNet_TCP_Open(&ip);        // Ouvrir une connexion TCP avec le serveur
 
-    //SDL_Thread *sendContThread = SDL_CreateThread(sendControls, "SendControls", (void *)serverSocket); // Créer un thread pour recevoir les messages du serveur
+    SDL_Thread *sendContThread = SDL_CreateThread(sendControls, "SendControls", (void *)serverSocket); // Créer un thread pour recevoir les messages du serveur
 
     char encodedMap[MAX_MESSAGE_LENGTH];
     SDLNet_TCP_Recv(serverSocket, encodedMap, MAX_MESSAGE_LENGTH);
     Map map;
-    decode_map(&map, encodedMap);
+    decode_map_first(&map, encodedMap);
 
-    /*SDL_SetWindowSize(window, map.size * TILE_SIZE, map.size * TILE_SIZE);
+    SDL_SetWindowSize(window, map.size * TILE_SIZE, map.size * TILE_SIZE);
     display_map(render, &map);
-    SDL_RenderPresent(render);*/
-    printf("%s\n", encodedMap);
+    SDL_RenderPresent(render);
     
     
 
 
-    //SDL_WaitThread(sendContThread, NULL); // Attendre la fin du thread de réception
+    SDL_WaitThread(sendContThread, NULL); // Attendre la fin du thread de réception
     SDLNet_TCP_Close(serverSocket);
     return 0;
 }
