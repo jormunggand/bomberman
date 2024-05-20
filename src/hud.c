@@ -13,6 +13,13 @@ SDL_Texture* host_btn;
 SDL_Texture* join_btn;
 SDL_Texture* back_btn;
 
+SDL_Texture* bomb_p1_text_texture = NULL;
+SDL_Texture* flame_p1_text_texture = NULL;
+SDL_Texture* speed_p1_text_texture = NULL;
+SDL_Texture* bomb_p2_text_texture = NULL;
+SDL_Texture* flame_p2_text_texture = NULL;
+SDL_Texture* speed_p2_text_texture = NULL;
+
 // load textures needed for the booting menu
 int load_menu_textures(SDL_Renderer* render) {
     splashscreen = loadImage("../assets/title_flat.jpg", render);
@@ -130,22 +137,24 @@ Gamemode online_menu(SDL_Renderer* render, int windowWidth, int windowHeight) {
 }
 
 void display_hud(SDL_Renderer* render, TTF_Font* sans, Player* p1, Player* p2, int windowWidth){
-    int icon_size = 3 * HUD_HEIGHT / 4;
+    int icon_size = 5 * HUD_HEIGHT / 8;
+    int y = HUD_HEIGHT / 2 - icon_size / 2;
+    int xleft = 10;
     SDL_Color white = {255, 255, 255};
 
-    SDL_Rect bomb_p1 = {0, 0, icon_size, icon_size};    
-    SDL_Rect flame_p1 = {windowWidth / 7, 0, icon_size, icon_size};
-    SDL_Rect speed_p1 = {2 * windowWidth / 7, 0, icon_size, icon_size};
-    SDL_Rect bomb_p2 = {4 * windowWidth / 7, 0, icon_size, icon_size};
-    SDL_Rect flame_p2 = {5 * windowWidth / 7, 0, icon_size, icon_size};
-    SDL_Rect speed_p2 = {6 * windowWidth / 7, 0, icon_size, icon_size};
+    SDL_Rect bomb_p1 = {xleft, y, icon_size, icon_size};    
+    SDL_Rect flame_p1 = {xleft + windowWidth / 7, y, icon_size, icon_size};
+    SDL_Rect speed_p1 = {xleft + 2 * windowWidth / 7, y, icon_size, icon_size};
+    SDL_Rect bomb_p2 = {4 * windowWidth / 7, y, icon_size, icon_size};
+    SDL_Rect flame_p2 = {5 * windowWidth / 7, y, icon_size, icon_size};
+    SDL_Rect speed_p2 = {6 * windowWidth / 7, y, icon_size, icon_size};
 
-    SDL_Rect bomb_p1_text_rect = {icon_size + 5, 0, icon_size, icon_size};
-    SDL_Rect flame_p1_text_rect = {windowWidth / 7 + icon_size + 5, 0, 2 * icon_size, icon_size};
-    SDL_Rect speed_p1_text_rect = {2 * windowWidth / 7 + icon_size + 5, 0, 2 * icon_size, icon_size};
-    SDL_Rect bomb_p2_text_rect = {4 * windowWidth / 7 + icon_size + 5, 0, icon_size, icon_size};
-    SDL_Rect flame_p2_text_rect = {5 * windowWidth / 7 + icon_size + 5, 0, 2 * icon_size, icon_size};
-    SDL_Rect speed_p2_text_rect = {6 * windowWidth / 7 + icon_size + 5, 0, 2 * icon_size, icon_size};
+    SDL_Rect bomb_p1_text_rect = {xleft + icon_size + 5, y, icon_size, icon_size};
+    SDL_Rect flame_p1_text_rect = {xleft + windowWidth / 7 + icon_size + 5, y, icon_size, icon_size};
+    SDL_Rect speed_p1_text_rect = {xleft + 2 * windowWidth / 7 + icon_size + 5, y, 2 * icon_size, icon_size};
+    SDL_Rect bomb_p2_text_rect = {4 * windowWidth / 7 + icon_size + 5, y, icon_size, icon_size};
+    SDL_Rect flame_p2_text_rect = {5 * windowWidth / 7 + icon_size + 5, y, icon_size, icon_size};
+    SDL_Rect speed_p2_text_rect = {6 * windowWidth / 7 + icon_size + 5, y, 2 * icon_size, icon_size};
 
     char bomb_p1_str[5];
     char flame_p1_str[5];
@@ -154,12 +163,12 @@ void display_hud(SDL_Renderer* render, TTF_Font* sans, Player* p1, Player* p2, i
     char flame_p2_str[5];
     char speed_p2_str[10];
 
-    sprintf(bomb_p1_str, ": %d", p1->nMaxBombs);
+    sprintf(bomb_p1_str, ": %d", p1->nMaxBombs - p1->nCurBombs);
     sprintf(flame_p1_str, ": %d", p1->flamePower);
-    sprintf(speed_p1_str, ": %.2f", p1->speed);
-    sprintf(bomb_p2_str, ": %d", p2->nMaxBombs);
+    sprintf(speed_p1_str, ": x%.2f", p1->speed  / BASE_SPEED);
+    sprintf(bomb_p2_str, ": %d", p2->nMaxBombs - p2->nCurBombs);
     sprintf(flame_p2_str, ": %d", p2->flamePower);
-    sprintf(speed_p2_str, ": %.2f", p2->speed);
+    sprintf(speed_p2_str, ": x%.2f", p2->speed / BASE_SPEED);
 
     SDL_Surface* bomb_p1_surf = TTF_RenderText_Solid(sans, bomb_p1_str, white);
     SDL_Surface* flame_p1_surf = TTF_RenderText_Solid(sans, flame_p1_str, white);
@@ -188,4 +197,18 @@ void display_hud(SDL_Renderer* render, TTF_Font* sans, Player* p1, Player* p2, i
     SDL_RenderCopy(render, bomb_p2_text_texture, NULL, &bomb_p2_text_rect);
     SDL_RenderCopy(render, flame_p2_text_texture, NULL, &flame_p2_text_rect);
     SDL_RenderCopy(render, speed_p2_text_texture, NULL, &speed_p2_text_rect);
+
+    SDL_FreeSurface(bomb_p1_surf);
+    SDL_FreeSurface(flame_p1_surf);
+    SDL_FreeSurface(speed_p1_surf);
+    SDL_FreeSurface(bomb_p2_surf);
+    SDL_FreeSurface(flame_p2_surf);
+    SDL_FreeSurface(speed_p2_surf);
+
+    SDL_DestroyTexture(bomb_p1_text_texture);
+    SDL_DestroyTexture(flame_p1_text_texture);
+    SDL_DestroyTexture(speed_p1_text_texture);
+    SDL_DestroyTexture(bomb_p2_text_texture);
+    SDL_DestroyTexture(flame_p2_text_texture);
+    SDL_DestroyTexture(speed_p2_text_texture);
 }
