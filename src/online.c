@@ -33,8 +33,8 @@ void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_file
     Player players[nPlayers];
     Key controls1[5] = {K_z, K_d, K_s, K_q, K_SPACE};
     Key controls2[5] = {K_UP, K_RIGHT, K_DOWN, K_LEFT, K_RSHIFT};
-    init_player(&players[0], 1, 1, controls1);
-    init_player(&players[1], map.size-2, map.size-2, controls2);
+    init_player(&players[0], 1, 1, controls1, 0);
+    init_player(&players[1], map.size-2, map.size-2, controls2, 1);
 
     // Load and display map and players
     display_map(render, &map);
@@ -109,19 +109,19 @@ void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_file
 
                     if (handler.keyState[curPlayer->controls[0]] == SDL_PRESSED) {
                         deltas[iPlayer].y -= 1;
-                        change_direction(curPlayer, BACK);
+                        change_direction(curPlayer, BACK, iPlayer);
                     }
                     if (handler.keyState[curPlayer->controls[1]] == SDL_PRESSED) {
                         deltas[iPlayer].x += 1;
-                        change_direction(curPlayer, RIGHT);
+                        change_direction(curPlayer, RIGHT, iPlayer);
                     }
                     if (handler.keyState[curPlayer->controls[2]] == SDL_PRESSED) {
                         deltas[iPlayer].y += 1;
-                        change_direction(curPlayer, FRONT);
+                        change_direction(curPlayer, FRONT, iPlayer);
                     }
                     if (handler.keyState[curPlayer->controls[3]] == SDL_PRESSED) {
                         deltas[iPlayer].x -= 1;
-                        change_direction(curPlayer, LEFT);
+                        change_direction(curPlayer, LEFT, iPlayer);
                     }
                 }
                 if (handler.keyState[curPlayer->controls[4]] == SDL_PRESSED)

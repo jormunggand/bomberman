@@ -291,7 +291,7 @@ int load_bomb_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int 
     for (int i = 0; i < nb_textures; i++) {
         char filename[50];
         sprintf(filename, base, i);
-        SDL_Texture* curText = loadImage(filename, render);
+        SDL_Texture* curText = loadImage(filename, render, false);
         if (curText == NULL) {
             printf("%s\n", SDL_GetError());
             return -1;

@@ -32,13 +32,13 @@ SDL_Texture* create_bonus_texture(SDL_Renderer* render, SDL_Texture* icon) {
 }
 
 int load_map_textures(SDL_Renderer* render) {
-    empty_texture = loadImage("../assets/Blocks/BackgroundTile.png", render);
-    wall_texture = loadImage("../assets/Blocks/SolidBlock.png", render);
-    soft_wall_texture = loadImage("../assets/Blocks/ExplodableBlock.png", render);
+    empty_texture = loadImage("../assets/Blocks/BackgroundTile.png", render, false);
+    wall_texture = loadImage("../assets/Blocks/SolidBlock.png", render, false);
+    soft_wall_texture = loadImage("../assets/Blocks/ExplodableBlock.png", render, false);
 
-    bomb_bonus_icon = loadImage("../assets/Powerups/BombPowerup.png", render);
-    flame_bonus_icon = loadImage("../assets/Powerups/FlamePowerup.png", render);
-    speed_bonus_icon = loadImage("../assets/Powerups/SpeedPowerup.png", render);
+    bomb_bonus_icon = loadImage("../assets/Powerups/BombPowerup.png", render, false);
+    flame_bonus_icon = loadImage("../assets/Powerups/FlamePowerup.png", render, false);
+    speed_bonus_icon = loadImage("../assets/Powerups/SpeedPowerup.png", render, false);
 
     bomb_bonus = create_bonus_texture(render, bomb_bonus_icon);
     flame_bonus = create_bonus_texture(render, flame_bonus_icon);

@@ -23,15 +23,15 @@ SDL_Texture* speed_p2_text_texture = NULL;
 
 // load textures needed for the booting menu
 int load_menu_textures(SDL_Renderer* render) {
-    splashscreen = loadImage("../assets/title_flat.jpg", render);
-    local_multi_btn = loadImage("../assets/Menu/local_multiplayer_button.png", render);
-    online_multi_btn = loadImage("../assets/Menu/online_multiplayer_button.png", render);
-    playervcpu_btn = loadImage("../assets/Menu/player_vs_cpu_button.png", render);
+    splashscreen = loadImage("../assets/title_flat.jpg", render, false);
+    local_multi_btn = loadImage("../assets/Menu/local_multiplayer_button.png", render, false);
+    online_multi_btn = loadImage("../assets/Menu/online_multiplayer_button.png", render, false);
+    playervcpu_btn = loadImage("../assets/Menu/player_vs_cpu_button.png", render, false);
 
-    host_btn = loadImage("../assets/Menu/host_button.png", render);
-    join_btn = loadImage("../assets/Menu/join_button.png", render);
+    host_btn = loadImage("../assets/Menu/host_button.png", render, false);
+    join_btn = loadImage("../assets/Menu/join_button.png", render, false);
 
-    back_btn = loadImage("../assets/Menu/back_button.png", render);
+    back_btn = loadImage("../assets/Menu/back_button.png", render, false);
 
     if (splashscreen == NULL || local_multi_btn == NULL || online_multi_btn == NULL 
         || playervcpu_btn == NULL || host_btn == NULL || join_btn == NULL) {

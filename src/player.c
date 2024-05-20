@@ -16,7 +16,7 @@ const float flame_hitbox_tolerance = 2 * TILE_SIZE / 5;
 const float wall_hitbox_tolerance = TILE_SIZE / 4 + 0.5;
 
 // create a player structure positioned at map.grid[y][x]
-void init_player(Player* player, int playerIndex, int x, int y, int* controls) {
+void init_player(Player* player, int x, int y, int* controls, int playerIndex) {
     player->curDir = FRONT;
     player->iframe = 0;
     player->isWalking = false;
@@ -52,10 +52,11 @@ void init_player(Player* player, int playerIndex, int x, int y, int* controls) {
 
 void display_player(SDL_Renderer* render, Player* player) {
     if (!player->isWalking) player->iframe = 0;
-    renderTexture(render, player->animations[player->iframe], NULL, &(player->rect));
+    SDL_Texture* texture = player->animations[player->iframe];
+    renderTexture(render, texture, NULL, &(player->rect));
 }
 
-void change_direction(Player* player, int playerIndex, SpriteDirection newDir) {
+void change_direction(Player* player, SpriteDirection newDir, int playerIndex) {
     player->curDir = newDir;
     if (player->curDir == FRONT) {
         player->animations = front_walking[playerIndex];
@@ -75,11 +76,11 @@ void update_sprite(Player* player) {
     player->iframe %= ANIMATION_FRAMES;
 }
 
-int load_player_aux(SDL_Renderer* render, char* base, SDL_Texture** textures) {
+int load_player_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int playerIndex) {
     for (int i = 0; i < ANIMATION_FRAMES; i++) {
         char filename[50];
         sprintf(filename, base, i);
-        SDL_Texture* curText = loadImage(filename, render);
+        SDL_Texture* curText = loadImage(filename, render, playerIndex == 1);
         if (curText == NULL) {
             printf("%s\n", SDL_GetError());
             return -1;
@@ -89,12 +90,12 @@ int load_player_aux(SDL_Renderer* render, char* base, SDL_Texture** textures) {
     return 0;
 }
 
-int load_player_textures(SDL_Renderer* render) {
+int load_player_textures(SDL_Renderer* render, int playerIndex) {
     int r1, r2, r3, r4;
-    r1 = load_player_aux(render, "../assets/Bomberman/Front/Bman_F_f0%d.png", front_walking);
-    r2 = load_player_aux(render, "../assets/Bomberman/Back/Bman_B_f0%d.png", back_walking);
-    r3 = load_player_aux(render, "../assets/Bomberman/Left/Bman_L_f0%d.png", left_walking);
-    r4 = load_player_aux(render, "../assets/Bomberman/Right/Bman_R_f0%d.png", right_walking);
+    r1 = load_player_aux(render, "../assets/Bomberman/Front/Bman_F_f0%d.png", front_walking[playerIndex], playerIndex);
+    r2 = load_player_aux(render, "../assets/Bomberman/Back/Bman_B_f0%d.png", back_walking[playerIndex], playerIndex);
+    r3 = load_player_aux(render, "../assets/Bomberman/Left/Bman_L_f0%d.png", left_walking[playerIndex], playerIndex);
+    r4 = load_player_aux(render, "../assets/Bomberman/Right/Bman_R_f0%d.png", right_walking[playerIndex], playerIndex);
     if (r1 + r2 + r3 + r4 != 0) {
         return -1;
     }

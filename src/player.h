@@ -46,13 +46,13 @@ typedef struct Player {
 
 
 
-void init_player(Player* player, int x, int y, int* controls);
-void change_direction(Player* player, SpriteDirection newDir);
+void init_player(Player* player, int x, int y, int* controls, int playerIndex);
+void change_direction(Player* player, SpriteDirection newDir, int playerIndex);
 void update_sprite(Player* player);
 void display_player(SDL_Renderer* render, Player* player);
 
-int load_player_aux(SDL_Renderer* render, char* base, SDL_Texture** textures);
-int load_player_textures(SDL_Renderer* render);
+int load_player_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int playerIndex);
+int load_player_textures(SDL_Renderer* render, int playerIndex);
 
 void edge_collision(SDL_Window* window, Player* player, struct Map *map, int deltaX, int deltaY, double elapsedTime);
 bool check_collision(SDL_Rect* r, struct Map *map);

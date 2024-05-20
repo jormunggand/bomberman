@@ -43,7 +43,7 @@ int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h){
     return 0;
 }
 
-SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer){
+SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer, bool isNegative){
     SDL_Surface *tmp = NULL; 
     SDL_Texture *texture = NULL;
     tmp = IMG_Load(path);
@@ -52,7 +52,21 @@ SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer){
         fprintf(stderr, "Erreur IMG_Load : %s", SDL_GetError());
         return NULL;
     }
-    texture = SDL_CreateTextureFromSurface(renderer, tmp);
+    if (!isNegative){
+        texture = SDL_CreateTextureFromSurface(renderer, tmp);
+    }
+    else{
+        Uint32* pixels = tmp->pixels;
+        for (int i = 0; i < tmp->w * tmp->h; i++) {
+            Uint8 r, g, b, a;
+            SDL_GetRGBA(pixels[i], tmp->format, &r, &g, &b, &a);
+            r = 255 - r;
+            g = 255 - g;
+            b = 255 - b;
+            pixels[i] = SDL_MapRGBA(tmp->format, r, g, b, a);
+        }
+        texture = SDL_CreateTextureFromSurface(renderer, tmp);
+    }
     SDL_FreeSurface(tmp);
     if(NULL == texture) {
         fprintf(stderr, "Erreur SDL_CreateTextureFromSurface : %s", SDL_GetError());
@@ -68,31 +82,6 @@ int setColor(SDL_Renderer *renderer, SDL_Color color){
 bool point_in_rect(SDL_Rect rect, int x, int y) {
     return x >= rect.x && (x <= rect.x + rect.w) && y >= rect.y && (y <= rect.y + rect.h);
 } 
-double **createGaussianKernel(int radius, double sigma) {
-    int size = 2 * radius + 1;
-    double **kernel = malloc(size * sizeof(double *));
-    for (int i = 0; i < size; i++) {
-        kernel[i] = malloc(size * sizeof(double));
-    }
-
-    double sum = 0.0;
-    for (int y = -radius; y <= radius; y++) {
-        for (int x = -radius; x <= radius; x++) {
-            double exponent = -(x*x + y*y) / (2 * sigma * sigma);
-            kernel[y + radius][x + radius] = exp(exponent) / (2 * M_PI * sigma * sigma);
-            sum += kernel[y + radius][x + radius];
-        }
-    }
-
-    // Normalize the kernel
-    for (int y = 0; y < size; y++) {
-        for (int x = 0; x < size; x++) {
-            kernel[y][x] /= sum;
-        }
-    }
-
-    return kernel;
-}
 
 double *create1DGaussianKernel(int radius, double sigma) {
     int size = 2 * radius + 1;
@@ -170,6 +159,7 @@ void gaussian_blur(Uint32 *pixels, int width, int height) {
     free(kernel);
 }
 
+// to render a texture with and take into account the offset of the HUD
 int renderTexture(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect *srcrect, SDL_Rect *dstrect){
     if (dstrect != NULL){
         dstrect->y += HUD_HEIGHT;

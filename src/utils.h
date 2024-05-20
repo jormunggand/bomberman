@@ -39,7 +39,7 @@ bool is_in_tab(int x, int* tab, int size);
 int min(int a, int b);
 int max(int a, int b);
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);
-SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer);
+SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer, bool isNegative);
 int setColor(SDL_Renderer *renderer, SDL_Color color);
 bool point_in_rect(SDL_Rect rect, int x, int y); // check wheter (x,y) is inside the rect
 void gaussian_blur(Uint32 *pixels, int width, int height);
