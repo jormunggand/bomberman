@@ -8,7 +8,8 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include <stdlib.h> 
+#include <stdlib.h>
+#include <time.h>
 
 #define MAX_MESSAGE_LENGTH (1024)
 #define BILLION (1000000000L)
@@ -16,14 +17,41 @@
 SDL_KeyboardEvent recInput;
 // to store player 2's input received through the network
 
+int send_map(TCPsocket clientSocket, Map map)
+{
+    char encodedMap[MAX_MESSAGE_LENGTH];
+    sprintf(encodedMap, "%d", map.size);
+    int k = 2;
+    for (int i = 0; i < map.size; i++)
+        for (int j = 0; j < map.size; j++) {
+            //printf("writing %c", map.grid[i][j].type + '0');
+            encodedMap[k++] = (map.grid[i][j].type + '0');
+        }
 
-void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filename, TCPsocket clientSocket) {
+    //printf("Sending %s", encodedMap);
+    int size = strlen(encodedMap);
+    encodedMap[size] = '\0';
+    int bytesSent = SDLNet_TCP_Send(clientSocket, encodedMap, 1024);
+    if (bytesSent < size)
+    {
+        printf("Error while sending controls (only %d bytes were sent)\n", bytesSent);
+        printf("%s\n", SDLNet_GetError());
+        return -1;
+    }
+    return 0;
+}
+
+void online_multiplayer(SDL_Window *window, SDL_Renderer *render, char *map_filename, TCPsocket clientSocket)
+{
     Map map;
     if (read_map_from_file(&map, map_filename) != 0)
     {
         printf("Error while opening the map file (%s)\n", SDL_GetError());
     }
     init_bonus(&map); // randomly add hidden bonuses in soft walls
+
+    send_map(clientSocket, map); // send the map to the client
+
 
     // Resize the window to fit the map
     SDL_SetWindowSize(window, map.size * TILE_SIZE, map.size * TILE_SIZE);
@@ -34,21 +62,22 @@ void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_file
     Key controls1[5] = {K_z, K_d, K_s, K_q, K_SPACE};
     Key controls2[5] = {K_UP, K_RIGHT, K_DOWN, K_LEFT, K_RSHIFT};
     init_player(&players[0], 1, 1, controls1);
-    init_player(&players[1], map.size-2, map.size-2, controls2);
+    init_player(&players[1], map.size - 2, map.size - 2, controls2);
 
     // Load and display map and players
     display_map(render, &map);
     for (int i = 0; i < nPlayers; i++)
         display_player(render, &players[i]);
     SDL_RenderPresent(render);
-    
+
     SDL_Event event;
     KeyboardHandler handler; // to handle simultaneous keypresses
     initHandler(&handler);
 
     bool done = false;
     Delta deltas[nPlayers];
-    for (int i = 0; i < nPlayers; i++) {
+    for (int i = 0; i < nPlayers; i++)
+    {
         deltas[i].x = 0;
         deltas[i].y = 0;
     }
@@ -61,66 +90,79 @@ void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_file
 
     char timerStr[8];
     SDL_Color White = {255, 255, 255};
-    TTF_Font* sans = TTF_OpenFont("../assets/nasa.ttf", 12);
-    if (sans == NULL) {
+    TTF_Font *sans = TTF_OpenFont("../assets/nasa.ttf", 12);
+    if (sans == NULL)
+    {
         printf("Error while loading font: %s\n", TTF_GetError());
         return;
     }
     struct timespec start_time;
     clock_gettime(CLOCK_REALTIME, &start_time);
-    SDL_Rect Message_rect; //create a rect
+    SDL_Rect Message_rect; // create a rect
     int ww, wh;
     SDL_GetWindowSize(window, &ww, &wh);
-    Message_rect.w = 50; // controls the width of the rect
-    Message_rect.h = 50; // controls the height of the rect
-    Message_rect.y = 0; // controls the rect's y coordinte
-    Message_rect.x = ww / 2 - Message_rect.w / 2;  //controls the rect's x coordinate 
+    Message_rect.w = 50;                          // controls the width of the rect
+    Message_rect.h = 50;                          // controls the height of the rect
+    Message_rect.y = 0;                           // controls the rect's y coordinte
+    Message_rect.x = ww / 2 - Message_rect.w / 2; // controls the rect's x coordinate
 
-    while (!done) {
+    while (!done) 
+    {
         LAST = NOW;
         NOW = SDL_GetPerformanceCounter();
-        deltaTime = (double)( (NOW - LAST) / (double) SDL_GetPerformanceFrequency() ); // delta time in seconds
+        deltaTime = (double)((NOW - LAST) / (double)SDL_GetPerformanceFrequency()); // delta time in seconds
         accumulator += deltaTime;
 
         int eventPresent = SDL_PollEvent(&event);
-        if (eventPresent) {
+        if (eventPresent)
+        {
             if (event.type == SDL_QUIT || handler.keyState[K_ESC] == SDL_PRESSED)
                 done = true;
-            else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-                if (is_in_tab(sdl_to_k(event.key.keysym.sym), controls1, 5)) {
+            else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+            {
+                if (is_in_tab(sdl_to_k(event.key.keysym.sym), controls1, 5))
+                {
                     handleEvent(&handler, event.key);
                 }
             }
         }
-        //printf("%d %d", recInput.keysym.sym, recInput.state);
+        // printf("%d %d", recInput.keysym.sym, recInput.state);
         handleEvent(&handler, recInput); // player 2's input
-        while (accumulator > targetfps) {
-            for (int iPlayer = 0; iPlayer < nPlayers; iPlayer++) {
+        while (accumulator > targetfps)
+        {
+            for (int iPlayer = 0; iPlayer < nPlayers; iPlayer++)
+            {
                 if (!players[iPlayer].isAlive)
                     continue;
-                Player* curPlayer = &players[iPlayer];
-                if (anyDirectionPressed(&handler, iPlayer+1)) {
+                Player *curPlayer = &players[iPlayer];
+                if (anyDirectionPressed(&handler, iPlayer + 1))
+                {
                     curPlayer->isWalking = true;
                     curPlayer->cpt_reset++;
                     update_sprite(curPlayer);
-                    if (curPlayer->cpt_reset == 200) {
+                    if (curPlayer->cpt_reset == 200)
+                    {
                         curPlayer->cpt_reset = 0;
                         curPlayer->isWalking = false;
                     }
 
-                    if (handler.keyState[curPlayer->controls[0]] == SDL_PRESSED) {
+                    if (handler.keyState[curPlayer->controls[0]] == SDL_PRESSED)
+                    {
                         deltas[iPlayer].y -= 1;
                         change_direction(curPlayer, BACK);
                     }
-                    if (handler.keyState[curPlayer->controls[1]] == SDL_PRESSED) {
+                    if (handler.keyState[curPlayer->controls[1]] == SDL_PRESSED)
+                    {
                         deltas[iPlayer].x += 1;
                         change_direction(curPlayer, RIGHT);
                     }
-                    if (handler.keyState[curPlayer->controls[2]] == SDL_PRESSED) {
+                    if (handler.keyState[curPlayer->controls[2]] == SDL_PRESSED)
+                    {
                         deltas[iPlayer].y += 1;
                         change_direction(curPlayer, FRONT);
                     }
-                    if (handler.keyState[curPlayer->controls[3]] == SDL_PRESSED) {
+                    if (handler.keyState[curPlayer->controls[3]] == SDL_PRESSED)
+                    {
                         deltas[iPlayer].x -= 1;
                         change_direction(curPlayer, LEFT);
                     }
@@ -138,20 +180,25 @@ void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_file
         }
         struct timespec cur_time;
         clock_gettime(CLOCK_REALTIME, &cur_time);
-        double dt = (cur_time.tv_sec - start_time.tv_sec) + (double) (cur_time.tv_nsec - start_time.tv_nsec) / (double) BILLION;
+        double dt = (cur_time.tv_sec - start_time.tv_sec) + (double)(cur_time.tv_nsec - start_time.tv_nsec) / (double)BILLION;
         sprintf(timerStr, "%.2f", dt);
-        SDL_Surface* surfaceMessage = TTF_RenderText_Solid(sans, timerStr, White); 
-        SDL_Texture* message = SDL_CreateTextureFromSurface(render, surfaceMessage);
-        
+        SDL_Surface *surfaceMessage = TTF_RenderText_Solid(sans, timerStr, White);
+        SDL_Texture *message = SDL_CreateTextureFromSurface(render, surfaceMessage);
+
         SDL_RenderClear(render);
         display_map(render, &map);
         display_bombs(render, &map);
-        for (int b = 0; b < MAX_BOMBS && bombs[b] != NULL; b++){
+        for (int b = 0; b < MAX_BOMBS && bombs[b] != NULL; b++)
+        {
             SDL_RenderDrawRect(render, &bombs[b]->collision_rect);
         }
-        for (int i = 0; i < nPlayers; i++) {
+        for (int i = 0; i < nPlayers; i++)
+        {
             updateDeathStatus(&map, &players[i]);
-            if (players[i].isAlive) {display_player(render, &players[i]);}
+            if (players[i].isAlive)
+            {
+                display_player(render, &players[i]);
+            }
         }
         SDL_RenderCopy(render, message, NULL, &Message_rect);
         SDL_RenderPresent(render);
@@ -160,7 +207,7 @@ void online_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_file
 
 int receiveControls(void *data)
 {
-    TCPsocket socket = (TCPsocket) data; // Casting de data en TCPsocket
+    TCPsocket socket = (TCPsocket)data; // Casting de data en TCPsocket
     char message[MAX_MESSAGE_LENGTH];   // Buffer pour stocker les messages reçus
 
     while (1)
@@ -168,16 +215,15 @@ int receiveControls(void *data)
         if (SDLNet_TCP_Recv(socket, message, MAX_MESSAGE_LENGTH) > 0) // Recevoir un message du client
         {
             recInput.state = (int)(message[0] - '0');
-            recInput.keysym.sym = atoi(message+1);
-            //printf("Received: %d %d\n", recInput.keysym.sym, recInput.state);
-
+            recInput.keysym.sym = atoi(message + 1);
+            // printf("Received: %d %d\n", recInput.keysym.sym, recInput.state);
         }
     }
     return 0;
 }
 
-
-int host_server(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
+int host_server(SDL_Window *window, SDL_Renderer *render, char *map_filename)
+{
     IPaddress ip; // server's ip address
     TCPsocket serverSocket, clientSocket = NULL;
 
@@ -191,19 +237,19 @@ int host_server(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
     SDL_SetRenderDrawColor(render, 150, 150, 190, 255);
     SDL_RenderClear(render);
 
-    TTF_Font* nasa = TTF_OpenFont("../assets/Fonts/nasa.ttf", 24);
-    if (nasa == NULL) 
+    TTF_Font *nasa = TTF_OpenFont("../assets/Fonts/nasa.ttf", 24);
+    if (nasa == NULL)
     {
         printf("%s\n", TTF_GetError());
         return -1;
     }
-    SDL_Color red = {.r=255, .g=0, .b=0, .a=255};
-    SDL_Surface* surf = TTF_RenderText_Solid(nasa, "En attente du joueur 2...", red);
-    SDL_Texture* mess = SDL_CreateTextureFromSurface(render, surf);
+    SDL_Color red = {.r = 255, .g = 0, .b = 0, .a = 255};
+    SDL_Surface *surf = TTF_RenderText_Solid(nasa, "En attente du joueur 2...", red);
+    SDL_Texture *mess = SDL_CreateTextureFromSurface(render, surf);
 
     int windowWidth, windowHeight;
     SDL_GetWindowSize(window, &windowWidth, &windowHeight);
-    SDL_Rect mess_rect = {.w=200, .h=50, .x=windowWidth/2 - 100, .y=windowHeight/2 - 50};
+    SDL_Rect mess_rect = {.w = 200, .h = 50, .x = windowWidth / 2 - 100, .y = windowHeight / 2 - 50};
 
     SDL_RenderCopy(render, mess, NULL, &mess_rect);
     SDL_RenderPresent(render);
@@ -212,25 +258,23 @@ int host_server(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
     SDL_Event event;
     Uint64 last = 0, now;
     int delta;
-    while (clientSocket == NULL) 
+    while (clientSocket == NULL)
     {
         if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
             return 0;
 
         now = SDL_GetPerformanceCounter();
-        delta = now-last;
+        delta = now - last;
         if (delta > 250) // wait 250ms before attempting a new connection
-        { 
+        {
             clientSocket = SDLNet_TCP_Accept(serverSocket);
             last = now;
         }
-
-    } 
+    }
     printf("Client connected\n");
-    
 
     SDL_Thread *recvThread = SDL_CreateThread(receiveControls, "ReceiveControls", (void *)clientSocket);
-    //char message[MAX_MESSAGE_LENGTH]; // Buffer pour stocker les messages entrés par l'utilisateur
+    // char message[MAX_MESSAGE_LENGTH]; // Buffer pour stocker les messages entrés par l'utilisateur
 
     online_multiplayer(window, render, map_filename, clientSocket);
 
@@ -248,28 +292,31 @@ NetworkError:
 // send keyboard input to the server socket in data
 // the format is a string "STATE*KEY_SCANCODE" where KEY_SCANCODE is the scancode of the key and STATE either
 // SDL_PRESSED or SDL_RELEASED (1 or 0 respectively)
-int sendControls(void* data) 
+int sendControls(void *data)
 {
     TCPsocket socket = (TCPsocket)data; // Casting de data en TCPsocket
     char message[MAX_MESSAGE_LENGTH];
 
     SDL_Event event;
     bool done = false;
-    while (!done) 
+    while (!done)
     {
         if (SDL_PollEvent(&event))
         {
-            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) 
+            if (event.type == SDL_QUIT)
+                done = true;
+            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
             {
                 if (event.key.keysym.sym == SDLK_ESCAPE)
                     done = true;
-                else 
+                else
                 {
                     sprintf(message, "%d%d", event.key.state, event.key.keysym.sym);
-                    //printf("Sending %d %d\n", event.key.keysym.sym, event.key.state);
+                    // printf("Sending %d %d\n", event.key.keysym.sym, event.key.state);
                     int size = strlen(message);
                     int bytesSent = SDLNet_TCP_Send(socket, message, size);
-                    if (bytesSent < size) {
+                    if (bytesSent < size)
+                    {
                         printf("Error while sending controls (only %d bytes were sent)\n", bytesSent);
                         printf("%s\n", SDLNet_GetError());
                         return -1;
@@ -281,17 +328,46 @@ int sendControls(void* data)
     return 0;
 }
 
-int join_server(SDL_Renderer* render, int windowWidth, int windowHeight) {
+
+void decode_map(Map* map, char* encodedMap) {
+    char size_[3];
+    size_[0] = encodedMap[0];
+    size_[1] = encodedMap[1];
+    size_[2] ='\0';
+
+    map->size = atoi(size_);
+    int k = 2;
+    for (int i = 0; i < map->size; i++) {
+        for (int j = 0; j < map->size; j++) {
+            map->grid[i][j].type = encodedMap[k++];
+            map->grid[i][j].bonus = NONE;
+        }
+    }
+}
+
+int join_server(SDL_Window* window, SDL_Renderer *render)
+{
     IPaddress ip;           // Adresse IP du serveur
     TCPsocket serverSocket; // Socket du client
 
     SDLNet_ResolveHost(&ip, "127.0.0.1", 1234); // Se connecter au serveur a l'adresse IP 127.0.0.1 sur le port 1234
     serverSocket = SDLNet_TCP_Open(&ip);        // Ouvrir une connexion TCP avec le serveur
 
-    SDL_Thread *sendContThread = SDL_CreateThread(sendControls, "SendControls", (void *)serverSocket); // Créer un thread pour recevoir les messages du serveur
+    //SDL_Thread *sendContThread = SDL_CreateThread(sendControls, "SendControls", (void *)serverSocket); // Créer un thread pour recevoir les messages du serveur
+
+    char encodedMap[MAX_MESSAGE_LENGTH];
+    SDLNet_TCP_Recv(serverSocket, encodedMap, MAX_MESSAGE_LENGTH);
+    Map map;
+    decode_map(&map, encodedMap);
+
+    SDL_SetWindowSize(window, map.size * TILE_SIZE, map.size * TILE_SIZE);
+    display_map(render, &map);
+    SDL_RenderPresent(render);
+    
+    
 
 
-    SDL_WaitThread(sendContThread, NULL); // Attendre la fin du thread de réception
+    //SDL_WaitThread(sendContThread, NULL); // Attendre la fin du thread de réception
     SDLNet_TCP_Close(serverSocket);
     return 0;
 }

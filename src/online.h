@@ -10,7 +10,13 @@
 #include <SDL_ttf.h>
 #endif
 
-int receiveMessages(void *data);
+struct Map;
+
+void online_multiplayer(SDL_Window *window, SDL_Renderer *render, char *map_filename, TCPsocket clientSocket);
+//int send_map(TCPsocket clientSocket, Map map);
+int receiveControls(void *data);
 int host_server(SDL_Window* window, SDL_Renderer* render, char* map_filename);
+
+//void decode_map(Map* map, char* encodedMap);
 int sendControls(void* data);
-int join_server(SDL_Renderer* render, int windowWidth, int windowHeight);
+int join_server(SDL_Window* window, SDL_Renderer *render);
