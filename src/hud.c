@@ -4,7 +4,6 @@
 #include "player.h"
 #include "map.h"
 #include "bomb.h"
-#include <SDL_ttf.h>
 
 SDL_Texture* splashscreen;
 SDL_Texture* local_multi_btn;

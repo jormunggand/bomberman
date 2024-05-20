@@ -7,7 +7,7 @@ endif
 
 ifeq ($(UNAME), Linux)
 CFLAGS= -Wall -Werror
-LDFLAGS= -lSDL2 -lSDL2_image -lSDL2_net -lSDL2_ttf
+LDFLAGS= -lSDL2 -lSDL2_image -lSDL2_net -lSDL2_ttf -lm
 endif
 
 CC = gcc

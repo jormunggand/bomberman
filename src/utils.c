@@ -1,7 +1,7 @@
 #include "utils.h"
 
 #include <stdbool.h>
-
+#include <math.h>
 
 
 bool is_in_tab(int x, int* tab, int size) {
