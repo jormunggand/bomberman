@@ -31,6 +31,7 @@ typedef struct KeyboardHandler {
 } KeyboardHandler;
 
 
+int sdl_to_k(int SDL_key);
 void initHandler(KeyboardHandler* self);
 void handleEvent(KeyboardHandler* self, SDL_KeyboardEvent event);
 bool anyDirectionPressed(KeyboardHandler* self, int iPlayer);

@@ -1,5 +1,29 @@
 #include "keyboard.h"
 
+
+int sdl_to_k(int SDL_key) {
+    switch (SDL_key) {
+        case SDLK_z:
+            return K_z;
+            break;
+        case SDLK_q:
+            return K_q;
+            break;
+        case SDLK_s:
+            return K_s;
+            break;
+        case SDLK_d:
+            return K_d;
+            break;
+        case SDLK_SPACE:
+            return K_SPACE;
+            break;
+        default:
+            return -1;
+            break;
+    }
+}
+
 void initHandler(KeyboardHandler* self) {
     for (int k = 0; k < N_KEYS; k++)
         self->keyState[k] = SDL_RELEASED;
