@@ -160,30 +160,27 @@ bool check_collision(SDL_Rect* r, Map *map) {
 
 // check if the rectangle is colliding with a bomb
 bool bomb_collision(SDL_Rect* r, int sign, bool collidedWithBomb) {
-    for (int i = 0; i < 2; i++){
-        for (int j = 0; j < 2; j++){
-            SDL_Rect intersectRect;
-            for (int k = 0; k < MAX_BOMBS && bombs[k] != NULL; k++){
-                if (!(bombs[k]->detonated) 
-                && SDL_IntersectRect(r, &(bombs[k]->rect), &intersectRect) == SDL_TRUE){
-                    if (collidedWithBomb) return true;
-                    if (bombs[k]->isMoving){
-                        bombs[k]->isMoving = false;
-                    }
-                    else{
-                        SpriteDirection d;
-                        if (sign == 1){
-                            d = intersectRect.w > intersectRect.h ? FRONT : RIGHT;
-                        }
-                        else{
-                            d = intersectRect.w > intersectRect.h ? BACK : LEFT;
-                        }
-                        bombs[k]->isMoving = true;
-                        bombs[k]->direction = d;
-                    }
-                    return true;
-                }
+    SDL_Rect intersectRect;
+    for (int k = 0; k < MAX_BOMBS; k++){
+        if (bombs[k] == NULL) continue;
+        if (!(bombs[k]->detonated) 
+        && SDL_IntersectRect(r, &(bombs[k]->rect), &intersectRect) == SDL_TRUE){
+            if (collidedWithBomb) return true;
+            if (bombs[k]->isMoving){
+                bombs[k]->isMoving = false;
             }
+            else{
+                SpriteDirection d;
+                if (sign == 1){
+                    d = intersectRect.w > intersectRect.h ? FRONT : RIGHT;
+                }
+                else{
+                    d = intersectRect.w > intersectRect.h ? BACK : LEFT;
+                }
+                bombs[k]->isMoving = true;
+                bombs[k]->direction = d;
+            }
+            return true;
         }
     }
     return false;

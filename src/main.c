@@ -98,7 +98,6 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
 
     char timerStr[8];
     SDL_Color White = {255, 255, 255};
-    SDL_Color Black = {0, 0, 0};
     TTF_Font* sans = TTF_OpenFont("../assets/nasa.ttf", 12);
     if (sans == NULL) {
         printf("Error while loading font: %s\n", TTF_GetError());
@@ -188,86 +187,7 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
         SDL_RenderPresent(render);
 
         if (map.nPlayersAlive <= 1) {
-            int pitch = sizeof(Uint32) * ww;
-            Uint32 *pixels = malloc(pitch * wh);
-            SDL_RenderReadPixels(render, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, pitch);
-            // gaussian blur on the screen
-            gaussian_blur(pixels, ww, wh);
-            SDL_Texture* texture = SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ww, wh);
-            SDL_UpdateTexture(texture, NULL, pixels, pitch);
-            SDL_RenderClear(render);
-            renderTexture(render, texture, NULL, NULL);
-            free(pixels);
-
-            SDL_Rect game_over_rect;
-            game_over_rect.w = 200;
-            game_over_rect.h = 120;
-            game_over_rect.x = ww / 2 - game_over_rect.w / 2;
-            game_over_rect.y = wh / 2 - game_over_rect.h / 2 - 100;
-            char game_over_str[20];
-             if (players[0].isAlive)
-                sprintf(game_over_str, "Player 1 wins");
-            else if (players[1].isAlive)
-                sprintf(game_over_str, "Player 2 wins");
-            else 
-                sprintf(game_over_str, "Draw");
-            SDL_Surface* surface_go = TTF_RenderText_Solid(sans, game_over_str, Black); 
-            SDL_Texture* mess_go = SDL_CreateTextureFromSurface(render, surface_go);
-            SDL_RenderCopy(render, mess_go, NULL, &game_over_rect);
-
-            SDL_Rect choice_rect;
-            choice_rect.w = 200;
-            choice_rect.h = 120;
-            choice_rect.x = ww / 2 - choice_rect.w / 2;
-            choice_rect.y = wh / 2 - choice_rect.h / 2 + 100;
-            char choice_str[20];
-            sprintf(choice_str, "Play again?");
-            SDL_Surface* surface_choice = TTF_RenderText_Solid(sans, choice_str, Black);
-            SDL_Texture* mess_choice = SDL_CreateTextureFromSurface(render, surface_choice);
-            SDL_RenderCopy(render, mess_choice, NULL, &choice_rect);
-
-            SDL_Rect yes_rect;
-            yes_rect.w = 50;
-            yes_rect.h = 50;
-            yes_rect.x = ww / 2 - yes_rect.w / 2 - 100;
-            yes_rect.y = wh / 2 - yes_rect.h / 2 + 200;
-            char yes_str[20];
-            sprintf(yes_str, "Yes");
-            SDL_Surface* surface_yes = TTF_RenderText_Solid(sans, yes_str, Black);
-            SDL_Texture* mess_yes = SDL_CreateTextureFromSurface(render, surface_yes);
-            SDL_RenderCopy(render, mess_yes, NULL, &yes_rect);
-
-            SDL_Rect no_rect;
-            no_rect.w = 50;
-            no_rect.h = 50;
-            no_rect.x = ww / 2 - no_rect.w / 2 + 100;
-            no_rect.y = wh / 2 - no_rect.h / 2 + 200;
-            char no_str[20];
-            sprintf(no_str, "No");
-            SDL_Surface* surface_no = TTF_RenderText_Solid(sans, no_str, Black);
-            SDL_Texture* mess_no = SDL_CreateTextureFromSurface(render, surface_no);
-            SDL_RenderCopy(render, mess_no, NULL, &no_rect);
-            SDL_RenderPresent(render);
-
-            free_bombs();
-
-            SDL_Event event;
-            while (1) {
-                if (SDL_WaitEvent(&event)) {
-                    if (event.type == SDL_QUIT) {
-                        return QUIT;
-                    }
-                    if (event.type == SDL_MOUSEBUTTONDOWN) {
-                        int x = event.button.x;
-                        int y = event.button.y;
-                        if (point_in_rect(yes_rect, x, y)) {
-                            return LOCAL_MULTI;
-                        } else if (point_in_rect(no_rect, x, y)) {
-                            return CHOOSING;
-                        }
-                    }
-                }
-            }
+            return display_game_over(render, sans, players, ww, wh);
         }
     }
     return QUIT;

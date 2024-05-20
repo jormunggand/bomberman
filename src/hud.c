@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "player.h"
 #include "map.h"
+#include "bomb.h"
 #include <SDL_ttf.h>
 
 SDL_Texture* splashscreen;
@@ -136,6 +137,7 @@ Gamemode online_menu(SDL_Renderer* render, int windowWidth, int windowHeight) {
     return QUIT;
 }
 
+// display the HUD with the bonus icons and the number of bombs, flame power and speed
 void display_hud(SDL_Renderer* render, TTF_Font* sans, Player* p1, Player* p2, int windowWidth){
     int icon_size = 5 * HUD_HEIGHT / 8;
     int y = HUD_HEIGHT / 2 - icon_size / 2;
@@ -211,4 +213,106 @@ void display_hud(SDL_Renderer* render, TTF_Font* sans, Player* p1, Player* p2, i
     SDL_DestroyTexture(bomb_p2_text_texture);
     SDL_DestroyTexture(flame_p2_text_texture);
     SDL_DestroyTexture(speed_p2_text_texture);
+}
+
+
+int display_game_over(SDL_Renderer* render, TTF_Font* sans, Player* players, int ww, int wh) {
+    SDL_Color Black = {0, 0, 0};
+    int pitch = sizeof(Uint32) * ww;
+    Uint32 *pixels = malloc(pitch * wh);
+    SDL_RenderReadPixels(render, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, pitch);
+    // gaussian blur on the screen
+    gaussian_blur(pixels, ww, wh);
+    SDL_Texture* texture = SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, ww, wh);
+    SDL_UpdateTexture(texture, NULL, pixels, pitch);
+    SDL_RenderClear(render);
+    renderTexture(render, texture, NULL, NULL);
+    free(pixels);
+
+    SDL_Rect game_over_rect;
+    game_over_rect.w = 200;
+    game_over_rect.h = 120;
+    game_over_rect.x = ww / 2 - game_over_rect.w / 2;
+    game_over_rect.y = wh / 2 - game_over_rect.h / 2 - 100;
+    char game_over_str[20];
+        if (players[0].isAlive)
+        sprintf(game_over_str, "Player 1 wins");
+    else if (players[1].isAlive)
+        sprintf(game_over_str, "Player 2 wins");
+    else 
+        sprintf(game_over_str, "Draw");
+    SDL_Surface* surface_go = TTF_RenderText_Solid(sans, game_over_str, Black); 
+    SDL_Texture* mess_go = SDL_CreateTextureFromSurface(render, surface_go);
+    SDL_RenderCopy(render, mess_go, NULL, &game_over_rect);
+
+    SDL_Rect choice_rect;
+    choice_rect.w = 200;
+    choice_rect.h = 120;
+    choice_rect.x = ww / 2 - choice_rect.w / 2;
+    choice_rect.y = wh / 2 - choice_rect.h / 2 + 100;
+    char choice_str[20];
+    sprintf(choice_str, "Play again?");
+    SDL_Surface* surface_choice = TTF_RenderText_Solid(sans, choice_str, Black);
+    SDL_Texture* mess_choice = SDL_CreateTextureFromSurface(render, surface_choice);
+    SDL_RenderCopy(render, mess_choice, NULL, &choice_rect);
+
+    SDL_Rect yes_rect;
+    yes_rect.w = 50;
+    yes_rect.h = 50;
+    yes_rect.x = ww / 2 - yes_rect.w / 2 - 100;
+    yes_rect.y = wh / 2 - yes_rect.h / 2 + 200;
+    char yes_str[20];
+    sprintf(yes_str, "Yes");
+    SDL_Surface* surface_yes = TTF_RenderText_Solid(sans, yes_str, Black);
+    SDL_Texture* mess_yes = SDL_CreateTextureFromSurface(render, surface_yes);
+    SDL_RenderCopy(render, mess_yes, NULL, &yes_rect);
+
+    SDL_Rect no_rect;
+    no_rect.w = 50;
+    no_rect.h = 50;
+    no_rect.x = ww / 2 - no_rect.w / 2 + 100;
+    no_rect.y = wh / 2 - no_rect.h / 2 + 200;
+    char no_str[20];
+    sprintf(no_str, "No");
+    SDL_Surface* surface_no = TTF_RenderText_Solid(sans, no_str, Black);
+    SDL_Texture* mess_no = SDL_CreateTextureFromSurface(render, surface_no);
+    SDL_RenderCopy(render, mess_no, NULL, &no_rect);
+    SDL_RenderPresent(render);
+
+    free_bombs();
+
+    SDL_Event event;
+    bool done = false;
+    int res = -1;
+    while (!done) {
+        if (SDL_WaitEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                res = QUIT;
+                done = true;
+            }
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                int x = event.button.x;
+                int y = event.button.y;
+                if (point_in_rect(yes_rect, x, y)) {
+                    res = LOCAL_MULTI;
+                    done = true;
+                } else if (point_in_rect(no_rect, x, y)) {
+                    res = CHOOSING;
+                    done = true;
+                }
+            }
+        }
+    }
+    // destroy textures and surfaces
+    SDL_FreeSurface(surface_go);
+    SDL_FreeSurface(surface_choice);
+    SDL_FreeSurface(surface_yes);
+    SDL_FreeSurface(surface_no);
+
+    SDL_DestroyTexture(mess_go);
+    SDL_DestroyTexture(mess_choice);
+    SDL_DestroyTexture(mess_yes);
+    SDL_DestroyTexture(mess_no);
+
+    return res;
 }

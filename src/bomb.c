@@ -218,6 +218,7 @@ void update_bombs_positions(SDL_Window* window, Map* map, double dt){
     int speed = 2 * MAX_SPEED;
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
+    int sign = 1;
     for (int k = 0; k < MAX_BOMBS; k++){
         Bomb* bomb = bombs[k];
         if (bomb == NULL) {continue;}
@@ -226,23 +227,28 @@ void update_bombs_positions(SDL_Window* window, Map* map, double dt){
                 case FRONT:
                     bomb->rect.y += speed * dt;
                     bomb->collision_rect.y += speed * dt;
+                    sign = 1;
                     break;
                 case BACK:
                     bomb->rect.y -= speed * dt;
                     bomb->collision_rect.y -= speed * dt;
+                    sign = -1;
                     break;
                 case LEFT:
                     bomb->rect.x -= speed * dt;
                     bomb->collision_rect.x -= speed * dt;
+                    sign = -1;
                     break;
                 case RIGHT:
                     bomb->rect.x += speed * dt;
                     bomb->collision_rect.x += speed * dt;
+                    sign = 1;
                     break;
             }
             if (bomb->rect.x < 0 
             || bomb->rect.x + bomb->rect.w > width 
-            || check_collision(&(bomb->collision_rect), map)){
+            || check_collision(&(bomb->collision_rect), map)
+            || bombToBombCollision(&(bomb->collision_rect), sign, k)){
                 bombs[k]->isMoving = false;
                 switch(bombs[k]->direction){
                     case FRONT:
@@ -313,4 +319,32 @@ void free_bombs(){
             bombs[i] = NULL;
         }
     }
+}
+
+
+// to handle collision between bombs
+bool bombToBombCollision(SDL_Rect* r, int sign, int bombIndex){
+    SDL_Rect intersectRect;
+    for (int k = 0; k < MAX_BOMBS; k++){
+        if (k == bombIndex || bombs[k] == NULL) continue;
+        if (!(bombs[k]->detonated) 
+        && SDL_IntersectRect(r, &(bombs[k]->rect), &intersectRect) == SDL_TRUE){
+            if (bombs[k]->isMoving){
+                bombs[k]->isMoving = false;
+            }
+            else{
+                SpriteDirection d;
+                if (sign == 1){
+                    d = intersectRect.w > intersectRect.h ? FRONT : RIGHT;
+                }
+                else{
+                    d = intersectRect.w > intersectRect.h ? BACK : LEFT;
+                }
+                bombs[k]->isMoving = true;
+                bombs[k]->direction = d;
+            }
+            return true;
+        }
+    }
+    return false;
 }
