@@ -11,5 +11,8 @@
 struct Player;
 struct Map;
 
+// randomly initializes the bonus on the map inside the soft walls given a given spawn rate
 void init_bonus(struct Map* map);
+
+// gives a bonus to the player if he touches it
 void get_bonus(struct Player* player, struct Map* map);

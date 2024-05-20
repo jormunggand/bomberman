@@ -37,8 +37,17 @@ typedef struct Map {
     int nPlayersAlive; // number of players alive on the map
 } Map;
 
+// create a bonus texture that will be displayed on the map by combining the empty tile texture and the bonus texture
 SDL_Texture* create_bonus_texture(SDL_Renderer* render, SDL_Texture* icon);
+
+// load the textures for the map
 int load_map_textures(SDL_Renderer* render);
+
+// load the map from a text file
 int read_map_from_file(Map* map, char* file_name);
+
+// display the map on the screen
 int display_map(SDL_Renderer* renderer, Map* map);
+
+// destroy the map and free the memory
 void destroy_map(Map* map);

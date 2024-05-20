@@ -14,6 +14,7 @@ CC = gcc
 
 all: main.exe
 	./main.exe
+	rm -f *.o
 
 main.exe: main.o utils.o map.o player.o bomb.o bonus.o keyboard.o hud.o online.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)

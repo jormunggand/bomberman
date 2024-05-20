@@ -20,9 +20,7 @@ SDL_Texture* flameTextures[NB_FLAME_TEXTURES];
 
 Bomb* bombs[MAX_BOMBS] = {NULL};
 
-// initialize a bomb at the given map coordinates with a firepower of radius
-// the bomb needs a pointer to the player who placed it to make sure he cannot
-// place too many bombs
+// initialize a bomb at the given map coordinates with a 
 void init_bomb(Bomb* bomb, int x, int y, Player* owner) {
     bomb->rect.x = x * TILE_SIZE;
     bomb->rect.y = y * TILE_SIZE;

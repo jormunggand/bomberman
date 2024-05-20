@@ -35,12 +35,28 @@ typedef struct {
     int y;
 } Delta;
 
+// checks is x is in the tab array 
 bool is_in_tab(int x, int* tab, int size);
+
+// returns the minimum of a and b
 int min(int a, int b);
+
+// returns the maximum of a and b
 int max(int a, int b);
+
+// initialize the SDL window and renderer
 int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);
+
+// load an image from the path and return a texture, if isNegative is true, the image's colors will be inverted
 SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer, bool isNegative);
+
 int setColor(SDL_Renderer *renderer, SDL_Color color);
-bool point_in_rect(SDL_Rect rect, int x, int y); // check wheter (x,y) is inside the rect
+
+// check whether (x,y) is inside the rect
+bool point_in_rect(SDL_Rect rect, int x, int y); 
+
+// apply a gaussian blur on the pixels array, radius used is 10
 void gaussian_blur(Uint32 *pixels, int width, int height);
+
+// render a texture on the screen but take into account the offset of the hud
 int renderTexture(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect *srcrect, SDL_Rect *dstrect);
