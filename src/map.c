@@ -24,9 +24,9 @@ SDL_Texture* create_bonus_texture(SDL_Renderer* render, SDL_Texture* icon) {
     SDL_Texture* text = SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, 
         SDL_TEXTUREACCESS_TARGET, TILE_SIZE, TILE_SIZE);
     SDL_SetRenderTarget(render, text);
-    renderTexture(render, empty_texture, NULL, NULL);
+    SDL_RenderCopy(render, empty_texture, NULL, NULL);
     SDL_Rect middle = {.x=TILE_SIZE/4, .y=TILE_SIZE/4, .w=TILE_SIZE/2, .h=TILE_SIZE/2};
-    renderTexture(render, icon, NULL, &middle);
+    SDL_RenderCopy(render, icon, NULL, &middle);
     SDL_SetRenderTarget(render, NULL);
     return text;
 }

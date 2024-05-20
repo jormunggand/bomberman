@@ -7,16 +7,16 @@
 #include "keyboard.h"
 
 
-SDL_Texture* front_walking[ANIMATION_FRAMES];
-SDL_Texture* back_walking[ANIMATION_FRAMES];
-SDL_Texture* left_walking[ANIMATION_FRAMES];
-SDL_Texture* right_walking[ANIMATION_FRAMES];
+SDL_Texture* front_walking[2][ANIMATION_FRAMES];
+SDL_Texture* back_walking[2][ANIMATION_FRAMES];
+SDL_Texture* left_walking[2][ANIMATION_FRAMES];
+SDL_Texture* right_walking[2][ANIMATION_FRAMES];
 
 const float flame_hitbox_tolerance = 2 * TILE_SIZE / 5;
 const float wall_hitbox_tolerance = TILE_SIZE / 4 + 0.5;
 
 // create a player structure positioned at map.grid[y][x]
-void init_player(Player* player, int x, int y, int* controls) {
+void init_player(Player* player, int playerIndex, int x, int y, int* controls) {
     player->curDir = FRONT;
     player->iframe = 0;
     player->isWalking = false;
@@ -37,7 +37,7 @@ void init_player(Player* player, int x, int y, int* controls) {
     player->flameHitbox.w = TILE_SIZE - 2 * flame_hitbox_tolerance;
     player->flameHitbox.h = TILE_SIZE - 2 * flame_hitbox_tolerance;
 
-    player->animations = front_walking;
+    player->animations = front_walking[playerIndex];
 
     player->nMaxBombs = 1;
     player->nCurBombs = 0;
@@ -55,17 +55,17 @@ void display_player(SDL_Renderer* render, Player* player) {
     renderTexture(render, player->animations[player->iframe], NULL, &(player->rect));
 }
 
-void change_direction(Player* player, SpriteDirection newDir) {
+void change_direction(Player* player, int playerIndex, SpriteDirection newDir) {
     player->curDir = newDir;
     if (player->curDir == FRONT) {
-        player->animations = front_walking;
+        player->animations = front_walking[playerIndex];
     } else if (player->curDir == BACK) {
-        player->animations = back_walking;
+        player->animations = back_walking[playerIndex];
     } else if (player->curDir == LEFT) {
-        player->animations = left_walking;
+        player->animations = left_walking[playerIndex];
     }
     else {
-        player->animations = right_walking;
+        player->animations = right_walking[playerIndex];
     }
 }
 

@@ -54,6 +54,8 @@ int load_all_textures(SDL_Renderer* render) {
 
 // launch a game with two players
 Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
+    setColor(render, (SDL_Color){0, 0, 0});
+
     Map map;
     if (read_map_from_file(&map, map_filename) != 0)
     {
