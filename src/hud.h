@@ -5,6 +5,7 @@
 #elif __APPLE__
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #endif
 
 /* This file contains functions displaying menus or hud elements (like the timer) */
