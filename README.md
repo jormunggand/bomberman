@@ -1,13 +1,18 @@
 # bomberman
 
-## Projet IN104: Bomberman
+## IN104 Project: Bomberman
 
-Implementation of the famous game Bomberman in C using SDL2.
-Use arrows or zqsd to move across the map and SPACE to place bombs.
+Implementation of the classic game Bomberman in C using SDL2.
+This project is part of the course IN104 teached at ENSTA Paris
 
-Currently there are only three powerups but more is coming ;)
+## Dependencies
+Currently, only Linux and Mac Os are supported.
 
-Multiplayer support in under development
+This game uses SDL2, SDL_net, SDL_image and SDL_ttf. You need to install those libraries on your machine in order to play the game.
+For general explications you can follow [the SDL documentation](https://wiki.libsdl.org/SDL2/Installation).
+For systems using apt you can run the following command:
+
+```sudo apt-get install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-image-dev libsdl2-net-2.0-0 libsdl2-net-dev libsdl2-ttf-2.0-0 libsdl2-ttf-dev```
 
 
 ### Running the game
@@ -22,9 +27,13 @@ Maps are currently stored in maps/
 
 You can select which map you want to play one by running ```./main.exe ../maps/FILE```
 
+## Tutorial
+
 ### Authors
 Arthur Foucard
 
 Théo Atakpama
+
+Supervised by Damien Bouchabou and Sao Mai Nguyen
 
 
