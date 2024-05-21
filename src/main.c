@@ -222,7 +222,7 @@ int main(int argc, char* argv[]) {
     if (argc == 2) {
         strcpy(map_filename, argv[1]);
     } else {
-        strcpy(map_filename,  "../maps/map_bonus.txt"); // default map
+        strcpy(map_filename,  "../maps/map_closed.txt"); // default map
     }
    
     // Create and init the SDL Window and Renderer
