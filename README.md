@@ -47,6 +47,4 @@ Arthur Foucard
 
 Théo Atakpama
 
-Supervised by Damien Bouchabou and Sao Mai Nguyen
-
 
