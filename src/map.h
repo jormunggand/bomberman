@@ -6,6 +6,9 @@
 #include <SDL_image.h>
 #endif
 
+/* This file contains structures and functions related to the construction and behavior of the map
+on which the players are battling each other*/
+
 extern SDL_Texture* bomb_bonus_icon;
 extern SDL_Texture* flame_bonus_icon;
 extern SDL_Texture* speed_bonus_icon;
@@ -31,9 +34,10 @@ typedef struct Tile {
     BonusType bonus; // bonus to be displayed when a SOFT_WALL is broken
 } Tile;
 
+// the map is a size*size grid
 typedef struct Map {
     Tile** grid;
-    int size, starty, startx;
+    int size, startx, starty; 
     int nPlayersAlive; // number of players alive on the map
 } Map;
 

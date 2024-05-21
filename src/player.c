@@ -7,6 +7,7 @@
 #include "keyboard.h"
 
 
+// The second dimension is for the negative colored player
 SDL_Texture* front_walking[2][ANIMATION_FRAMES];
 SDL_Texture* back_walking[2][ANIMATION_FRAMES];
 SDL_Texture* left_walking[2][ANIMATION_FRAMES];

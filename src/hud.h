@@ -7,6 +7,8 @@
 #include <SDL_image.h>
 #endif
 
+/* This file contains functions displaying menus or hud elements (like the timer) */
+
 
 struct Player;
 
@@ -24,7 +26,7 @@ typedef enum {
 // load the button textures used in the menu and return -1 if an error occured or 0 otherwise
 int load_menu_textures(SDL_Renderer* render);
 
-// draw the button at the given position
+// draw the button at the given position (not used)
 void draw_button(SDL_Renderer* render, SDL_Texture* text, int baseX, int baseY);
 
 // display the main menu and return the gamemode chosen by the player by clicking on the buttons

@@ -18,6 +18,8 @@
 SDL_KeyboardEvent recInput;
 // to store player 2's input received through the network
 
+
+// Functions for the server side
 int send_map(TCPsocket clientSocket, Map map)
 {
     char encodedMap[MAX_MESSAGE_LENGTH];
@@ -326,6 +328,12 @@ NetworkError:
     return QUIT;
 }
 
+
+
+
+
+/* Functions for the client side */
+
 // send keyboard input to the server socket in data
 // the format is a string "STATE*KEY_SCANCODE" where KEY_SCANCODE is the scancode of the key and STATE either
 // SDL_PRESSED or SDL_RELEASED (1 or 0 respectively)
@@ -365,7 +373,8 @@ int sendControls(void *data)
     return 0;
 }
 
-
+// read the encoded map for the first time
+// the first two characters of encodedMap are the size of the map
 void get_map_first(TCPsocket serverSocket, Map* map) {
     char encodedMap[MAX_MESSAGE_LENGTH];
     char encodedBonus[MAX_MESSAGE_LENGTH];
@@ -389,6 +398,7 @@ void get_map_first(TCPsocket serverSocket, Map* map) {
     }
 }
 
+// no need to reallocate memory now
 void get_map(TCPsocket serverSocket, Map* map) 
 {
     char encodedMap[MAX_MESSAGE_LENGTH];
@@ -417,7 +427,7 @@ int get_player_infos(TCPsocket serverSocket, Player* player1, Player* player2) {
     player2->curDir = curDir2;
     player1->isWalking = isWalk1;
     player2->isWalking = isWalk2;
-    printf("Iframe : %d %d\n", player1->iframe, player2->iframe);
+    //printf("Iframe : %d %d\n", player1->iframe, player2->iframe);
     change_direction(player1, curDir1, 0);
     change_direction(player2, curDir2, 1);
     return 0;

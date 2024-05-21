@@ -19,7 +19,6 @@ SDL_Texture* textures[N_TEXTURES];
 
 
 // draw the bonus icon on top of the background tile
-
 SDL_Texture* create_bonus_texture(SDL_Renderer* render, SDL_Texture* icon) {
     SDL_Texture* text = SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, 
         SDL_TEXTUREACCESS_TARGET, TILE_SIZE, TILE_SIZE);
@@ -61,7 +60,6 @@ int load_map_textures(SDL_Renderer* render) {
     textures[BOMB_BONUS] = bomb_bonus;
     textures[SPEED_BONUS] = speed_bonus;
     textures[FLAME_BONUS] = flame_bonus;
-
     
     return 0;
 }

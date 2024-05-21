@@ -9,12 +9,16 @@
 #include <stdbool.h>
 #include <time.h>
 
+/* This file contains the code related to handling bombs and their explosions */
+
 
 
 #define NB_BOMB_TEXTURES (7)
 #define NB_FLAME_TEXTURES (5)
 #define MAX_BOMBS (20)
 
+// this array will hold every bomb currently active on the screen
+// bombs[i] is either NULL or has a struct Bomb pointer
 extern struct Bomb* bombs[MAX_BOMBS];
 
 struct Player;
@@ -33,6 +37,7 @@ typedef struct Bomb {
     int direction; // the direction the bomb is moving
 } Bomb;
 
+// useful indexes conversion
 int ij_to_expl_index(int i, int j, int radius);
 void exlp_index_to_ij(int expl_index, int radius, int* i, int* j);
 

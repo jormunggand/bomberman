@@ -40,9 +40,12 @@
 #define BILLION (1000000000L)
 
 
+// Load all textures required for the game in one place
+// returns 0 if everything went well and -1 otherwise
 int load_all_textures(SDL_Renderer* render) {
     int r1 = load_map_textures(render);
     int r2 = load_bomb_textures(render);
+    // 0 for normal skin and 1 for negative colors
     int r3 = load_player_textures(render, 0);
     int r4 = load_player_textures(render, 1);
     int r5 = load_menu_textures(render);
@@ -54,7 +57,8 @@ int load_all_textures(SDL_Renderer* render) {
 }
 
 
-// launch a game with two players
+// Launch a game inside window with the renderer render where two players can play on the same keyboard S
+// Gamemode is an enum defined in hud.h
 Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_filename) {
     setColor(render, (SDL_Color){0, 0, 0});
 
@@ -76,30 +80,32 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
     init_player(&players[0], 1, 1, controls1, 0);
     init_player(&players[1], map.size-2, map.size-2, controls2, 1);
 
+    Delta deltas[nPlayers]; // deltas are used to move the player sprites
+    for (int i = 0; i < nPlayers; i++) {
+        deltas[i].x = 0;
+        deltas[i].y = 0;
+    }
+
+    // KeyboardHandler is defined in keyboard.h 
+    // Enables simultaneous keypresses (moving diagonally for example)
+    KeyboardHandler handler; 
+    initHandler(&handler);
+
     // Load and display map and players
     display_map(render, &map);
     for (int i = 0; i < nPlayers; i++)
         display_player(render, &players[i]);
     SDL_RenderPresent(render);
+
     
-    SDL_Event event;
-    KeyboardHandler handler; // to handle simultaneous keypresses
-    initHandler(&handler);
-
-    bool done = false;
-    Delta deltas[nPlayers];
-    for (int i = 0; i < nPlayers; i++) {
-        deltas[i].x = 0;
-        deltas[i].y = 0;
-    }
-    printf("%d\n", deltas[0].x);
-
+    // Make sure the game doesn't run too fast or too slow on other machines
     Uint64 NOW = SDL_GetPerformanceCounter();
     Uint64 LAST = 0;
     double deltaTime = 0;
     double targetfps = 1.0 / 60.0;
     double accumulator = 0.0;
 
+    // Code to display the timer
     char timerStr[8];
     SDL_Color White = {255, 255, 255};
     TTF_Font* sans = TTF_OpenFont("../assets/nasa.ttf", 12);
@@ -117,6 +123,9 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
     timer_rect.y = 0; // controls the rect's y coordinte
     timer_rect.x = ww / 2 - timer_rect.w / 2;  //controls the rect's x coordinate 
 
+    // Start the game loop
+    SDL_Event event;
+    bool done = false;
     while (!done) {
         LAST = NOW;
         NOW = SDL_GetPerformanceCounter();
@@ -139,11 +148,14 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
                     curPlayer->isWalking = true;
                     curPlayer->cpt_reset++;
                     update_sprite(curPlayer);
+
+                    // reset the animation when the player is not moving
                     if (curPlayer->cpt_reset == 200) {
                         curPlayer->cpt_reset = 0;
                         curPlayer->isWalking = false;
                     }
 
+                    // make the sprite move in the adequate direction
                     if (handler.keyState[curPlayer->controls[0]] == SDL_PRESSED) {
                         deltas[iPlayer].y -= 1;
                         change_direction(curPlayer, BACK, iPlayer);
@@ -172,6 +184,7 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
             update_bombs_positions(window, &map, targetfps);
             accumulator -= targetfps;
         }
+        // Disply the timer
         struct timespec cur_time;
         clock_gettime(CLOCK_REALTIME, &cur_time);
         double dt = (cur_time.tv_sec - start_time.tv_sec) + (double) (cur_time.tv_nsec - start_time.tv_nsec) / (double) BILLION;
@@ -179,6 +192,7 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
         SDL_Surface* surfaceMessage = TTF_RenderText_Solid(sans, timerStr, White); 
         SDL_Texture* message = SDL_CreateTextureFromSurface(render, surfaceMessage);
         
+        // Display everything on screen
         SDL_RenderClear(render);
         display_map(render, &map);
         display_bombs(render, &map);
@@ -188,6 +202,7 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
         }
         SDL_RenderCopy(render, message, NULL, &timer_rect);
         display_hud(render, sans, &players[0], &players[1], ww);
+
         SDL_RenderPresent(render);
 
         if (map.nPlayersAlive <= 1) {
@@ -202,7 +217,7 @@ Gamemode local_multiplayer(SDL_Window* window, SDL_Renderer* render, char* map_f
 int main(int argc, char* argv[]) {
     int exit_status = EXIT_FAILURE;
 
-    // Read the command line argument
+    // Read the command line argument to load a specified map
     char map_filename[100];
     if (argc == 2) {
         strcpy(map_filename, argv[1]);
@@ -222,7 +237,7 @@ int main(int argc, char* argv[]) {
     // Load all textures once and for all
     load_all_textures(render);
 
-    // Start the game
+    // Start the menu
     Gamemode gamemode = choose_gamemode(render, windowWidth, windowHeight);
     while (gamemode != QUIT) {
         if (gamemode == LOCAL_MULTI) {
@@ -248,6 +263,7 @@ int main(int argc, char* argv[]) {
     SDL_DestroyRenderer(render);
     SDL_DestroyWindow(window);
     SDLNet_Quit();
+    TTF_Quit();
     SDL_Quit();
     return exit_status;
 }

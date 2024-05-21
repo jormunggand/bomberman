@@ -8,11 +8,15 @@
 
 #include <stdbool.h>
 
+/* This file contains structures and functions related to the movement and actions of the player
+character */
+
 #define ANIMATION_FRAMES (8)
 
 struct Map;
 enum Key;
 
+// Represents which direction the sprite is facing
 typedef enum {
     FRONT = 0,
     BACK = 1,
@@ -22,25 +26,25 @@ typedef enum {
 
 
 typedef struct Player {
-    SpriteDirection curDir;
+    SpriteDirection curDir; // current direction
     bool isWalking;
     int iframe;
     int cpt_reset; // reset the player animation when idling
 
     SDL_Texture** animations;
-    SDL_Rect rect;
-    SDL_Rect collisionRect;
-    SDL_Rect flameHitbox;
+    SDL_Rect rect; // for the sprite position
+    SDL_Rect collisionRect; // for collisions with the walls and bombs
+    SDL_Rect flameHitbox; // for collisions with flame explosions
 
     int nMaxBombs; // the maximum number of bombs the player can fire simultaneously
     int nCurBombs; // the current number of bombs the player has lit
     float speed;
-    int flamePower;
+    int flamePower; // the number of cases the explosion spans in each direction
 
     bool isAlive;
 
 
-    // keyboard controls to go Up, Right, Down, Left and to Fire
+    // keyboard controls to go Up, Right, Down, Left and to Fire respectively
     int controls[5];
 } Player;
 
@@ -61,6 +65,7 @@ void display_player(SDL_Renderer* render, Player* player);
 int load_player_aux(SDL_Renderer* render, char* base, SDL_Texture** textures, int playerIndex);
 
 // loads all the textures used to display the players
+// returns 0 if everything went well and -1 otherwise
 int load_player_textures(SDL_Renderer* render, int playerIndex);
 
 // update the player's position in the direction given by the deltas if there is no collision that prevents it 

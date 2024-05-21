@@ -15,7 +15,9 @@
 #include <SDL_ttf.h>
 #endif
 
-// might be changed in the future
+/* This file contains global defines, structs and functions used in a lot of other files */
+
+
 #define N_TEXTURES (10)
 // the size of the board is currently fixed by defines but this will maybe be changed in the future to have variable sizes
 #define TILE_SIZE (48)
@@ -35,7 +37,7 @@ typedef struct {
     int y;
 } Delta;
 
-// checks is x is in the tab array 
+// checks if x is in the tab array of size size (linear complexity)
 bool is_in_tab(int x, int* tab, int size);
 
 // returns the minimum of a and b
@@ -50,6 +52,7 @@ int init(SDL_Window **window, SDL_Renderer **renderer, int w, int h);
 // load an image from the path and return a texture, if isNegative is true, the image's colors will be inverted
 SDL_Texture* loadImage(const char path[], SDL_Renderer *renderer, bool isNegative);
 
+// set the color using a SDL_Color rather that specifying the rgba values
 int setColor(SDL_Renderer *renderer, SDL_Color color);
 
 // check whether (x,y) is inside the rect

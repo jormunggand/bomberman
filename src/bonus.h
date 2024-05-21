@@ -6,7 +6,7 @@
 #include <SDL_image.h>
 #endif
 
-
+/* This file contains two functions for placing bonus and allowing the plower to get them */
 
 struct Player;
 struct Map;

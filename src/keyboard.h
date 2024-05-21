@@ -10,6 +10,12 @@
 
 #define N_KEYS (15)
 
+/* This file contains everything related to the keyboard handler. This is better for handling 
+multiples keypresses at the same time */
+
+
+// SDL constants (SDLK_DOWN for example) are way too high to be stored in a array so we
+// redefine it (not very optimal)
 typedef enum {
     K_NONE = -1,
     K_ESC = 0,
@@ -31,9 +37,11 @@ typedef struct KeyboardHandler {
     int keyState[N_KEYS];
 } KeyboardHandler;
 
-// set all keys to released
 
+// make the conversion from SDLK code to enum Key (only for player 1 controls)
 int sdl_to_k(int SDL_key);
+
+// set all keys to released
 void initHandler(KeyboardHandler* self);
 
 // update the state of the keys according to the event received

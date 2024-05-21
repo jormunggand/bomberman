@@ -7,7 +7,9 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define SPAWN_RATE (4)
+// value between 0 and 9
+// if this value is low then there will be a lot of powerups
+#define SPAWN_RATE (4) 
 
 
 void init_bonus(Map* map) {
@@ -15,6 +17,7 @@ void init_bonus(Map* map) {
 
     for (int y = 0; y < map->size; y++) {
         for (int x = 0; x < map->size; x++) {
+            // a bonus can only spawn in a breakable wall
             if (map->grid[y][x].type == SOFT_WALL) {
                 if (random() % 10 > SPAWN_RATE) {
                     switch (random() % 3) {
